@@ -1,10 +1,22 @@
 
 #include <stdbool.h>
 #include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
 
-#define SCREEN_WIDTH 1024
-#define SCREEN_HEIGHT 768
+#include "continuum.h"
+
+int screenWidth = SCREEN_WIDTH;
+int screenHeight = SCREEN_HEIGHT;
+
+void render()
+{
+	gl_render();
+	SDL_GL_SwapBuffers();
+}
+
+void configure()
+{
+	gl_configure();
+}
 
 bool handle_event(SDL_Event* event)
 {
@@ -29,11 +41,13 @@ int main(int argc, char *argv[])
 
 	//SDL_Surface* screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, SDL_OPENGL | SDL_FULLSCREEN);
 	SDL_Surface* screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, SDL_OPENGL);
+	configure();
 	SDL_Event event;
 
 	bool done = false;
 	while (!done)
 	{
+		render();
 		while (SDL_PollEvent(&event))
 		{
 			if (!(done = handle_event(&event)))
@@ -41,7 +55,6 @@ int main(int argc, char *argv[])
 		}
 	}
 	//TODO add a UI layer (clutter?)
-
 
 	SDL_FreeSurface(screen);
 
