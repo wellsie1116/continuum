@@ -2,7 +2,7 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://wellsie1116.github.com/continuum_blog
+url: http://wellsie1116.github.com/continuum
 title: Continuum
 subtitle: Status updates for my CSSE491 project.
 author: Kevin Wells
@@ -15,7 +15,7 @@ simple_search: http://google.com/search
 date_format: "ordinal"
 
 # RSS / Email (optional) subscription links (change if using something like Feedburner)
-subscribe_rss: /continuum_blog/atom.xml
+subscribe_rss: /continuum/atom.xml
 subscribe_email:
 # RSS feeds can list your email address if you like
 email:
@@ -25,10 +25,10 @@ email:
 # ----------------------- #
 
 # If publishing to a subdirectory as in http://site.com/project set 'root: /project'
-root: /continuum_blog
+root: /continuum
 permalink: /blog/:year/:month/:day/:title/
 source: source
-destination: public/continuum_blog
+destination: public/continuum
 plugins: plugins
 code_dir: downloads/code
 category_dir: blog/categories
