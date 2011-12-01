@@ -1,0 +1,102 @@
+---
+layout: post
+title: "Getting Things Started"
+date: 2011-11-30 22:45
+comments: true
+categories: 
+---
+
+
+
+## Game Overview 
+
+My tentative plan for the game is to combine elements from both
+[Braid](http://braid-game.com) and [Portal](http://www.thinkwithportals.com)
+with some new game play ideas I come up with.  My main goal with this game is
+to explore how a game could bend the ideas of time and space (space-time
+**continuum**) to create a unique and innovative game play experience.
+
+### Breaking Time
+
+At its heart, Continuum will be a puzzle game where the player is presented with
+a 3 dimensional world where they need to navigate to the exit.  In order to
+reach their goal, they will need to utilize various abilities that they acquire
+throughout the game (related to manipulating time and space).  Players will have
+no time limit and will have only 1 life, but even though the game will have
+elements deadly to players, they will only need 1 life because the players will
+have the ability to rewind time.  Even if a player dies, they can simply rewind
+time to a state where they were still alive, hopefully making better choices in
+the future.  For someone that has not played games such as Braid in the past,
+this concept can seem a bit odd.  Consider the following timeline:
+
+                :---------->------->
+                :     0.5     1.0
+                :-------:
+                  -1.0  :
+    local  -------------:
+             1.0
+
+    global ------------------------------------------------------------------>
+           1    3       2 4        5
+
+In this graph, *global* is time as it passes for a passive observer, whereas
+*local* is time as it passes for the player, where they have the ability to
+control the flow of time.  In this example, the player plays from timestep 1 to
+2, where the player hits an obstacle and dies.  They then rewind time back to
+timestep 3, where they continue playing at half of the normal rate of time.
+After crossing the difficult obstacle (at timestep 4), they continue playing
+until timestep 5, where they solve the puzzle.  To someone watching the game,
+the would not see the progression from timestep 2 to 3.  A passive observer
+would only see the following sequences of timesteps: 1, 3, 4, 5.  
+
+Players will gain additional time manipulation abilities throughout the game.
+Consider the following timeline:
+
+                        :----------X
+                        :
+    local  -------------:              :---------X
+                        :              :
+                        :--------------:
+                                       :
+                                       :----------------->
+
+    global ------------------------------------------------------------------>
+           1            2          3   4         5       6
+
+In this example, the player has the ability to 'fork' time, the ability to
+duplicate themselves and control both timelines.  How is this useful?  Consider
+a simple example.  In a level, there is a door which must be opened by a switch
+that it takes 5 seconds to walk to.  The switch, however, will only keep the
+door open for 3 seconds.  To solve the puzzle, the player can set a marker point
+(timesteps 2 and 4 in the example above), go and press the button, and then jump
+back to the marker point, and simply walk through the door when their double
+presses the button.
+
+In the example above, the player moves through time normally from step 1 to 2,
+at which point they set a fork marker.  They then move through the top branch to
+step 3, where they instantaneously jump back to step 2 and then move through the
+lower branch to step 4.  During this time, they could see their 'double' moving
+through the level doing whatever they did.  This example has a second fork in
+time, and it functions the same as the first.
+
+### Breaking Space
+
+Time permitting, I would like to also incorporate space manipulation elements
+similar to the popular game Portal, which involves the player specifying two
+arbitrary points in the level that they can instantaneously jump from one point
+to the other.  I plan on basing the game in the same universe as Portal, and it
+would be fun to incorporate aspects of other games in that universe.
+
+## Choosing a Framework
+
+While the focus of this project is on creating a full featured game, I feel like
+I will be unable to use any existing full-package frameworks to do the job
+mostly because this game breaks conventional ideas about first person shooters.
+Most game engines don't support forking time, let alone introducing portals.
+One game engine that I did look into was Source, the same game engine that was
+used to make Portal and Portal 2.  It is possible to write mods for those games,
+but, unfortunately, Valve has not yet released the SDK for Portal 2, which is my
+target platform if I would make a mod to the game.  Instead, I plan on using SDL
+to host the application, OpenGL for graphics rendering, OpenAL for 3D audio, ODE
+for my physics engine, and a blend of C and Python for the implementation language.
+
