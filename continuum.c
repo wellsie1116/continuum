@@ -7,6 +7,8 @@
 int screenWidth = SCREEN_WIDTH;
 int screenHeight = SCREEN_HEIGHT;
 
+static SDL_Surface* screen = NULL;
+
 void render()
 {
 	gl_render();
@@ -15,7 +17,15 @@ void render()
 
 void configure()
 {
+	if (screen)
+	{
+		SDL_FreeSurface(screen);
+		screen = NULL;
+	}
+	int mode = SDL_OPENGL | SDL_RESIZABLE; //SDL_FULLSCREEN
+	screen = SDL_SetVideoMode(screenWidth, screenHeight, 16, mode);
 	gl_configure();
+	render();
 }
 
 void handle_active_event(SDL_ActiveEvent* event)
@@ -71,6 +81,15 @@ void handle_mouse_button_event(SDL_MouseButtonEvent* event)
 	printf("%s button %s at %d, %d\n", button, state, event->x, event->y);
 }
 
+void handle_resize_event(SDL_ResizeEvent* event)
+{
+	screenWidth = event->w;
+	screenHeight = event->h;
+
+	printf("Resizing to %d, %d\n", screenWidth, screenHeight);
+	configure();
+}
+
 bool handle_event(SDL_Event* event)
 {
 	switch (event->type)
@@ -91,9 +110,17 @@ bool handle_event(SDL_Event* event)
 		case SDL_MOUSEBUTTONUP:
 			handle_mouse_button_event(&event->button);
 			break;
+		case SDL_VIDEORESIZE:
+			handle_resize_event(&event->resize);
+			break;
 			
 	}
 	return false;
+}
+
+void cleanup()
+{
+	SDL_Quit();
 }
 
 int main(int argc, char *argv[])
@@ -104,11 +131,11 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	atexit(cleanup);
+
 	SDL_GL_SetAttribute(SDL_GL_STEREO, 0);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	//SDL_Surface* screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, SDL_OPENGL | SDL_FULLSCREEN);
-	SDL_Surface* screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 16, SDL_OPENGL);
 	configure();
 	SDL_Event event;
 
@@ -124,10 +151,6 @@ int main(int argc, char *argv[])
 	}
 	//TODO add a UI layer (clutter?)
 
-	SDL_FreeSurface(screen);
-
-	SDL_Quit();
-	
 	return 0;
 }
 
