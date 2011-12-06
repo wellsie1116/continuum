@@ -8,3 +8,5 @@ extern int screenHeight;
 void gl_render(); 
 void gl_configure();
 
+int continuum_main();
+

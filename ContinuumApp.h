@@ -24,18 +24,32 @@ struct _ContinuumAppClass
 	GObjectClass parent_class;
 	
 	/* signals */
+
 	/* virtual funcs */
+	void (*render_ui)(ContinuumApp* self);
 };
 
-GType			continuum_app_get_type	() G_GNUC_CONST;
-ContinuumApp*	continuum_app_new		();
+GType			continuum_app_get_type		() G_GNUC_CONST;
+
+/**
+ * continuum_app_get_instance
+ *
+ * Retrieves the single instance of the running app
+ *
+ * Returns: (transfer none): The instance of App
+ */
+ContinuumApp*	continuum_app_get_instance	();
+
+void			continuum_app_render_ui		(ContinuumApp* self);
 
 /**
  * continuum_app_run:
  * @self: The this ptr
  *
  * Runs the application
+ *
+ * Returns: The exit code for the application
  */
-void			continuum_app_run		(ContinuumApp* self);
+int				continuum_app_run			(ContinuumApp* self);
 
 G_END_DECLS

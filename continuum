@@ -1,12 +1,23 @@
 #!/usr/bin/python2
 
+import sys
 from gi.repository import Continuum
 
+#from OpenGL.GL import *
+
 class MyApp(Continuum.App):
-    pass
+    def do_render_ui(self):
+        pass
+        #glBegin(GL_TRIANGLES)
+        #glVertex2i(50, 50)
+        #glVertex2i(150, 150)
+        #glVertex2i(50, 150)
+        #glEnd()
 
-app = MyApp()
+def main():
+    app = MyApp()
+    sys.exit(app.run())
 
-app.run()
-print "Ran the app"
+if __name__ == '__main__':
+    main()
 

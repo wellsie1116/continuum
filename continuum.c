@@ -3,6 +3,7 @@
 #include <SDL/SDL.h>
 
 #include "continuum.h"
+#include "ContinuumApp.h"
 
 int screenWidth = SCREEN_WIDTH;
 int screenHeight = SCREEN_HEIGHT;
@@ -12,6 +13,9 @@ static SDL_Surface* screen = NULL;
 void render()
 {
 	gl_render();
+
+	continuum_app_render_ui(continuum_app_get_instance());
+
 	SDL_GL_SwapBuffers();
 }
 
@@ -118,20 +122,13 @@ bool handle_event(SDL_Event* event)
 	return false;
 }
 
-void cleanup()
-{
-	SDL_Quit();
-}
-
-int main(int argc, char *argv[])
+int continuum_main()
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 	{
 		printf("Unable to initialize SDL: %s\n", SDL_GetError());
 		return 1;
 	}
-
-	atexit(cleanup);
 
 	SDL_GL_SetAttribute(SDL_GL_STEREO, 0);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -150,6 +147,8 @@ int main(int argc, char *argv[])
 		}
 	}
 	//TODO add a UI layer (clutter?)
+	
+	SDL_Quit();
 
 	return 0;
 }

@@ -1,6 +1,8 @@
 
 #include "ContinuumApp.h"
 
+#include "continuum.h"
+
 #include <stdio.h>
 
 G_DEFINE_TYPE(ContinuumApp, continuum_app, G_TYPE_OBJECT)
@@ -32,16 +34,33 @@ continuum_app_finalize(GObject* gobject)
 	G_OBJECT_CLASS(continuum_app_parent_class)->finalize(gobject);
 }
 
+static ContinuumApp* instance;
+
 ContinuumApp*
-continuum_app_new()
+continuum_app_get_instance()
 {
-	return (ContinuumApp*)g_object_new(CONTINUUM_TYPE_APP, NULL);
+	return instance;
 }
 
 void
+continuum_app_render_ui(ContinuumApp* self)
+{
+	ContinuumAppClass* klass = CONTINUUM_APP_GET_CLASS(self);
+	if (klass->render_ui)
+		klass->render_ui(self);
+}
+
+int
 continuum_app_run(ContinuumApp* self)
 {
-	printf("In Main app function\n");
+	if (instance)
+	{
+		printf("App already running\n");
+		return 1;
+	}
+
+	instance = self;
+	return continuum_main();
 }
 
 /*********************
