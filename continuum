@@ -1,0 +1,12 @@
+#!/usr/bin/python2
+
+from gi.repository import Continuum
+
+class MyApp(Continuum.App):
+    pass
+
+app = MyApp()
+
+app.run()
+print "Ran the app"
+

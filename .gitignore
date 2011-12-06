@@ -1,4 +1,6 @@
 *.o
-continuum
 .*.swp
 Session.vim
+libcontinuum.so*
+Continuum-1.0.gir
+Continuum-1.0.typelib
