@@ -15,22 +15,26 @@ Ogre::String ContinuumApp::mPluginsCfg = "plugins.cfg";
 #endif
 
 ContinuumApp::ContinuumApp()
-	: mSceneMgr(NULL)
+	: mQuit(false)
+	, mSceneMgr(NULL)
 	, mWindow(NULL)
 	, mRoot(NULL)
 	, mCamera(NULL)
-	, mQuit(false)
+	, mTrayMgr(NULL)
+	, mInputManager(NULL)
+	, mMouse(NULL)
+	, mKeyboard(NULL)
 {
 }
 
 ContinuumApp::~ContinuumApp()
 {
+	if (mTrayMgr) delete mTrayMgr;
+
     Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
     windowClosed(mWindow);
-	if (mRoot)
-	{
-		delete mRoot;
-	}
+
+	if (mRoot) delete mRoot;
 }
 
 int ContinuumApp::run()
@@ -134,6 +138,11 @@ void ContinuumApp::createListeners()
 
     //Register as a Window listener
     Ogre::WindowEventUtilities::addWindowEventListener(mWindow, this);
+    
+	mTrayMgr = new OgreBites::SdkTrayManager("InterfaceName", mWindow, mMouse, this);
+    mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
+    //mTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
+    mTrayMgr->hideCursor();
 
     mRoot->addFrameListener(this);
 }
@@ -148,12 +157,16 @@ bool ContinuumApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 
     mKeyboard->capture();
     mMouse->capture();
+    
+	mTrayMgr->frameRenderingQueued(evt);
 
 	return true;
 }
 
 bool ContinuumApp::keyPressed(const OIS::KeyEvent &arg)
 {
+    if (mTrayMgr->isDialogVisible()) return true;
+
 	switch (arg.key)
 	{
 		case OIS::KC_ESCAPE:
@@ -173,16 +186,22 @@ bool ContinuumApp::keyReleased(const OIS::KeyEvent &arg)
 
 bool ContinuumApp::mouseMoved(const OIS::MouseEvent &arg)
 {
+    if (mTrayMgr->injectMouseMove(arg)) return true;
+
 	return true;
 }
 
 bool ContinuumApp::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
+    if (mTrayMgr->injectMouseDown(arg, id)) return true;
+
 	return true;
 }
 
 bool ContinuumApp::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
+    if (mTrayMgr->injectMouseUp(arg, id)) return true;
+
 	return true;
 }
 

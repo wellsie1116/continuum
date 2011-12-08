@@ -23,6 +23,7 @@ class ContinuumApp
 	, public Ogre::WindowEventListener
 	, public OIS::KeyListener
 	, public OIS::MouseListener
+	, public OgreBites::SdkTrayListener
 {
 public:
 	ContinuumApp ();
@@ -64,6 +65,8 @@ private:
     Ogre::RenderWindow* mWindow;
     Ogre::Root* mRoot;
     Ogre::Camera* mCamera;
+
+    OgreBites::SdkTrayManager* mTrayMgr;
     
 	OIS::InputManager* mInputManager;
     OIS::Mouse* mMouse;
