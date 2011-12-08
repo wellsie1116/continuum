@@ -14,8 +14,6 @@ void render()
 {
 	gl_render();
 
-	continuum_app_render_ui(continuum_app_get_instance());
-
 	SDL_GL_SwapBuffers();
 }
 
@@ -28,6 +26,7 @@ void configure()
 	}
 	int mode = SDL_OPENGL | SDL_RESIZABLE; //SDL_FULLSCREEN
 	screen = SDL_SetVideoMode(screenWidth, screenHeight, 16, mode);
+	gl_init();
 	gl_configure();
 	render();
 }

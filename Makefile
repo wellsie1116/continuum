@@ -1,11 +1,11 @@
 CC=gcc
-CFLAGS=-g -Wall -fPIC `pkg-config --cflags glib-2.0 gobject-2.0 gobject-introspection-1.0`
-LDFLAGS=-g -shared -Wl,-soname,libcontinuum.so.1 -o libcontinuum.so.1.0.1 -lSDL -lGL -lGLU `pkg-config --libs glib-2.0 gobject-2.0 gobject-introspection-1.0`
+CFLAGS=-g -Wall -fPIC `pkg-config --cflags glib-2.0 gobject-2.0 gobject-introspection-1.0` -I/usr/include/ode
+LDFLAGS=-g -shared -Wl,-soname,libcontinuum.so.1 -o libcontinuum.so.1.0.1 -lSDL -lGL -lGLU -lode `pkg-config --libs glib-2.0 gobject-2.0 gobject-introspection-1.0`
 
 API_HEADERS=ContinuumApp.h
-HEADERS=$(API_HEADERS) continuum.h
+HEADERS=$(API_HEADERS) continuum.h vect.h
 
-OBJECTS=ContinuumApp.o continuum.o gl.o
+OBJECTS=ContinuumApp.o continuum.o gl.o vect.o
 
 all: Continuum-1.0.typelib
 
