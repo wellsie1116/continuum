@@ -6,6 +6,8 @@ Session.vim
 autom4te.cache
 config.guess
 config.sub
+config.status
+config.h
 configure
 depcomp
 install-sh
@@ -13,3 +15,8 @@ ltmain.sh
 missing
 ogre.cfg
 *.log
+stamp-h1
+continuum
+Makefile
+.deps
+libtool

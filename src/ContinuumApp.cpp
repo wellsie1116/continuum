@@ -7,8 +7,8 @@
 #include <stdio.h>
     
 #if _DEBUG
-Ogre::String ContinuumApp::mResourcesCfg = "resources.cfg";
-Ogre::String ContinuumApp::mPluginsCfg = "plugins.cfg";
+Ogre::String ContinuumApp::mResourcesCfg = "resources_d.cfg";
+Ogre::String ContinuumApp::mPluginsCfg = "plugins_d.cfg";
 #else
 Ogre::String ContinuumApp::mResourcesCfg = "resources.cfg";
 Ogre::String ContinuumApp::mPluginsCfg = "plugins.cfg";
@@ -19,6 +19,7 @@ ContinuumApp::ContinuumApp()
 	, mWindow(NULL)
 	, mRoot(NULL)
 	, mCamera(NULL)
+	, mQuit(false)
 {
 }
 
@@ -59,6 +60,10 @@ int ContinuumApp::setup()
     Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
 	loadResources();
+
+	//TODO load scene
+	
+	createListeners();
 }
 
 void ContinuumApp::setupResources()
@@ -103,6 +108,108 @@ bool ContinuumApp::configure()
         return false;
     }
 }
+
+void ContinuumApp::createListeners()
+{
+    OIS::ParamList pl;
+    size_t windowHnd = 0;
+    std::ostringstream windowHndStr;
+
+    mWindow->getCustomAttribute("WINDOW", &windowHnd);
+    windowHndStr << windowHnd;
+    pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
+
+    mInputManager = OIS::InputManager::createInputSystem(pl);
+
+    mKeyboard = static_cast<OIS::Keyboard*>(mInputManager->createInputObject( OIS::OISKeyboard, true ));
+    mMouse = static_cast<OIS::Mouse*>(mInputManager->createInputObject( OIS::OISMouse, true ));
+
+    mMouse->setEventCallback(this);
+    mKeyboard->setEventCallback(this);
+
+    //Set initial mouse clipping size
+    windowResized(mWindow);
+
+    //Register as a Window listener
+    Ogre::WindowEventUtilities::addWindowEventListener(mWindow, this);
+
+    mRoot->addFrameListener(this);
+}
+    
+bool ContinuumApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
+{
+    if (mWindow->isClosed())
+        return false;
+
+    if (mQuit)
+        return false;
+
+    mKeyboard->capture();
+    mMouse->capture();
+
+	return true;
+}
+
+bool ContinuumApp::keyPressed(const OIS::KeyEvent &arg)
+{
+	switch (arg.key)
+	{
+		case OIS::KC_ESCAPE:
+			mQuit = true;
+			break;
+		default:
+			return false;
+    }
+
+	return true;
+}
+
+bool ContinuumApp::keyReleased(const OIS::KeyEvent &arg)
+{
+	return true;
+}
+
+bool ContinuumApp::mouseMoved(const OIS::MouseEvent &arg)
+{
+	return true;
+}
+
+bool ContinuumApp::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+{
+	return true;
+}
+
+bool ContinuumApp::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
+{
+	return true;
+}
+
+void ContinuumApp::windowResized(Ogre::RenderWindow* rw)
+{
+    unsigned int width, height, depth;
+    int left, top;
+    rw->getMetrics(width, height, depth, left, top);
+
+    const OIS::MouseState &ms = mMouse->getMouseState();
+    ms.width = width;
+    ms.height = height;
+}
+
+void ContinuumApp::windowClosed(Ogre::RenderWindow* rw)
+{
+    if (rw == mWindow)
+    {
+        if (mInputManager)
+        {
+            mInputManager->destroyInputObject(mMouse);
+            mInputManager->destroyInputObject(mKeyboard);
+
+            OIS::InputManager::destroyInputSystem(mInputManager);
+            mInputManager = NULL;
+        }
+    }
+}
+
 
 void ContinuumApp::cleanup()
 {
