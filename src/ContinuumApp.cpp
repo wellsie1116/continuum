@@ -25,6 +25,8 @@ ContinuumApp::ContinuumApp()
 
 ContinuumApp::~ContinuumApp()
 {
+    Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
+    windowClosed(mWindow);
 	if (mRoot)
 	{
 		delete mRoot;
