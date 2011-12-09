@@ -16,6 +16,7 @@
 #include <OISKeyboard.h>
 #include <OISMouse.h>
 
+#include <SdkCameraMan.h>
 #include <SdkTrays.h>
 
 class ContinuumApp
@@ -38,6 +39,9 @@ private:
 	bool configure();
 	void createListeners();
 	void cleanup();
+	void createCamera();
+	void createViewports();
+	void createScene();
 
     // Ogre::FrameListener
     bool frameRenderingQueued(const Ogre::FrameEvent& evt);
@@ -67,6 +71,7 @@ private:
     Ogre::Camera* mCamera;
 
     OgreBites::SdkTrayManager* mTrayMgr;
+    OgreBites::SdkCameraMan* mCameraMan;
     
 	OIS::InputManager* mInputManager;
     OIS::Mouse* mMouse;

@@ -1,5 +1,4 @@
 
-
 #include "ContinuumApp.h"
 
 #include "continuum.h"
@@ -21,6 +20,7 @@ ContinuumApp::ContinuumApp()
 	, mRoot(NULL)
 	, mCamera(NULL)
 	, mTrayMgr(NULL)
+	, mCameraMan(NULL)
 	, mInputManager(NULL)
 	, mMouse(NULL)
 	, mKeyboard(NULL)
@@ -30,6 +30,7 @@ ContinuumApp::ContinuumApp()
 ContinuumApp::~ContinuumApp()
 {
 	if (mTrayMgr) delete mTrayMgr;
+	if (mCameraMan) delete mCameraMan;
 
     Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
     windowClosed(mWindow);
@@ -58,16 +59,14 @@ int ContinuumApp::setup()
 		return 1;
 
     mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
-    mCamera = mSceneMgr->createCamera("PlayerCam");
+	createCamera();
+	createViewports();
 
-    Ogre::Viewport* vp = mWindow->addViewport(mCamera);
-    vp->setBackgroundColour(Ogre::ColourValue(0,0,0));
-    mCamera->setAspectRatio(Ogre::Real(vp->getActualWidth()) / Ogre::Real(vp->getActualHeight()));
     Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
 	loadResources();
 
-	//TODO load scene
+	createScene();
 	
 	createListeners();
 }
@@ -160,6 +159,11 @@ bool ContinuumApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
     
 	mTrayMgr->frameRenderingQueued(evt);
 
+	if (!mTrayMgr->isDialogVisible())
+	{
+        mCameraMan->frameRenderingQueued(evt);
+	}
+
 	return true;
 }
 
@@ -173,20 +177,26 @@ bool ContinuumApp::keyPressed(const OIS::KeyEvent &arg)
 			mQuit = true;
 			break;
 		default:
+			mCameraMan->injectKeyDown(arg);
 			return false;
     }
+    
 
 	return true;
 }
 
 bool ContinuumApp::keyReleased(const OIS::KeyEvent &arg)
 {
+	mCameraMan->injectKeyUp(arg);
+
 	return true;
 }
 
 bool ContinuumApp::mouseMoved(const OIS::MouseEvent &arg)
 {
     if (mTrayMgr->injectMouseMove(arg)) return true;
+    
+	mCameraMan->injectMouseMove(arg);
 
 	return true;
 }
@@ -194,6 +204,8 @@ bool ContinuumApp::mouseMoved(const OIS::MouseEvent &arg)
 bool ContinuumApp::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
     if (mTrayMgr->injectMouseDown(arg, id)) return true;
+	
+	mCameraMan->injectMouseDown(arg, id);
 
 	return true;
 }
@@ -201,6 +213,8 @@ bool ContinuumApp::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 bool ContinuumApp::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
     if (mTrayMgr->injectMouseUp(arg, id)) return true;
+
+	mCameraMan->injectMouseUp(arg, id);
 
 	return true;
 }
@@ -234,5 +248,44 @@ void ContinuumApp::windowClosed(Ogre::RenderWindow* rw)
 
 void ContinuumApp::cleanup()
 {
+}
+	
+void ContinuumApp::createCamera()
+{
+    mCamera = mSceneMgr->createCamera("PlayerCam");
+
+	mCamera->setPosition(Ogre::Vector3(0, 10, 100));
+	mCamera->lookAt(Ogre::Vector3(0, 0, 0));
+
+	mCameraMan = new OgreBites::SdkCameraMan(mCamera);
+}
+
+void ContinuumApp::createViewports()
+{
+    Ogre::Viewport* vp = mWindow->addViewport(mCamera);
+    vp->setBackgroundColour(Ogre::ColourValue(0, 0, 0));
+
+	Ogre::Real width = vp->getActualWidth();
+	Ogre::Real height = vp->getActualHeight();
+    mCamera->setAspectRatio(width / height);
+}
+
+void ContinuumApp::createScene()
+{
+	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+
+	Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
+	Ogre::MeshManager::getSingleton().createPlane("ground",
+			Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+			plane,
+			1500, 1500,
+			20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
+
+	Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "ground");
+	entGround->setMaterialName("Examples/Rockwall");
+	entGround->setCastShadows(false);
+	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
+
+
 }
 
