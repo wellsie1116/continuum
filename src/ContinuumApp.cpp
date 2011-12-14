@@ -66,9 +66,13 @@ int ContinuumApp::setup()
 
 	loadResources();
 
+	mPhysicsWorld.init();
+
 	createScene();
 	
 	createListeners();
+
+	mPhysicsWorld.start();
 }
 
 void ContinuumApp::setupResources()
@@ -164,6 +168,12 @@ bool ContinuumApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
         mCameraMan->frameRenderingQueued(evt);
 	}
 
+	return true;
+}
+
+bool ContinuumApp::frameStarted(const Ogre::FrameEvent& evt)
+{
+	mPhysicsWorld.step();
 	return true;
 }
 
@@ -285,6 +295,23 @@ void ContinuumApp::createScene()
 	entGround->setMaterialName("Examples/Rockwall");
 	entGround->setCastShadows(false);
 	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
+
+	//create some cubes
+	
+	for (int y = 0; y < 5; y++)
+	{
+		for (int x = 0; x < 5-y; x++)
+		{
+			char name[20];
+			sprintf(name, "Cube%d|%d", x, y);
+			Ogre::Entity* entCube = mSceneMgr->createEntity(name, "cube.mesh");
+			Ogre::SceneNode* cubeNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+			cubeNode->setPosition(x * 150.0f, 150.0f + y * 150.0f, 0.0f);
+			cubeNode->attachObject(entCube);
+			CompanionCube* cube = mPhysicsWorld.createCompanionCube(cubeNode);
+
+		}
+	}
 
 
 }

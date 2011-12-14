@@ -19,6 +19,8 @@
 #include <SdkCameraMan.h>
 #include <SdkTrays.h>
 
+#include "PhysicsWorld.h"
+
 class ContinuumApp
 	: public Ogre::FrameListener
 	, public Ogre::WindowEventListener
@@ -45,6 +47,7 @@ private:
 
     // Ogre::FrameListener
     bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+    bool frameStarted(const Ogre::FrameEvent& evt);
 
     // OIS::KeyListener
     bool keyPressed(const OIS::KeyEvent &arg);
@@ -76,6 +79,8 @@ private:
 	OIS::InputManager* mInputManager;
     OIS::Mouse* mMouse;
     OIS::Keyboard* mKeyboard;
+
+	PhysicsWorld mPhysicsWorld;
 };
 
 #endif
