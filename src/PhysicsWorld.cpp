@@ -60,7 +60,7 @@ PhysicsWorld::step()
 	GSList* pObjects = mObjects;
 	while (pObjects)
 	{
-		CompanionCube* cube = (CompanionCube*)pObjects->data;
+		Box* cube = (Box*)pObjects->data;
 	
 		cube->sync();
 	
@@ -74,10 +74,20 @@ PhysicsWorld::stepWorld()
 	NewtonUpdate(mWorld, 1.0 / TICKS_PER_SECOND);
 }
 
-CompanionCube*
+Box*
 PhysicsWorld::createCompanionCube(Ogre::SceneNode* node)
 {
-	CompanionCube* cube = new CompanionCube(node, mWorld);
+	Box* cube = new Box(node, mWorld, 5.0f);
+
+	mObjects = g_slist_prepend(mObjects, cube);
+
+	return cube;
+}
+
+Box*
+PhysicsWorld::createFloor(Ogre::SceneNode* node)
+{
+	Box* cube = new Floor(node, mWorld);
 
 	mObjects = g_slist_prepend(mObjects, cube);
 

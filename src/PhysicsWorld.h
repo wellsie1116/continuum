@@ -1,7 +1,7 @@
 #ifndef PHYSICSWORLD_H_Z8CVKYR9
 #define PHYSICSWORLD_H_Z8CVKYR9
 
-#include "CompanionCube.h"
+#include "Box.h"
 #include "TickTimer.h"
 
 #include <Newton.h>
@@ -13,7 +13,8 @@ public:
 	PhysicsWorld();
 	virtual ~PhysicsWorld();
 
-	CompanionCube* createCompanionCube(Ogre::SceneNode* node);
+	Box* createCompanionCube(Ogre::SceneNode* node);
+	Box* createFloor(Ogre::SceneNode* node);
 
 	void init();
 	void start();

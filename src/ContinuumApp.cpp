@@ -264,7 +264,7 @@ void ContinuumApp::createCamera()
 {
     mCamera = mSceneMgr->createCamera("PlayerCam");
 
-	mCamera->setPosition(Ogre::Vector3(0, 10, 100));
+	mCamera->setPosition(Ogre::Vector3(-500, 300, 500));
 	mCamera->lookAt(Ogre::Vector3(0, 0, 0));
 
 	mCameraMan = new OgreBites::SdkCameraMan(mCamera);
@@ -294,7 +294,9 @@ void ContinuumApp::createScene()
 	Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "ground");
 	entGround->setMaterialName("Examples/Rockwall");
 	entGround->setCastShadows(false);
-	mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
+	Ogre::SceneNode* floorNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	floorNode->attachObject(entGround);
+	mPhysicsWorld.createFloor(floorNode);
 
 	//create some cubes
 	
@@ -306,10 +308,9 @@ void ContinuumApp::createScene()
 			sprintf(name, "Cube%d|%d", x, y);
 			Ogre::Entity* entCube = mSceneMgr->createEntity(name, "cube.mesh");
 			Ogre::SceneNode* cubeNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-			cubeNode->setPosition(x * 150.0f, 150.0f + y * 150.0f, 0.0f);
+			cubeNode->setPosition(x * 150.0f, 150.0f + y * 300.0f, 0.0f);
 			cubeNode->attachObject(entCube);
-			CompanionCube* cube = mPhysicsWorld.createCompanionCube(cubeNode);
-
+			Box* cube = mPhysicsWorld.createCompanionCube(cubeNode);
 		}
 	}
 
