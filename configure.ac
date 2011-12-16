@@ -1,5 +1,6 @@
-AC_INIT(configure.ac)
-AM_INIT_AUTOMAKE(continuum, 0.1)
+AC_INIT([continuum], [0.1])
+AM_INIT_AUTOMAKE([1.5 -Wall dist-bzip2 silent-rules])
+AM_SILENT_RULES([yes])
 AM_CONFIG_HEADER(config.h)
 
 AC_LANG_CPLUSPLUS
