@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Continuum</title>
+  <title>A Real Framework - Continuum</title>
   <meta name="author" content="Kevin Wells">
 
   
@@ -19,7 +19,7 @@ could get to the fun part of the project: actually making the game. As &hellip;"
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://wellsie1116.github.com/continuum">
+  <link rel="canonical" href="http://wellsie1116.github.com/continuum/blog/2011/12/16/a-real-framework">
   <link href="/continuum/favicon.png" rel="icon">
   <link href="/continuum/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/continuum/javascripts/modernizr-2.0.js"></script>
@@ -61,15 +61,12 @@ could get to the fun part of the project: actually making the game. As &hellip;"
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/continuum/blog/2011/12/16/a-real-framework/">A Real Framework</a></h1>
+      <h1 class="entry-title">A Real Framework</h1>
     
     
       <p class="meta">
@@ -92,7 +89,7 @@ could get to the fun part of the project: actually making the game. As &hellip;"
   </header>
 
 
-  <div class="entry-content"><p>Two weeks ago, my goal was to finish the basics of my own game framework so I
+<div class="entry-content"><p>Two weeks ago, my goal was to finish the basics of my own game framework so I
 could get to the fun part of the project: actually making the game.  As I got
 into all that I needed to implement before I would be able to get to the actual
 game making part, I found the workload a bit overwhelming.  I enjoy using
@@ -147,22 +144,16 @@ beginning of the level, so I will have to take snapshots of the world at various
 timesteps.  After implementing these concepts, I will be able to completely
 control the flow of time in the game.</p>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/continuum/blog/2011/11/30/getting-things-started/">Getting Things Started</a></h1>
-    
-    
-      <p class="meta">
-        
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Kevin Wells</span></span>
+
+      
 
 
 
@@ -174,119 +165,34 @@ control the flow of time in the game.</p>
   
 
 
-<time datetime="2011-11-30T22:45:00-05:00" pubdate data-updated="true">Nov 30<span>th</span>, 2011</time>
-        
-      </p>
+<time datetime="2011-12-16T09:54:00-05:00" pubdate data-updated="true">Dec 16<span>th</span>, 2011</time>
+      
+
+
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><h2>Game Overview</h2>
-
-<p>My tentative plan for the game is to combine elements from both
-<a href="http://braid-game.com">Braid</a> and <a href="http://www.thinkwithportals.com">Portal</a>
-with some new game play ideas I come up with.  My main goal with this game is
-to explore how a game could bend the ideas of time and space (space-time
-<strong>continuum</strong>) to create a unique and innovative game play experience.</p>
-
-<h3>Breaking Time</h3>
-
-<p>At its heart, Continuum will be a puzzle game where the player is presented with
-a 3 dimensional world where they need to navigate to the exit.  In order to
-reach their goal, they will need to utilize various abilities that they acquire
-throughout the game (related to manipulating time and space).  Players will have
-no time limit and will have only 1 life, but even though the game will have
-elements deadly to players, they will only need 1 life because the players will
-have the ability to rewind time.  Even if a player dies, they can simply rewind
-time to a state where they were still alive, hopefully making better choices in
-the future.  For someone that has not played games such as Braid in the past,
-this concept can seem a bit odd.  Consider the following timeline:</p>
-
-<pre><code>            :----------&gt;-------&gt;
-            :     0.5     1.0
-            :-------:
-              -1.0  :
-local  -------------:
-         1.0
-
-global ------------------------------------------------------------------&gt;
-       1    3       2 4        5
-</code></pre>
-
-<p>In this graph, <em>global</em> is time as it passes for a passive observer, whereas
-<em>local</em> is time as it passes for the player, where they have the ability to
-control the flow of time.  In this example, the player plays from timestep 1 to
-2, where the player hits an obstacle and dies.  They then rewind time back to
-timestep 3, where they continue playing at half of the normal rate of time.
-After crossing the difficult obstacle (at timestep 4), they continue playing
-until timestep 5, where they solve the puzzle.  To someone watching the game,
-the would not see the progression from timestep 2 to 3.  A passive observer
-would only see the following sequences of timesteps: 1, 3, 4, 5.</p>
-
-<p>Players will gain additional time manipulation abilities throughout the game.
-Consider the following timeline:</p>
-
-<pre><code>                    :----------X
-                    :
-local  -------------:              :---------X
-                    :              :
-                    :--------------:
-                                   :
-                                   :-----------------&gt;
-
-global ------------------------------------------------------------------&gt;
-       1            2          3   4         5       6
-</code></pre>
-
-<p>In this example, the player has the ability to &#8216;fork&#8217; time, the ability to
-duplicate themselves and control both timelines.  How is this useful?  Consider
-a simple example.  In a level, there is a door which must be opened by a switch
-that it takes 5 seconds to walk to.  The switch, however, will only keep the
-door open for 3 seconds.  To solve the puzzle, the player can set a marker point
-(timesteps 2 and 4 in the example above), go and press the button, and then jump
-back to the marker point, and simply walk through the door when their double
-presses the button.</p>
-
-<p>In the example above, the player moves through time normally from step 1 to 2,
-at which point they set a fork marker.  They then move through the top branch to
-step 3, where they instantaneously jump back to step 2 and then move through the
-lower branch to step 4.  During this time, they could see their &#8216;double&#8217; moving
-through the level doing whatever they did.  This example has a second fork in
-time, and it functions the same as the first.</p>
-
-<h3>Breaking Space</h3>
-
-<p>Time permitting, I would like to also incorporate space manipulation elements
-similar to the popular game Portal, which involves the player specifying two
-arbitrary points in the level that they can instantaneously jump from one point
-to the other.  I plan on basing the game in the same universe as Portal, and it
-would be fun to incorporate aspects of other games in that universe.</p>
-
-<h2>Choosing a Framework</h2>
-
-<p>While the focus of this project is on creating a full featured game, I feel like
-I will be unable to use any existing full-package frameworks to do the job
-mostly because this game breaks conventional ideas about first person shooters.
-Most game engines don&#8217;t support forking time, let alone introducing portals.
-One game engine that I did look into was Source, the same game engine that was
-used to make Portal and Portal 2.  It is possible to write mods for those games,
-but, unfortunately, Valve has not yet released the SDK for Portal 2, which is my
-target platform if I would make a mod to the game.  Instead, I plan on using SDL
-to host the application, OpenGL for graphics rendering, OpenAL for 3D audio, ODE
-for my physics engine, and a blend of C and Python for the implementation language.</p>
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://wellsie1116.github.com/continuum/blog/2011/12/16/a-real-framework/" data-via="" data-counturl="http://wellsie1116.github.com/continuum/blog/2011/12/16/a-real-framework/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
 </div>
-  
-  
 
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/continuum/blog/2011/11/30/getting-things-started/" title="Previous Post: Getting Things Started">&laquo; Getting Things Started</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/continuum/blog/archives">Blog Archives</a>
-    
-  </div>
 </div>
+
 <aside class="sidebar">
   
     <section>
@@ -311,6 +217,7 @@ for my physics engine, and a blend of C and Python for the implementation langua
 
   
 </aside>
+
 
     </div>
   </div>
