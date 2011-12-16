@@ -85,9 +85,9 @@ PhysicsWorld::createCompanionCube(Ogre::SceneNode* node)
 }
 
 Box*
-PhysicsWorld::createFloor(Ogre::SceneNode* node)
+PhysicsWorld::createSurface(Ogre::SceneNode* node)
 {
-	Box* cube = new Floor(node, mWorld);
+	Box* cube = new Surface(node, mWorld);
 
 	mObjects = g_slist_prepend(mObjects, cube);
 

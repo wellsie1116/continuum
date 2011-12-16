@@ -2,6 +2,7 @@
 #include "ContinuumApp.h"
 
 #include "continuum.h"
+#include "ContinuumSceneLoader.h"
 
 #include <stdio.h>
     
@@ -59,8 +60,6 @@ int ContinuumApp::setup()
 		return 1;
 
     mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);
-	createCamera();
-	createViewports();
 
     Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
@@ -259,61 +258,23 @@ void ContinuumApp::windowClosed(Ogre::RenderWindow* rw)
 void ContinuumApp::cleanup()
 {
 }
-	
-void ContinuumApp::createCamera()
-{
-    mCamera = mSceneMgr->createCamera("PlayerCam");
-
-	mCamera->setPosition(Ogre::Vector3(-500, 300, 500));
-	mCamera->lookAt(Ogre::Vector3(0, 0, 0));
-
-	mCameraMan = new OgreBites::SdkCameraMan(mCamera);
-}
-
-void ContinuumApp::createViewports()
-{
-    Ogre::Viewport* vp = mWindow->addViewport(mCamera);
-    vp->setBackgroundColour(Ogre::ColourValue(0, 0, 0));
-
-	Ogre::Real width = vp->getActualWidth();
-	Ogre::Real height = vp->getActualHeight();
-    mCamera->setAspectRatio(width / height);
-}
 
 void ContinuumApp::createScene()
 {
-	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+	//load the scene
+	ContinuumSceneLoader loader(&mPhysicsWorld);
+	loader.parseDotScene("testScene.scene", "General", mSceneMgr);
 
-	Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
-	Ogre::MeshManager::getSingleton().createPlane("ground",
-			Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-			plane,
-			1500, 1500,
-			20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
+	//get some objects from it
+	mCamera = mSceneMgr->getCamera("Camera");
+	mCameraMan = new OgreBites::SdkCameraMan(mCamera);
+	mCameraMan->setTopSpeed(50);
 
-	Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "ground");
-	entGround->setMaterialName("Examples/Rockwall");
-	entGround->setCastShadows(false);
-	Ogre::SceneNode* floorNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-	floorNode->attachObject(entGround);
-	mPhysicsWorld.createFloor(floorNode);
-
-	//create some cubes
-	
-	for (int y = 0; y < 5; y++)
-	{
-		for (int x = 0; x < 5-y; x++)
-		{
-			char name[20];
-			sprintf(name, "Cube%d|%d", x, y);
-			Ogre::Entity* entCube = mSceneMgr->createEntity(name, "cube.mesh");
-			Ogre::SceneNode* cubeNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-			cubeNode->setPosition(x * 150.0f, 150.0f + y * 300.0f, 0.0f);
-			cubeNode->attachObject(entCube);
-			Box* cube = mPhysicsWorld.createCompanionCube(cubeNode);
-		}
-	}
-
-
+	//setup our viewport
+    Ogre::Viewport* vp = mWindow->addViewport(mCamera);
+    vp->setBackgroundColour(Ogre::ColourValue(0.1, 0.1, 0.1));
+	Ogre::Real width = vp->getActualWidth();
+	Ogre::Real height = vp->getActualHeight();
+    mCamera->setAspectRatio(width / height);
 }
 

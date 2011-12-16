@@ -14,7 +14,7 @@ public:
 	virtual ~PhysicsWorld();
 
 	Box* createCompanionCube(Ogre::SceneNode* node);
-	Box* createFloor(Ogre::SceneNode* node);
+	Box* createSurface(Ogre::SceneNode* node);
 
 	void init();
 	void start();

@@ -1,0 +1,7 @@
+*.material
+*.mesh
+*.mesh.xml
+_ogre_debug.txt
+*.blend1
+*.blend2
+*.scene

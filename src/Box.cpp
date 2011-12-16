@@ -37,8 +37,8 @@ Box::createBox(NewtonWorld* world)
 		const Ogre::AxisAlignedBox& box = obj->getBoundingBox();
 		bounds.merge(box);
 	}
-	Ogre::Vector3 range = bounds.getMaximum() - bounds.getMinimum();
-	Ogre::Vector3 min = Ogre::Vector3(2.0f);
+	Ogre::Vector3 range = (bounds.getMaximum() - bounds.getMinimum()) * mNode->getScale();
+	Ogre::Vector3 min = Ogre::Vector3(0.1f);
 	range.makeCeil(min);
 
 	NewtonCollision* collision = NewtonCreateBox(world, range.x, range.y, range.z, 0, NULL);
@@ -100,7 +100,7 @@ Box::setTransform(const float* matrix, int thread)
 void
 Box::applyForce(dFloat timestep, int thread)
 { 
-	float gravity = -98.0f;
+	float gravity = -9.8f;
 	float mass, ix, iy, iz;
 	NewtonBodyGetMassMatrix(mBody, &mass, &ix, &iy, &iz);
 

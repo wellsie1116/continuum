@@ -41,8 +41,6 @@ private:
 	bool configure();
 	void createListeners();
 	void cleanup();
-	void createCamera();
-	void createViewports();
 	void createScene();
 
     // Ogre::FrameListener

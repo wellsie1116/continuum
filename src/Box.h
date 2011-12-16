@@ -28,10 +28,10 @@ protected:
 	float mMass;
 };
 
-class Floor : public Box
+class Surface : public Box
 {
 public:
-	Floor(Ogre::SceneNode* node, NewtonWorld* world)
+	Surface(Ogre::SceneNode* node, NewtonWorld* world)
 		: Box(node, world, 0.0f)
 	{ }
 };
