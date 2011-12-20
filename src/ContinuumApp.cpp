@@ -72,6 +72,8 @@ int ContinuumApp::setup()
 	createListeners();
 
 	mPhysicsWorld.start();
+
+	return 0;
 }
 
 void ContinuumApp::setupResources()

@@ -6,6 +6,8 @@
 
 #include <Newton.h>
 
+class PhysicsWorld;
+
 class Box {
 public:
 	Box(Ogre::SceneNode* node, NewtonWorld* world, float mass);
@@ -21,6 +23,8 @@ private:
 
 	virtual void setTransform(const float* matrix, int thread);
 	virtual void applyForce(dFloat timestep, int thread);
+
+	PhysicsWorld* getWorld();
 
 protected:
 	Ogre::SceneNode* mNode;

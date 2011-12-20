@@ -3,6 +3,8 @@
 
 #include <OgreMovableObject.h>
 
+#include "PhysicsWorld.h"
+
 void setTransform(const NewtonBody* body, const dFloat* matrix, int thread);
 void applyForce(const NewtonBody* body, dFloat timestep, int thread);
 
@@ -21,7 +23,14 @@ Box::~Box()
 
 void Box::sync()
 {
+	float matrix[16];
+	float quat[4];
 
+	NewtonBodyGetMatrix(mBody, matrix);
+	NewtonBodyGetRotation(mBody, quat);
+
+	mNode->setPosition(matrix[12], matrix[13], matrix[14]);
+	mNode->setOrientation(quat[0], quat[1], quat[2], quat[3]);
 }
 
 NewtonCollision*
@@ -70,6 +79,8 @@ Box::createRigidBody(NewtonWorld* world, NewtonCollision* shape)
 	NewtonBodySetForceAndTorqueCallback(body, Box::applyForceCallback);
 	NewtonBodySetTransformCallback(body, Box::setTransformCallback);
 
+	//NewtonBodySetAutoSleep(body, 0);
+
 	return body;
 }
 
@@ -100,11 +111,28 @@ Box::setTransform(const float* matrix, int thread)
 void
 Box::applyForce(dFloat timestep, int thread)
 { 
+	//if (getWorld()->getTimestep() == 1200)
+	//{
+	//	float force[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	//	NewtonBodySetForce(mBody, force);
+	//	return;
+	//}
+
 	float gravity = -9.8f;
 	float mass, ix, iy, iz;
 	NewtonBodyGetMassMatrix(mBody, &mass, &ix, &iy, &iz);
 
-	float force[4] = { 0.0f, gravity * mass, 0.0f, 1.0f };
+	float force[3] = {0.0f, gravity * mass, 0.0f};
 	NewtonBodySetForce(mBody, force);
+	
+	float torque[3] = {0.0f, 0.0f, 0.0f};
+	NewtonBodySetTorque(mBody, torque);
 }
+	
+PhysicsWorld* 
+Box::getWorld()
+{
+	return (PhysicsWorld*)NewtonWorldGetUserData(NewtonBodyGetWorld(mBody));
+}
+
 
