@@ -93,22 +93,22 @@ PhysicsWorld::stepWorld()
 	if (mTimestep % SNAPSHOT_TICKS == SNAPSHOT_TICKS - 1)
 	{
 		//TODO save the world state
-		WorldSnapshot snapshot(mWorld);
-		NewtonInvalidateCache(mWorld);
+		//WorldSnapshot snapshot(mWorld);
+		//NewtonInvalidateCache(mWorld);
 	}
 	//WorldSnapshot snapshot(mWorld);
 	//snapshot.restore();
 
 	if (mTimestep == 300 && !startState)
 	{
-		NewtonInvalidateCache(mWorld);
+		//NewtonInvalidateCache(mWorld);
 		startState = new WorldSnapshot(mWorld);
 	}
 
 	if (mTimestep == 1200)
 	{
 		startState->restore();
-		NewtonInvalidateCache(mWorld);
+		//NewtonInvalidateCache(mWorld);
 		mTimestep = 300;
 	}
 }
@@ -169,6 +169,25 @@ WorldSnapshot::restore()
 		mStates[i]->restore();
 		box->sync();
 	}
+	
+	//purge old contact joints
+	NewtonBody* body = NewtonWorldGetFirstBody(mWorld);
+	for (int i = 0; body; i++)
+	{
+		NewtonJoint* joint = NewtonBodyGetFirstContactJoint(body);
+		NewtonJoint* nextJoint;
+		for (int j = 0; joint; i++)
+		{
+			//NewtonJointRecord record;
+			//NewtonJointGetInfo(joint, &record);
+			nextJoint = NewtonBodyGetNextContactJoint(body, joint);
+			NewtonDestroyJoint(mWorld, joint);
+			joint = nextJoint;
+		}
+		body = NewtonWorldGetNextBody(mWorld, body);
+	}
+
+	//TODO restore old contact joints
 }
 
 BodyState::BodyState(NewtonBody* body)
@@ -177,15 +196,6 @@ BodyState::BodyState(NewtonBody* body)
 	NewtonBodyGetVelocity(mBody, mVelocity);
 	NewtonBodyGetOmega(mBody, mOmega);
 	NewtonBodyGetMatrix(mBody, mTransform);
-
-	//NewtonJoint* joint = NewtonBodyGetFirstContactJoint(mBody);
-	//for (int i = 0; joint; i++)
-	//{
-	//	NewtonJointRecord record;
-	//	NewtonJointGetInfo(joint, &record);
-	//	joint = NewtonBodyGetNextContactJoint(mBody, joint);
-	//}
-
 }
 
 void
