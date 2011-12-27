@@ -86,8 +86,13 @@ PhysicsWorld::step()
 	}
 	else
 	{
-		mSnapshots.restoreSnapshot(mTimestep + ticks);
-		mTimestep = MAX(0, mTimestep + ticks);
+		ticks = -ticks;
+		if (ticks > mTimestep)
+			mTimestep = 0;
+		else
+			mTimestep -= ticks;
+
+		mSnapshots.restoreSnapshot(mTimestep);
 	}
 
 	//synchronize the world

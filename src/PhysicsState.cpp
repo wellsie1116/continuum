@@ -121,8 +121,7 @@ SnapshotManager::reset()
 	//TODO clear old states
 
 	mStartState = new WorldSnapshot(mWorld, 0);
-	g_queue_push_tail(mStates, mStartState);
-	mStartState = new WorldSnapshot(mWorld, 0);
+	add(mStartState);
 }
 
 void
@@ -131,48 +130,63 @@ SnapshotManager::worldTick(int timestep)
 	if (timestep % SNAPSHOT_TICKS == SNAPSHOT_TICKS - 1)
 	{
 		WorldSnapshot* state = new WorldSnapshot(mWorld, timestep);
-
-		g_queue_push_tail(mStates, state);
+		add(state);
 	}
 }
 
 void
 SnapshotManager::restoreSnapshot(int timestep)
 {
-	if (timestep <= 0)
+	WorldSnapshot* state = getClosest(timestep);
+	purgeAfter(state->getTimestep());
+	state->restore();
+
+	for (int i = state->getTimestep() + 1; i <= timestep; i++)
 	{
-		WorldSnapshot* state;
-		while (state = (WorldSnapshot*)g_queue_pop_tail(mStates))
-		{
-			delete state;
-		}
-		mStartState->restore();
+		mWorld->stepWorld();
+		state = new WorldSnapshot(mWorld, i);
+		add(state);
 	}
+}
+
+void
+SnapshotManager::add(WorldSnapshot* state)
+{
+	if (mStates->length)
+	{
+		g_assert( ((WorldSnapshot*)mStates->tail->data)->getTimestep() <
+				  state->getTimestep());
+	}
+
+	g_queue_push_tail(mStates, state);
+}
+
+WorldSnapshot*
+SnapshotManager::getClosest(int timestep)
+{
+	for (GList* pStates = mStates->tail; pStates; pStates = pStates->prev)
+	{
+		WorldSnapshot* state = (WorldSnapshot*)pStates->data;
+		if (state->getTimestep() < timestep)
+			return state;
+	}
+	return (WorldSnapshot*)mStates->head->data;
+}
+
+void
+SnapshotManager::purgeAfter(int timestep)
+{
+	if (timestep < 0)
+		timestep = 0;
 
 	WorldSnapshot* state;
 	while (state = (WorldSnapshot*)g_queue_peek_tail(mStates))
 	{
-		if (state->getTimestep() == timestep)
-		{
-			state->restore();
-			return;
-		}
-		else if (state->getTimestep() < timestep)
-		{
-			state->restore();
-			for (int i = state->getTimestep() + 1; i <= timestep; i++)
-			{
-				mWorld->stepWorld();
-				state = new WorldSnapshot(mWorld, i);
-				g_queue_push_tail(mStates, state);
-			}
-			return;
-		}
-		else
-		{
-			delete state;
-			g_queue_pop_tail(mStates);
-		}
+		if (state->getTimestep() <= timestep)
+			break;
+
+		delete state;
+		g_queue_pop_tail(mStates);
 	}
 }
 

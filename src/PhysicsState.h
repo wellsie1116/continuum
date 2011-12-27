@@ -50,10 +50,10 @@ private:
 //class SnapshotSet
 //{
 //public:
-//	void add(int timestep, WorldSnapshot* state); //tree
+//	void add(WorldSnapshot* state); //tree
 //	bool contains(int timestep);   //tree
 //	void purgeAfter(int timestep); //array/list
-//	int getClosest(int timestep);  //array
+//	WorldSnapshot* getClosest(int timestep);  //array
 //	void prune(int timestep);      //list
 //};
 
@@ -66,6 +66,10 @@ public:
 	void reset();
 	void worldTick(int timestep);
 	void restoreSnapshot(int timestep);
+	
+	void add(WorldSnapshot* state);
+	void purgeAfter(int timestep);
+	WorldSnapshot* getClosest(int timestep);
 
 private:
 	PhysicsWorld* mWorld;
