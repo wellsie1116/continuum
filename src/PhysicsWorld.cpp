@@ -3,8 +3,6 @@
 
 #define TICKS_PER_SECOND 120.0
 
-#define SNAPSHOT_TICKS 100
-
 #define MAX_CONTACTS 50
 
 static float MIN_WORLD_COORDS[] = {-5000.0f, -5000.0f, -5000.0f};
@@ -19,6 +17,7 @@ PhysicsWorld::PhysicsWorld()
 	, mObjects(NULL)
 	, mSurfaces(NULL)
 	, mTimer(TICKS_PER_SECOND)
+	, mSnapshots(this)
 {
 }
 
@@ -67,9 +66,8 @@ void
 PhysicsWorld::start()
 {
 	mTimestep = 0;
+	mSnapshots.reset();
 	mTimer.start();
-
-	startState = NULL;
 }
 
 void
@@ -77,17 +75,19 @@ PhysicsWorld::step()
 {
 	int ticks = mTimer.getTicks();
 
-	if (ticks > 0)
+	if (ticks >= 0)
 	{
 		for (int i = 0; i < ticks; i++)
 		{
 			mTimestep++;
 			stepWorld();
+			mSnapshots.worldTick(mTimestep);
 		}
 	}
 	else
 	{
-		//TODO rewind
+		mSnapshots.restoreSnapshot(mTimestep + ticks);
+		mTimestep = MAX(0, mTimestep + ticks);
 	}
 
 	//synchronize the world
@@ -101,7 +101,16 @@ PhysicsWorld::step()
 		pObjects = pObjects->next;
 	}
 }
-	
+
+void
+PhysicsWorld::stepWorld()
+{
+	//step the world
+	dSpaceCollide(mSpace, this, &collideCallback);
+	dWorldQuickStep(mWorld, 1.0 / TICKS_PER_SECOND);
+	dJointGroupEmpty(mContactGroup);
+}
+
 void
 PhysicsWorld::freezeTime()
 {
@@ -126,40 +135,6 @@ PhysicsWorld::decelerateTime()
 {
 	int rate = mTimer.getTickRate();
 	mTimer.setTickRate(rate - 1);
-}
-
-void
-PhysicsWorld::stepWorld()
-{
-	if (mTimestep == 1200)
-	{
-		int rate = mTimer.getTickRate();
-		mTimer.setTickRate(rate + 1);
-		startState->restore();
-		mTimestep = 300;
-		return;
-	}
-
-	//step the world
-	dSpaceCollide(mSpace, this, &collideCallback);
-	dWorldQuickStep(mWorld, 1.0 / TICKS_PER_SECOND);
-	dJointGroupEmpty(mContactGroup);
-	
-	//save a snapshot
-	if (mTimestep % SNAPSHOT_TICKS == SNAPSHOT_TICKS - 1)
-	{
-		//TODO save the world state
-		//WorldSnapshot snapshot(this);
-		//NewtonInvalidateCache(mWorld);
-	}
-	//WorldSnapshot snapshot(this);
-	//snapshot.restore();
-
-	if (mTimestep == 300 && !startState)
-	{
-		startState = new WorldSnapshot(this);
-	}
-
 }
 
 Box*
@@ -229,96 +204,5 @@ static void
 collideCallback(void *data, dGeomID o1, dGeomID o2)
 {
 	((PhysicsWorld*)data)->nearCollide(o1, o2);
-}
-
-WorldSnapshot::WorldSnapshot(PhysicsWorld* world)
-	: mWorld(world)
-{
-	mSeed = dRandGetSeed();
-
-	dSpaceID space = world->getSpace();
-	mBodyCount = dSpaceGetNumGeoms(space);
-	mStates = new BodyState*[mBodyCount];
-
-	for (int i = 0; i < mBodyCount; i++)
-	{
-		mStates[i] = new BodyState(dSpaceGetGeom(space, i));
-	}
-}
-
-WorldSnapshot::~WorldSnapshot()
-{
-	if (mStates)
-	{
-		for (int i = 0; i < mBodyCount; i++)
-		{
-			delete mStates[i];
-		}
-		delete mStates;
-		mStates = NULL;
-	}
-}
-
-void
-WorldSnapshot::restore()
-{
-	for (int i = 0; i < mBodyCount; i++)
-	{
-		PhysicsObject* obj = mStates[i]->getPhysObject();
-		mStates[i]->restore();
-		obj->sync();
-	}
-
-	dRandSetSeed(mSeed);
-}
-
-BodyState::BodyState(dGeomID geom)
-	: mGeom(geom)
-{
-	dGeomCopyPosition(mGeom, mPosition);
-	dGeomCopyRotation(mGeom, mOrientation);
-
-	mBody = dGeomGetBody(mGeom);
-	if (mBody)
-	{
-		const float* vect;
-
-		vect = dBodyGetLinearVel(mBody);
-		for (int i = 0; i < 3; i++)
-			mLinearVelocity[i] = vect[i];
-
-		vect = dBodyGetAngularVel(mBody);
-		for (int i = 0; i < 3; i++)
-			mAngularVelocity[i] = vect[i];
-		
-		vect = dBodyGetForce(mBody);
-		for (int i = 0; i < 3; i++)
-			mForce[i] = vect[i];
-		
-		vect = dBodyGetTorque(mBody);
-		for (int i = 0; i < 3; i++)
-			mTorque[i] = vect[i];
-	}
-}
-
-void
-BodyState::restore()
-{
-	dGeomSetPosition(mGeom, mPosition[0], mPosition[1], mPosition[2]);
-	dGeomSetRotation(mGeom, mOrientation);
-
-	if (mBody)
-	{
-		dBodySetLinearVel(mBody, mLinearVelocity[0], mLinearVelocity[1], mLinearVelocity[2]);
-		dBodySetAngularVel(mBody, mAngularVelocity[0], mAngularVelocity[1], mAngularVelocity[2]);
-		dBodySetForce(mBody, mForce[0], mForce[1], mForce[2]);
-		dBodySetTorque(mBody, mTorque[0], mTorque[1], mTorque[2]);
-	}
-}
-
-PhysicsObject*
-BodyState::getPhysObject()
-{
-	return (PhysicsObject*)dGeomGetData(mGeom);
 }
 

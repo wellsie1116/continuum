@@ -4,51 +4,17 @@
 
 #include "Box.h"
 #include "TickTimer.h"
+#include "PhysicsState.h"
 
 #include <ode/ode.h>
 
 #include <glib.h>
 
-class BodyState
-{
-public:
-	BodyState(dGeomID geom);
-
-	void restore();
-	PhysicsObject* getPhysObject();
-
-private:
-	dGeomID mGeom;
-	dBodyID mBody;
-
-	dVector3 mPosition;
-	dMatrix3 mOrientation;
-	float mLinearVelocity[3];
-	float mAngularVelocity[3];
-	float mForce[3];
-	float mTorque[3];
-};
-
-class WorldSnapshot
-{
-public:
-	WorldSnapshot(PhysicsWorld* world);
-	~WorldSnapshot();
-
-	void restore();
-
-private:
-	PhysicsWorld* mWorld;
-	BodyState** mStates;
-	int mBodyCount;
-	unsigned long mSeed;
-};
-
 class PhysicsWorld
 {
 public:
 	PhysicsWorld();
-	virtual ~PhysicsWorld();
+	~PhysicsWorld();
 
 	Box* createCompanionCube(Ogre::SceneNode* node);
 	Surface* createSurface(Ogre::SceneNode* node);
@@ -57,6 +23,7 @@ public:
 	void init();
 	void start();
 	void step();
+	void stepWorld();
 
 	void freezeTime();
 	void resumeTime();
@@ -69,9 +36,6 @@ public:
 	void nearCollide(dGeomID o1, dGeomID o2);
 
 private:
-	void stepWorld();
-
-private:
 	dWorldID mWorld;
 	dSpaceID mSpace;
 	dJointGroupID mContactGroup;
@@ -81,7 +45,7 @@ private:
 	GSList* mObjects;
 	GSList* mSurfaces;
 
-	WorldSnapshot* startState;
+	SnapshotManager mSnapshots;
 };
 
 #endif
