@@ -106,7 +106,6 @@ PhysicsWorld::stepWorld()
 	}
 
 	//step the world
-	dRandSetSeed(0);
 	dSpaceCollide(mSpace, this, &collideCallback);
 	dWorldQuickStep(mWorld, 1.0 / TICKS_PER_SECOND);
 	dJointGroupEmpty(mContactGroup);
@@ -199,6 +198,8 @@ collideCallback(void *data, dGeomID o1, dGeomID o2)
 WorldSnapshot::WorldSnapshot(PhysicsWorld* world)
 	: mWorld(world)
 {
+	mSeed = dRandGetSeed();
+
 	dSpaceID space = world->getSpace();
 	mBodyCount = dSpaceGetNumGeoms(space);
 	mStates = new BodyState*[mBodyCount];
@@ -231,6 +232,8 @@ WorldSnapshot::restore()
 		mStates[i]->restore();
 		obj->sync();
 	}
+
+	dRandSetSeed(mSeed);
 }
 
 BodyState::BodyState(dGeomID geom)

@@ -41,6 +41,7 @@ private:
 	PhysicsWorld* mWorld;
 	BodyState** mStates;
 	int mBodyCount;
+	unsigned long mSeed;
 };
 
 class PhysicsWorld
