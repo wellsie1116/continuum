@@ -187,6 +187,9 @@ bool ContinuumApp::keyPressed(const OIS::KeyEvent &arg)
 		case OIS::KC_ESCAPE:
 			mQuit = true;
 			break;
+		case OIS::KC_LMENU:
+			mPhysicsWorld.freezeTime();
+			break;
 		default:
 			mCameraMan->injectKeyDown(arg);
 			return false;
@@ -198,7 +201,15 @@ bool ContinuumApp::keyPressed(const OIS::KeyEvent &arg)
 
 bool ContinuumApp::keyReleased(const OIS::KeyEvent &arg)
 {
-	mCameraMan->injectKeyUp(arg);
+	switch (arg.key)
+	{
+		case OIS::KC_LMENU:
+			mPhysicsWorld.resumeTime();
+			break;
+		default:
+			mCameraMan->injectKeyUp(arg);
+			return false;
+    }
 
 	return true;
 }
@@ -209,12 +220,27 @@ bool ContinuumApp::mouseMoved(const OIS::MouseEvent &arg)
     
 	mCameraMan->injectMouseMove(arg);
 
+	if (arg.state.Z.rel > 0)
+	{
+		mPhysicsWorld.accelerateTime();
+	}
+	else if (arg.state.Z.rel < 0)
+	{
+		mPhysicsWorld.decelerateTime();
+	}
+
 	return true;
 }
 
 bool ContinuumApp::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
     if (mTrayMgr->injectMouseDown(arg, id)) return true;
+	
+	if (id == 2)
+	{
+		mPhysicsWorld.freezeTime();
+		return true;
+	}
 	
 	mCameraMan->injectMouseDown(arg, id);
 

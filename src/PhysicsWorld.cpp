@@ -77,10 +77,17 @@ PhysicsWorld::step()
 {
 	int ticks = mTimer.getTicks();
 
-	for (int i = 0; i < ticks; i++)
+	if (ticks > 0)
 	{
-		mTimestep++;
-		stepWorld();
+		for (int i = 0; i < ticks; i++)
+		{
+			mTimestep++;
+			stepWorld();
+		}
+	}
+	else
+	{
+		//TODO rewind
 	}
 
 	//synchronize the world
@@ -94,12 +101,40 @@ PhysicsWorld::step()
 		pObjects = pObjects->next;
 	}
 }
+	
+void
+PhysicsWorld::freezeTime()
+{
+	mTimer.setTickRate(0);
+}
+
+void
+PhysicsWorld::resumeTime()
+{
+	mTimer.setTickRate(1);
+}
+
+void
+PhysicsWorld::accelerateTime()
+{
+	int rate = mTimer.getTickRate();
+	mTimer.setTickRate(rate + 1);
+}
+
+void
+PhysicsWorld::decelerateTime()
+{
+	int rate = mTimer.getTickRate();
+	mTimer.setTickRate(rate - 1);
+}
 
 void
 PhysicsWorld::stepWorld()
 {
 	if (mTimestep == 1200)
 	{
+		int rate = mTimer.getTickRate();
+		mTimer.setTickRate(rate + 1);
 		startState->restore();
 		mTimestep = 300;
 		return;
@@ -110,6 +145,7 @@ PhysicsWorld::stepWorld()
 	dWorldQuickStep(mWorld, 1.0 / TICKS_PER_SECOND);
 	dJointGroupEmpty(mContactGroup);
 	
+	//save a snapshot
 	if (mTimestep % SNAPSHOT_TICKS == SNAPSHOT_TICKS - 1)
 	{
 		//TODO save the world state

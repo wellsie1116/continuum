@@ -4,7 +4,8 @@
 #include <stdlib.h>
 
 TickTimer::TickTimer(int ticksPerSecond)
-	: ticksPerSecond(ticksPerSecond)
+	: mTicksPerSecond(ticksPerSecond)
+	, mTickRate(1)
 { }
 
 TickTimer::~TickTimer()
@@ -13,7 +14,7 @@ TickTimer::~TickTimer()
 void
 TickTimer::start()
 {
-	gettimeofday(&last, NULL);
+	gettimeofday(&mLast, NULL);
 }
 
 int
@@ -23,14 +24,27 @@ TickTimer::getTicks()
 	struct timeval delta;
 
 	gettimeofday(&current, NULL);
-	timersub(&current, &last, &delta);
+	timersub(&current, &mLast, &delta);
 
-	int secondTicks = delta.tv_sec * ticksPerSecond;
-	int microsecondTicks = delta.tv_usec * ticksPerSecond / 1000000;
+	int secondTicks = delta.tv_sec * mTicksPerSecond;
+	int microsecondTicks = delta.tv_usec * mTicksPerSecond / 1000000;
 
-	delta.tv_usec = microsecondTicks * 1000000 / ticksPerSecond;
-	timeradd(&last, &delta, &last);
+	delta.tv_usec = microsecondTicks * 1000000 / mTicksPerSecond;
+	timeradd(&mLast, &delta, &mLast);
 
-	return secondTicks + microsecondTicks;
+	//FIXME incorporate tick rate sooner so ticks aren't delayed unnecessarily
+	return (secondTicks + microsecondTicks) * mTickRate;
+}
+
+int
+TickTimer::getTickRate()
+{
+	return mTickRate;
+}
+
+void
+TickTimer::setTickRate(int rate)
+{
+	mTickRate = rate;
 }
 

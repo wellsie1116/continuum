@@ -12,9 +12,13 @@ public:
 	void start();
 	int getTicks();
 
+	int getTickRate();
+	void setTickRate(int rate);
+
 private:
-	int ticksPerSecond;
-	struct timeval last;
+	int mTickRate;
+	int mTicksPerSecond;
+	struct timeval mLast;
 };
 
 #endif

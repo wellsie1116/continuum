@@ -58,6 +58,11 @@ public:
 	void start();
 	void step();
 
+	void freezeTime();
+	void resumeTime();
+	void accelerateTime();
+	void decelerateTime();
+
 	dWorldID getWorld() { return mWorld; }
 	dSpaceID getSpace() { return mSpace; }
 
