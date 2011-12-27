@@ -5,35 +5,40 @@
 #include "Box.h"
 #include "TickTimer.h"
 
-#include <Newton.h>
+#include <ode/ode.h>
 
 #include <glib.h>
 
 class BodyState
 {
 public:
-	BodyState(NewtonBody* body);
+	BodyState(dGeomID geom);
 
 	void restore();
-	Box* getPhysObject();
+	PhysicsObject* getPhysObject();
 
 private:
-	NewtonBody* mBody;
-	float mTransform[16];
-	float mVelocity[3];
-	float mOmega[3];
+	dGeomID mGeom;
+	dBodyID mBody;
+
+	dVector3 mPosition;
+	dMatrix3 mOrientation;
+	float mLinearVelocity[3];
+	float mAngularVelocity[3];
+	float mForce[3];
+	float mTorque[3];
 };
 
 class WorldSnapshot
 {
 public:
-	WorldSnapshot(NewtonWorld* world);
+	WorldSnapshot(PhysicsWorld* world);
 	~WorldSnapshot();
 
 	void restore();
 
 private:
-	NewtonWorld* mWorld;
+	PhysicsWorld* mWorld;
 	BodyState** mStates;
 	int mBodyCount;
 };
@@ -45,23 +50,30 @@ public:
 	virtual ~PhysicsWorld();
 
 	Box* createCompanionCube(Ogre::SceneNode* node);
-	Box* createSurface(Ogre::SceneNode* node);
+	Surface* createSurface(Ogre::SceneNode* node);
 
 	int getTimestep();
 	void init();
 	void start();
 	void step();
 
+	dWorldID getWorld() { return mWorld; }
+	dSpaceID getSpace() { return mSpace; }
+
+	void nearCollide(dGeomID o1, dGeomID o2);
 
 private:
 	void stepWorld();
 
 private:
-	NewtonWorld* mWorld;
+	dWorldID mWorld;
+	dSpaceID mSpace;
+	dJointGroupID mContactGroup;
 	unsigned long mTimestep;
 
 	TickTimer mTimer;
 	GSList* mObjects;
+	GSList* mSurfaces;
 
 	WorldSnapshot* startState;
 };

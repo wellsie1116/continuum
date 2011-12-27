@@ -5,16 +5,50 @@
 
 #include "PhysicsWorld.h"
 
-void setTransform(const NewtonBody* body, const dFloat* matrix, int thread);
-void applyForce(const NewtonBody* body, dFloat timestep, int thread);
+Ogre::Vector3 PhysicsObject::getBounds(Ogre::SceneNode* node)
+{
+	Ogre::AxisAlignedBox bounds;
+	bounds.setNull();
 
-Box::Box(Ogre::SceneNode* node, NewtonWorld* world, float mass)
+	Ogre::SceneNode::ObjectIterator it = node->getAttachedObjectIterator();
+	while (it.hasMoreElements())
+	{
+		Ogre::MovableObject* obj = it.getNext();
+		const Ogre::AxisAlignedBox& box = obj->getBoundingBox();
+		bounds.merge(box);
+	}
+	Ogre::Vector3 range = (bounds.getMaximum() - bounds.getMinimum()) * node->getScale();
+	Ogre::Vector3 min = Ogre::Vector3(0.1f);
+	range.makeCeil(min);
+
+	return range;
+}
+
+Box::Box(Ogre::SceneNode* node, PhysicsWorld* world, float mass)
 	: mNode(node)
+	, mBody(0)
+	, mGeom(0)
+	, mPos(NULL)
 	, mMass(mass)
 {
-	NewtonCollision* shape = createBox(world);
-	mBody = createRigidBody(world, shape);
-	NewtonReleaseCollision(world, shape);
+	Ogre::Vector3 range = getBounds(mNode);
+
+	dMass m;
+	dMassSetBox(&m, 1, range.x, range.y, range.z);
+	dMassAdjust(&m, mass);
+
+	Ogre::Vector3 pos = mNode->getPosition();
+	const float* quat = mNode->getOrientation().ptr();
+	mBody = dBodyCreate(world->getWorld());
+	dBodySetPosition(mBody, pos.x, pos.y, pos.z);
+	dBodySetQuaternion(mBody, quat);
+	dBodySetMass(mBody, &m);
+
+	mGeom = dCreateBox(world->getSpace(), range.x, range.y, range.z);
+	dGeomSetBody(mGeom, mBody);
+	dGeomSetData(mGeom, this);
+
+	mPos = dBodyGetPosition(mBody);
 }
 
 Box::~Box()
@@ -23,116 +57,31 @@ Box::~Box()
 
 void Box::sync()
 {
-	float matrix[16];
-	float quat[4];
+	const float* quat = dBodyGetQuaternion(mBody);
 
-	NewtonBodyGetMatrix(mBody, matrix);
-	NewtonBodyGetRotation(mBody, quat);
-
-	mNode->setPosition(matrix[12], matrix[13], matrix[14]);
+	mNode->setPosition(mPos[0], mPos[1], mPos[2]);
 	mNode->setOrientation(quat[0], quat[1], quat[2], quat[3]);
 }
 
-NewtonCollision*
-Box::createBox(NewtonWorld* world)
+Surface::Surface(Ogre::SceneNode* node, PhysicsWorld* world)
+	: mNode(node)
+	, mGeom(0)
 {
-	Ogre::AxisAlignedBox bounds;
-	bounds.setNull();
+	Ogre::Vector3 range = getBounds(mNode);
 
-	Ogre::SceneNode::ObjectIterator it = mNode->getAttachedObjectIterator();
-	while (it.hasMoreElements())
-	{
-		Ogre::MovableObject* obj = it.getNext();
-		const Ogre::AxisAlignedBox& box = obj->getBoundingBox();
-		bounds.merge(box);
-	}
-	Ogre::Vector3 range = (bounds.getMaximum() - bounds.getMinimum()) * mNode->getScale();
-	Ogre::Vector3 min = Ogre::Vector3(0.1f);
-	range.makeCeil(min);
-
-	NewtonCollision* collision = NewtonCreateBox(world, range.x, range.y, range.z, 0, NULL);
-	//printf("Range: %.1f, %.1f, %.1f\n", range.x, range.y, range.z);
-
-	return collision;
+	Ogre::Vector3 pos = mNode->getPosition();
+	const float* quat = mNode->getOrientation().ptr();
+	mGeom = dCreateBox(world->getSpace(), range.x, range.y, range.z);
+	dGeomSetPosition(mGeom, pos.x, pos.y, pos.z);
+	dGeomSetQuaternion(mGeom, quat);
+	dGeomSetData(mGeom, this);
 }
 
-NewtonBody*
-Box::createRigidBody(NewtonWorld* world, NewtonCollision* shape)
+Surface::~Surface()
 {
-	Ogre::Matrix4 transform;
-	transform.makeTransform(
-			mNode->getPosition(),
-			Ogre::Vector3::UNIT_SCALE,
-			mNode->getOrientation()
-			);
-
-	float matrix[16];
-	for (int i = 0; i < 4; i++)
-		for (int j = 0; j < 4; j++)
-			matrix[j*4+i] = transform[i][j];
-
-	NewtonBody* body = NewtonCreateBody(world, shape, matrix);
-	NewtonBodySetMassMatrix(body, mMass, 1, 1, 1);
-
-	NewtonBodySetUserData(body, this);
-
-	NewtonBodySetForceAndTorqueCallback(body, Box::applyForceCallback);
-	NewtonBodySetTransformCallback(body, Box::setTransformCallback);
-
-	//NewtonBodySetAutoSleep(body, 0);
-
-	return body;
 }
 
-void
-Box::setTransformCallback(const NewtonBody* body, const float* matrix, int thread)
+void Surface::sync()
 {
-	Box* self = (Box*)NewtonBodyGetUserData(body);
-	self->setTransform(matrix, thread);
+	//TODO implement
 }
-
-void
-Box::applyForceCallback(const NewtonBody* body, dFloat timestep, int thread)
-{ 
-	Box* self = (Box*)NewtonBodyGetUserData(body);
-	self->applyForce(timestep, thread);
-}
-
-void
-Box::setTransform(const float* matrix, int thread)
-{
-	float quat[4];
-	NewtonBodyGetRotation(mBody, quat);
-
-	mNode->setPosition(matrix[12], matrix[13], matrix[14]);
-	mNode->setOrientation(quat[0], quat[1], quat[2], quat[3]);
-}
-
-void
-Box::applyForce(dFloat timestep, int thread)
-{ 
-	//if (getWorld()->getTimestep() == 1200)
-	//{
-	//	float force[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	//	NewtonBodySetForce(mBody, force);
-	//	return;
-	//}
-
-	float gravity = -9.8f;
-	float mass, ix, iy, iz;
-	NewtonBodyGetMassMatrix(mBody, &mass, &ix, &iy, &iz);
-
-	float force[3] = {0.0f, gravity * mass, 0.0f};
-	NewtonBodySetForce(mBody, force);
-	
-	float torque[3] = {0.0f, 0.0f, 0.0f};
-	NewtonBodySetTorque(mBody, torque);
-}
-	
-PhysicsWorld* 
-Box::getWorld()
-{
-	return (PhysicsWorld*)NewtonWorldGetUserData(NewtonBodyGetWorld(mBody));
-}
-
-

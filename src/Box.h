@@ -4,48 +4,54 @@
 
 #include <OgreSceneNode.h>
 
-#include <Newton.h>
+#include <ode/ode.h>
 
 class PhysicsWorld;
 
-class Box {
-public:
-	Box(Ogre::SceneNode* node, NewtonWorld* world, float mass);
-	virtual ~Box();
+class PhysicsObject
+{
+	public:
+		static Ogre::Vector3 getBounds(Ogre::SceneNode* node);
 
-	void sync();
-private:
-	NewtonCollision* createBox(NewtonWorld* world);
-	NewtonBody* createRigidBody(NewtonWorld* world, NewtonCollision* shape);
-
-	static void setTransformCallback(const NewtonBody* body, const float* matrix, int thread);
-	static void applyForceCallback(const NewtonBody* body, dFloat timestep, int thread);
-
-	virtual void setTransform(const float* matrix, int thread);
-	virtual void applyForce(dFloat timestep, int thread);
-
-	PhysicsWorld* getWorld();
-
-protected:
-	Ogre::SceneNode* mNode;
-	NewtonBody* mBody;
-	float mMass;
+		virtual void sync() = 0;
 };
 
-class Surface : public Box
+class Box : public PhysicsObject
 {
-public:
-	Surface(Ogre::SceneNode* node, NewtonWorld* world)
-		: Box(node, world, 0.0f)
-	{ }
+	public:
+		Box(Ogre::SceneNode* node, PhysicsWorld* world, float mass);
+		virtual ~Box();
+		
+		virtual void sync();
+
+	protected:
+		Ogre::SceneNode* mNode;
+		dBodyID mBody;
+		dGeomID mGeom;
+		const float* mPos;
+		float mMass;
 };
 
 class CompanionCube : public Box
 {
-public:
-	CompanionCube(Ogre::SceneNode* node, NewtonWorld* world)
-		: Box(node, world, 0.0f)
-	{ }
+	public:
+		CompanionCube(Ogre::SceneNode* node, PhysicsWorld* world)
+			: Box(node, world, 5.0f)
+		{ }
+};
+
+
+class Surface : public PhysicsObject
+{
+	public:
+		Surface(Ogre::SceneNode* node, PhysicsWorld* world);
+		virtual ~Surface();
+		
+		virtual void sync();
+
+	protected:
+		Ogre::SceneNode* mNode;
+		dGeomID mGeom;
 };
 
 #endif
