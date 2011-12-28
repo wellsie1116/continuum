@@ -74,7 +74,6 @@ public:
 private:
 	PhysicsWorld* mWorld;
 	GQueue* mStates;
-	WorldSnapshot* mStartState;
 };
 
 #endif

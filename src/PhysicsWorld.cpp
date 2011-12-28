@@ -46,7 +46,17 @@ PhysicsWorld::~PhysicsWorld()
 		mContactGroup = NULL;
 	}
 
-	//FIXME free GSLists
+	if (mObjects)
+	{
+		g_slist_free_full(mObjects, (GDestroyNotify)physics_object_free);
+		mObjects = NULL;
+	}
+
+	if (mSurfaces)
+	{
+		g_slist_free_full(mSurfaces, (GDestroyNotify)physics_object_free);
+		mSurfaces = NULL;
+	}
 }
 
 int
@@ -58,8 +68,12 @@ PhysicsWorld::getTimestep()
 void
 PhysicsWorld::init()
 {
-	//TODO only call this once
-	dInitODE();
+	static bool init = false;
+	if (!init)
+	{
+		dInitODE();
+		init = true;
+	}
 
 	mWorld = dWorldCreate();
 	mSpace = dHashSpaceCreate(0);

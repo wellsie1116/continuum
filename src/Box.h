@@ -11,6 +11,8 @@ class PhysicsWorld;
 class PhysicsObject
 {
 	public:
+		virtual ~PhysicsObject() { }
+
 		static Ogre::Vector3 getBounds(Ogre::SceneNode* node);
 
 		virtual void sync() = 0;
@@ -53,6 +55,8 @@ class Surface : public PhysicsObject
 		Ogre::SceneNode* mNode;
 		dGeomID mGeom;
 };
+
+void physics_object_free(PhysicsObject* object);
 
 #endif
 

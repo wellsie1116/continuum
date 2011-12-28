@@ -5,6 +5,8 @@
 
 #define SNAPSHOT_TICKS 100
 
+static void free_snapshot(WorldSnapshot* state, gpointer user_data);
+
 WorldSnapshot::WorldSnapshot(PhysicsWorld* world, int timestep)
 	: mWorld(world)
 	, mTimestep(timestep)
@@ -99,29 +101,25 @@ BodyState::getPhysObject()
 
 SnapshotManager::SnapshotManager(PhysicsWorld* world)
 	: mWorld(world)
-	, mStartState(NULL)
 {
 	mStates = g_queue_new();
 }
 
 SnapshotManager::~SnapshotManager()
 {
-	//TODO cleanup
+	g_queue_foreach(mStates, (GFunc)free_snapshot, NULL);
+	g_queue_free(mStates);
 }
 
 void
 SnapshotManager::reset()
 {
-	if (mStartState)
-	{
-		delete mStartState;
-		mStartState = NULL;
-	}
+	//clear old states
+	g_queue_foreach(mStates, (GFunc)free_snapshot, NULL);
+	g_queue_clear(mStates);
 
-	//TODO clear old states
-
-	mStartState = new WorldSnapshot(mWorld, 0);
-	add(mStartState);
+	//add the initial state
+	add(new WorldSnapshot(mWorld, 0));
 }
 
 void
@@ -188,5 +186,11 @@ SnapshotManager::purgeAfter(int timestep)
 		delete state;
 		g_queue_pop_tail(mStates);
 	}
+}
+
+static void
+free_snapshot(WorldSnapshot* state, gpointer user_data)
+{
+	delete state;
 }
 

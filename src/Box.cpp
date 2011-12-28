@@ -85,3 +85,10 @@ void Surface::sync()
 {
 	//TODO implement
 }
+
+void
+physics_object_free(PhysicsObject* object)
+{
+	delete object;
+}
+
