@@ -20,3 +20,4 @@ continuum
 Makefile
 .deps
 libtool
+lib
