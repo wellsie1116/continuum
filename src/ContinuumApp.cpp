@@ -16,6 +16,7 @@ Ogre::String ContinuumApp::mPluginsCfg = "plugins.cfg";
 
 ContinuumApp::ContinuumApp()
 	: mQuit(false)
+	, mTimeControl(false)
 	, mSceneMgr(NULL)
 	, mWindow(NULL)
 	, mRoot(NULL)
@@ -189,6 +190,7 @@ bool ContinuumApp::keyPressed(const OIS::KeyEvent &arg)
 			break;
 		case OIS::KC_LMENU:
 			mPhysicsWorld.freezeTime();
+			mTimeControl = true;
 			break;
 		default:
 			mCameraMan->injectKeyDown(arg);
@@ -205,6 +207,7 @@ bool ContinuumApp::keyReleased(const OIS::KeyEvent &arg)
 	{
 		case OIS::KC_LMENU:
 			mPhysicsWorld.resumeTime();
+			mTimeControl = false;
 			break;
 		default:
 			mCameraMan->injectKeyUp(arg);
@@ -220,13 +223,16 @@ bool ContinuumApp::mouseMoved(const OIS::MouseEvent &arg)
     
 	mCameraMan->injectMouseMove(arg);
 
-	if (arg.state.Z.rel > 0)
+	if (mTimeControl)
 	{
-		mPhysicsWorld.accelerateTime();
-	}
-	else if (arg.state.Z.rel < 0)
-	{
-		mPhysicsWorld.decelerateTime();
+		if (arg.state.Z.rel > 0)
+		{
+			mPhysicsWorld.accelerateTime();
+		}
+		else if (arg.state.Z.rel < 0)
+		{
+			mPhysicsWorld.decelerateTime();
+		}
 	}
 
 	return true;

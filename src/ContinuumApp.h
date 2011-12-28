@@ -66,6 +66,8 @@ private:
 
 	bool mQuit;
 
+	bool mTimeControl;
+
     Ogre::SceneManager* mSceneMgr;
     Ogre::RenderWindow* mWindow;
     Ogre::Root* mRoot;
