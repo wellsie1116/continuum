@@ -31,7 +31,7 @@ WorldSnapshot::~WorldSnapshot()
 		{
 			delete mStates[i];
 		}
-		delete mStates;
+		delete [] mStates;
 		mStates = NULL;
 	}
 }
