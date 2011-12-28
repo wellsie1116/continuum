@@ -23,27 +23,34 @@ TickTimer::getTicks()
 	struct timeval current;
 	struct timeval delta;
 
+	int ticksPerSecond = mTicksPerSecond * mTickRate;
+
+	if (!ticksPerSecond)
+	{
+		gettimeofday(&mLast, NULL);
+		return 0;
+	}
+
 	gettimeofday(&current, NULL);
 	timersub(&current, &mLast, &delta);
 
-	int secondTicks = delta.tv_sec * mTicksPerSecond;
-	int microsecondTicks = delta.tv_usec * mTicksPerSecond / 1000000;
+	long int secondTicks = delta.tv_sec * ticksPerSecond;
+	long int microsecondTicks = delta.tv_usec * ticksPerSecond / 1000000;
 
-	delta.tv_usec = microsecondTicks * 1000000 / mTicksPerSecond;
+	delta.tv_usec = microsecondTicks * 1000000 / ticksPerSecond;
 	timeradd(&mLast, &delta, &mLast);
 
-	//FIXME incorporate tick rate sooner so ticks aren't delayed unnecessarily
-	return (secondTicks + microsecondTicks) * mTickRate;
+	return secondTicks + microsecondTicks;
 }
 
-int
+float
 TickTimer::getTickRate()
 {
 	return mTickRate;
 }
 
 void
-TickTimer::setTickRate(int rate)
+TickTimer::setTickRate(float rate)
 {
 	mTickRate = rate;
 }

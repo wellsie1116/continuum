@@ -36,10 +36,14 @@ public:
 	void nearCollide(dGeomID o1, dGeomID o2);
 
 private:
+	void updateTimeRate();
+
+private:
 	dWorldID mWorld;
 	dSpaceID mSpace;
 	dJointGroupID mContactGroup;
 	unsigned long mTimestep;
+	int mStepRate;
 
 	TickTimer mTimer;
 	GSList* mObjects;

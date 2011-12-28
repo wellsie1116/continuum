@@ -8,6 +8,11 @@
 static float MIN_WORLD_COORDS[] = {-5000.0f, -5000.0f, -5000.0f};
 static float MAX_WORLD_COORDS[] = { 5000.0f,  5000.0f,  5000.0f};
 
+static int DEFAULT_STEP_INDEX = 7;
+static int FREEZE_STEP_INDEX = 5;
+static float STEP_SPEEDS[] = {-16.0, -8.0, -4.0, -2.0, -1.0,
+	0.0, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0};
+
 static void collideCallback(void *data, dGeomID o1, dGeomID o2);
 
 PhysicsWorld::PhysicsWorld()
@@ -119,27 +124,39 @@ PhysicsWorld::stepWorld()
 void
 PhysicsWorld::freezeTime()
 {
-	mTimer.setTickRate(0);
+	mStepRate = FREEZE_STEP_INDEX;
+	updateTimeRate();
 }
 
 void
 PhysicsWorld::resumeTime()
 {
-	mTimer.setTickRate(1);
+	mStepRate = DEFAULT_STEP_INDEX;
+	updateTimeRate();
 }
 
 void
 PhysicsWorld::accelerateTime()
 {
-	int rate = mTimer.getTickRate();
-	mTimer.setTickRate(rate + 1);
+	mStepRate++;
+	updateTimeRate();
 }
 
 void
 PhysicsWorld::decelerateTime()
 {
-	int rate = mTimer.getTickRate();
-	mTimer.setTickRate(rate - 1);
+	mStepRate--;
+	updateTimeRate();
+}
+
+void
+PhysicsWorld::updateTimeRate()
+{
+	if (mStepRate < 0)
+		mStepRate = 0;
+	else if (mStepRate >= (sizeof(STEP_SPEEDS) / sizeof(STEP_SPEEDS[0])))
+		mStepRate = (sizeof(STEP_SPEEDS) / sizeof(STEP_SPEEDS[0])) - 1;
+	mTimer.setTickRate(STEP_SPEEDS[mStepRate]);
 }
 
 Box*
