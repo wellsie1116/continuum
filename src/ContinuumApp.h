@@ -16,10 +16,10 @@
 #include <OISKeyboard.h>
 #include <OISMouse.h>
 
-#include <SdkCameraMan.h>
 #include <SdkTrays.h>
 
 #include "PhysicsWorld.h"
+#include "PlayerController.h"
 
 class ContinuumApp
 	: public Ogre::FrameListener
@@ -74,13 +74,14 @@ private:
     Ogre::Camera* mCamera;
 
     OgreBites::SdkTrayManager* mTrayMgr;
-    OgreBites::SdkCameraMan* mCameraMan;
     
 	OIS::InputManager* mInputManager;
     OIS::Mouse* mMouse;
     OIS::Keyboard* mKeyboard;
 
 	PhysicsWorld mPhysicsWorld;
+    
+	PlayerController* mPlayer;
 };
 
 #endif

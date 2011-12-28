@@ -22,17 +22,17 @@ ContinuumApp::ContinuumApp()
 	, mRoot(NULL)
 	, mCamera(NULL)
 	, mTrayMgr(NULL)
-	, mCameraMan(NULL)
 	, mInputManager(NULL)
 	, mMouse(NULL)
 	, mKeyboard(NULL)
+	, mPlayer(NULL)
 {
 }
 
 ContinuumApp::~ContinuumApp()
 {
 	if (mTrayMgr) delete mTrayMgr;
-	if (mCameraMan) delete mCameraMan;
+	if (mPlayer) delete mPlayer;
 
     Ogre::WindowEventUtilities::removeWindowEventListener(mWindow, this);
     windowClosed(mWindow);
@@ -167,7 +167,7 @@ bool ContinuumApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 
 	if (!mTrayMgr->isDialogVisible())
 	{
-        mCameraMan->frameRenderingQueued(evt);
+        mPlayer->frameRenderingQueued(evt);
 	}
 
 	return true;
@@ -193,7 +193,7 @@ bool ContinuumApp::keyPressed(const OIS::KeyEvent &arg)
 			mTimeControl = true;
 			break;
 		default:
-			mCameraMan->injectKeyDown(arg);
+			mPlayer->injectKeyDown(arg);
 			return false;
     }
     
@@ -210,7 +210,7 @@ bool ContinuumApp::keyReleased(const OIS::KeyEvent &arg)
 			mTimeControl = false;
 			break;
 		default:
-			mCameraMan->injectKeyUp(arg);
+			mPlayer->injectKeyUp(arg);
 			return false;
     }
 
@@ -221,7 +221,7 @@ bool ContinuumApp::mouseMoved(const OIS::MouseEvent &arg)
 {
     if (mTrayMgr->injectMouseMove(arg)) return true;
     
-	mCameraMan->injectMouseMove(arg);
+	mPlayer->injectMouseMove(arg);
 
 	if (mTimeControl)
 	{
@@ -248,7 +248,7 @@ bool ContinuumApp::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 		return true;
 	}
 	
-	mCameraMan->injectMouseDown(arg, id);
+	mPlayer->injectMouseDown(arg, id);
 
 	return true;
 }
@@ -257,7 +257,7 @@ bool ContinuumApp::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID 
 {
     if (mTrayMgr->injectMouseUp(arg, id)) return true;
 
-	mCameraMan->injectMouseUp(arg, id);
+	mPlayer->injectMouseUp(arg, id);
 
 	return true;
 }
@@ -301,8 +301,7 @@ void ContinuumApp::createScene()
 
 	//get some objects from it
 	mCamera = mSceneMgr->getCamera("Camera");
-	mCameraMan = new OgreBites::SdkCameraMan(mCamera);
-	mCameraMan->setTopSpeed(50);
+	mPlayer = new PlayerController(mCamera);
 
 	//setup our viewport
     Ogre::Viewport* vp = mWindow->addViewport(mCamera);
