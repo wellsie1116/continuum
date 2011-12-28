@@ -75,6 +75,8 @@ Surface::Surface(Ogre::SceneNode* node, PhysicsWorld* world)
 	dGeomSetPosition(mGeom, pos.x, pos.y, pos.z);
 	dGeomSetQuaternion(mGeom, quat);
 	dGeomSetData(mGeom, this);
+
+	mPos = dGeomGetPosition(mGeom);
 }
 
 Surface::~Surface()
@@ -83,7 +85,11 @@ Surface::~Surface()
 
 void Surface::sync()
 {
-	//TODO implement
+	dQuaternion quat;
+	dGeomGetQuaternion(mGeom, quat);
+
+	mNode->setPosition(mPos[0], mPos[1], mPos[2]);
+	mNode->setOrientation(quat[0], quat[1], quat[2], quat[3]);
 }
 
 void

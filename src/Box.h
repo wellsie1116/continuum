@@ -54,6 +54,7 @@ class Surface : public PhysicsObject
 	protected:
 		Ogre::SceneNode* mNode;
 		dGeomID mGeom;
+		const float* mPos;
 };
 
 void physics_object_free(PhysicsObject* object);
