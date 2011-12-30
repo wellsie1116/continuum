@@ -442,6 +442,29 @@ void DotSceneLoader::processNode(TiXmlElement *XMLNode, SceneNode *pParent)
 		processNode(pElement, pNode);
 		pElement = pElement->NextSiblingElement("node");
 	}
+	
+	pElement = XMLNode->FirstChildElement("user_data");
+	while(pElement)
+	{
+		String type = getAttrib(pElement, "type");
+		String name = getAttrib(pElement, "name");
+		String value = getAttrib(pElement, "value");
+
+		Ogre::Any anyValue;
+
+		if (type == "int")
+		{
+			anyValue = Ogre::Any(atof(value.c_str()));
+		}
+		else
+		{
+			anyValue = Ogre::Any(value);
+		}
+
+		pNode->getUserObjectBindings().setUserAny(name, anyValue);
+
+		pElement = pElement->NextSiblingElement("node");
+	}
 
 	// Process entity (*)
 	pElement = XMLNode->FirstChildElement("entity");

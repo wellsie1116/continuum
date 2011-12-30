@@ -183,6 +183,16 @@ PhysicsWorld::createCompanionCube(Ogre::SceneNode* node)
 	return cube;
 }
 
+Box*
+PhysicsWorld::createBox(Ogre::SceneNode* node, float mass)
+{
+	Box* cube = new Box(node, this, mass);
+
+	mObjects = g_slist_prepend(mObjects, cube);
+
+	return cube;
+}
+
 Surface*
 PhysicsWorld::createSurface(Ogre::SceneNode* node)
 {
@@ -213,10 +223,10 @@ PhysicsWorld::nearCollide(dGeomID o1, dGeomID o2)
 	for (i = 0; i < MAX_CONTACTS; i++)
 	{
 		contact[i].surface.mode = dContactBounce | dContactSoftCFM;
-		contact[i].surface.mu = 2.0;
+		contact[i].surface.mu = 16.0;
 		contact[i].surface.mu2 = 0;
 		contact[i].surface.bounce = 0.01;
-		contact[i].surface.bounce_vel = 0.1;
+		contact[i].surface.bounce_vel = 0.01;
 		contact[i].surface.soft_cfm = 0.01;
 	}
 

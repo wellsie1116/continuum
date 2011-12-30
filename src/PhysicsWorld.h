@@ -17,6 +17,7 @@ public:
 	~PhysicsWorld();
 
 	Box* createCompanionCube(Ogre::SceneNode* node);
+	Box* createBox(Ogre::SceneNode* node, float mass);
 	Surface* createSurface(Ogre::SceneNode* node);
 
 	int getTimestep();

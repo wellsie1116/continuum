@@ -17,8 +17,17 @@ ContinuumSceneLoader::onEntityCreated(Ogre::Entity* pEntity, Ogre::SceneNode* pP
 	Ogre::Any physType = bindings.getUserAny("Physics");
 	if (!physType.isEmpty())
 	{
-		//create a weighted cube
-		mPhysicsWorld->createCompanionCube(pParentNode);
+		Ogre::Any mass = bindings.getUserAny("Mass");
+		if (mass.isEmpty())
+		{
+			//create a weighted cube
+			mPhysicsWorld->createCompanionCube(pParentNode);
+		}
+		else
+		{
+			//create a weighted cube
+			mPhysicsWorld->createBox(pParentNode, Ogre::any_cast<double>(mass));
+		}
 	}
 	else
 	{
@@ -26,3 +35,4 @@ ContinuumSceneLoader::onEntityCreated(Ogre::Entity* pEntity, Ogre::SceneNode* pP
 		mPhysicsWorld->createSurface(pParentNode);
 	}
 }
+
