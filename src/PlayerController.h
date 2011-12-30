@@ -25,7 +25,16 @@ public:
 	void injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 
 private:
+	void setupModel();
+	void setupCamera();
+
+private:
+	Ogre::SceneManager* mSceneMgr;
 	Ogre::Camera* mCamera;
+
+	Ogre::SceneNode* mPlayerNode;
+	Ogre::Entity* mPlayer;
+
     OgreBites::SdkCameraMan* mCameraMan;
 };
 
