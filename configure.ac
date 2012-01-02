@@ -2,6 +2,7 @@ AC_INIT([continuum], [0.1])
 AM_INIT_AUTOMAKE([1.5 -Wall dist-bzip2 silent-rules])
 AM_SILENT_RULES([yes])
 AM_CONFIG_HEADER(config.h)
+AC_CONFIG_MACRO_DIR([m4])
 
 AC_LANG_CPLUSPLUS
 AC_PROG_CXX
