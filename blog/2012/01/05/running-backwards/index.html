@@ -89,14 +89,14 @@ physics simulation takes too long, then the physics world &hellip;">
   </header>
 
 
-<div class="entry-content"><h1>A Physics Engine</h1>
+<div class="entry-content"><h2>A Physics Engine</h2>
 
 <p>Most gaming oriented physics engines focus on one major goal: speed.  If a
 physics simulation takes too long, then the physics world can&#8217;t be updated in
 real-time and the whole point of having a physics engine in the game is lost.
 Unfortunately, physics engines optimizing for speed can have some drawbacks.</p>
 
-<h2>First Attempt</h2>
+<h3>First Attempt</h3>
 
 <p>Initially, I attempted to use <a href="http://newtondynamics.com/">Newton Dynamics</a> for
 my physics engine.  It had nearly all of the features I needed and ran fast as
@@ -113,7 +113,7 @@ contact joints every frame, but the engine strongly advises
 <a href="http://www.newtondynamics.com/wiki/index.php5?title=NewtonInvalidateCache">NOT</a>
 to do that.</p>
 
-<h2>Open Dynamics Engine</h2>
+<h3>Open Dynamics Engine</h3>
 
 <p>Unwilling to cause a significant performance hit to my simulation just to get
 deterministic results, I decided to switch engines hoping that the next one I
@@ -133,7 +133,7 @@ After making those modifications, I can now simulate a world deterministically,
 jumping back in time arbitrarily, and see the same simulation (or a different
 one, if I influence the world differently.</p>
 
-<h1>Storing World Snapshots</h1>
+<h2>Storing World Snapshots</h2>
 
 <p>After being able to store the world snapshots, I needed a data structure that
 can store multiple, ordered snapshots and help with determining how and when to
