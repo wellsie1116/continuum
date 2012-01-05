@@ -4,7 +4,7 @@
   <title><![CDATA[Continuum]]></title>
   <link href="http://wellsie1116.github.com/continuum/atom.xml" rel="self"/>
   <link href="http://wellsie1116.github.com/continuum/"/>
-  <updated>2012-01-05T10:34:19-05:00</updated>
+  <updated>2012-01-05T11:05:43-05:00</updated>
   <id>http://wellsie1116.github.com/continuum/</id>
   <author>
     <name><![CDATA[Kevin Wells]]></name>
@@ -68,6 +68,45 @@ one, if I influence the world differently.</p>
 can store multiple, ordered snapshots and help with determining how and when to
 generate additional snapshots.  While I have not yet fully implemented the
 structure, I have identified the main operations I need to perform with it:</p>
+
+<div><script src='https://gist.github.com/1565882.js?file='></script>
+<noscript><pre><code>/**
+ * Adds a state the ordered set of world states
+ * 
+ * Preferred structure: Tree
+ */
+void add(WorldSnapshot* state);
+
+/**
+ * Checks if the structure contains a snapshot at the given timestep.
+ * 
+ * Preferred structure: Tree or Hashtable
+ */
+bool contains(int timestep);
+
+/**
+ * Deletes all snapshots after the given timestep
+ * 
+ * Preferred structure: Array or List
+ */
+void purgeAfter(int timestep);
+
+/**
+ * Returns the snapshot with a timestep equal
+ * to or before the given timestep
+ * 
+ * Preferred structure: Tree
+ */
+WorldSnapshot* getClosest(int timestep);
+
+/**
+ * Removes all unnecessary snaphots from the structure
+ * 
+ * Preferred structure: List
+ */
+void prune(int timestep);
+</code></pre></noscript></div>
+
 
 <p>As you can see by the <strong>Preferred structure</strong> comment, no simple data structure
 exists that can efficiently perform all of these operations.  Currently,
