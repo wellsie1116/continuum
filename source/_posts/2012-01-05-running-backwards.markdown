@@ -6,14 +6,14 @@ comments: true
 categories: 
 ---
 
-# A Physics Engine
+## A Physics Engine
 
 Most gaming oriented physics engines focus on one major goal: speed.  If a
 physics simulation takes too long, then the physics world can't be updated in
 real-time and the whole point of having a physics engine in the game is lost.
 Unfortunately, physics engines optimizing for speed can have some drawbacks.
 
-## First Attempt
+### First Attempt
 
 Initially, I attempted to use [Newton Dynamics](http://newtondynamics.com/) for
 my physics engine.  It had nearly all of the features I needed and ran fast as
@@ -30,7 +30,7 @@ contact joints every frame, but the engine strongly advises
 [NOT](http://www.newtondynamics.com/wiki/index.php5?title=NewtonInvalidateCache)
 to do that.
 
-## Open Dynamics Engine
+### Open Dynamics Engine
 
 Unwilling to cause a significant performance hit to my simulation just to get
 deterministic results, I decided to switch engines hoping that the next one I
@@ -50,7 +50,7 @@ After making those modifications, I can now simulate a world deterministically,
 jumping back in time arbitrarily, and see the same simulation (or a different
 one, if I influence the world differently.
 
-# Storing World Snapshots
+## Storing World Snapshots
 
 After being able to store the world snapshots, I needed a data structure that
 can store multiple, ordered snapshots and help with determining how and when to
