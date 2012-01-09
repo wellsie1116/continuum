@@ -4,6 +4,8 @@
 #include "continuum.h"
 #include "ContinuumSceneLoader.h"
 
+#include <OgreLog.h>
+
 #include <stdio.h>
     
 #if _DEBUG
@@ -53,6 +55,11 @@ int ContinuumApp::run()
 
 int ContinuumApp::setup()
 {
+	//disable debug output
+	Ogre::LogManager* logManager = new Ogre::LogManager();
+	Ogre::Log* defaultLog = new Ogre::Log("debug.log", false);
+	logManager->setDefaultLog(defaultLog);
+
     mRoot = new Ogre::Root(mPluginsCfg);
 
 	setupResources();
