@@ -3,6 +3,7 @@
 #define PHYSICSWORLD_H_Z8CVKYR9
 
 #include "Box.h"
+#include "Player.h"
 #include "TickTimer.h"
 #include "PhysicsState.h"
 
@@ -19,6 +20,7 @@ public:
 	Box* createCompanionCube(Ogre::SceneNode* node);
 	Box* createBox(Ogre::SceneNode* node, float mass);
 	Surface* createSurface(Ogre::SceneNode* node);
+	Player* createPlayer(Ogre::Camera* camera);
 
 	int getTimestep();
 	void init();

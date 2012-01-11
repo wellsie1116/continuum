@@ -118,9 +118,9 @@ PhysicsWorld::step()
 	GSList* pObjects = mObjects;
 	while (pObjects)
 	{
-		Box* cube = (Box*)pObjects->data;
+		PhysicsObject* obj = (PhysicsObject*)pObjects->data;
 	
-		cube->sync();
+		obj->sync();
 	
 		pObjects = pObjects->next;
 	}
@@ -201,6 +201,16 @@ PhysicsWorld::createSurface(Ogre::SceneNode* node)
 	mSurfaces = g_slist_prepend(mSurfaces, surface);
 
 	return surface;
+}
+
+Player*
+PhysicsWorld::createPlayer(Ogre::Camera* camera)
+{
+	Player* player = new Player(camera, this);
+	
+	mObjects = g_slist_prepend(mObjects, player);
+
+	return player;
 }
 
 void

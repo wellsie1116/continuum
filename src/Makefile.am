@@ -4,7 +4,9 @@ noinst_HEADERS= \
 				ContinuumSceneLoader.h \
 				ContinuumApp.h \
 				continuum.h \
+				PhysicsObject.h \
 				Box.h \
+				Player.h \
 				PhysicsWorld.h \
 				PhysicsState.h \
 				TickTimer.h
@@ -14,7 +16,9 @@ SOURCES= \
 		 DotSceneLoader.cpp \
 		 ContinuumSceneLoader.cpp \
 		 TickTimer.cpp \
+		 PhysicsObject.cpp \
 		 Box.cpp \
+		 Player.cpp \
 		 PhysicsWorld.cpp \
 		 PhysicsState.cpp \
 		 ContinuumApp.cpp \

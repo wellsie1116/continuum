@@ -11,10 +11,12 @@
 
 #include <SdkCameraMan.h>
 
+#include "Player.h"
+
 class PlayerController
 {
 public:
-    PlayerController(Ogre::Camera* camera);
+    PlayerController(Player* player);
 	~PlayerController();
 
 	bool frameRenderingQueued(const Ogre::FrameEvent& evt);
@@ -33,8 +35,9 @@ private:
 	Ogre::Camera* mCamera;
 
 	Ogre::SceneNode* mPlayerNode;
-	Ogre::Entity* mPlayer;
+	Ogre::Entity* mPlayerEntity;
 
+	Player* mPlayer;
     OgreBites::SdkCameraMan* mCameraMan;
 };
 

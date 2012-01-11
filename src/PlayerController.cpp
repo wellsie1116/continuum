@@ -1,10 +1,11 @@
 
 #include "PlayerController.h"
 
-PlayerController::PlayerController(Ogre::Camera* camera)
-	: mCamera(camera)
+PlayerController::PlayerController(Player* player)
+	: mPlayer(player)
 {
-	mSceneMgr = camera->getSceneManager();
+	mCamera = mPlayer->getCamera();
+	mSceneMgr = mCamera->getSceneManager();
 
 	mCameraMan = new OgreBites::SdkCameraMan(mCamera);
 	mCameraMan->setTopSpeed(50);
@@ -66,8 +67,8 @@ PlayerController::setupModel()
 	Ogre::Vector3 playerPosition;
 	playerPosition = mCamera->getParentSceneNode()->getPosition() + Ogre::Vector3::UNIT_Y * 5;
 	mPlayerNode = root->createChildSceneNode(playerPosition);
-	mPlayer = mSceneMgr->createEntity("SinbadBody", "Sinbad.mesh");
-	mPlayerNode->attachObject(mPlayer);
+	mPlayerEntity = mSceneMgr->createEntity("SinbadBody", "Sinbad.mesh");
+	mPlayerNode->attachObject(mPlayerEntity);
 }
 
 void

@@ -6,17 +6,9 @@
 
 #include <ode/ode.h>
 
+#include "PhysicsObject.h"
+
 class PhysicsWorld;
-
-class PhysicsObject
-{
-	public:
-		virtual ~PhysicsObject() { }
-
-		static Ogre::Vector3 getBounds(Ogre::SceneNode* node);
-
-		virtual void sync() = 0;
-};
 
 class Box : public PhysicsObject
 {

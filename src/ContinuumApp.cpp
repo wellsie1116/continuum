@@ -308,7 +308,8 @@ void ContinuumApp::createScene()
 
 	//get some objects from it
 	mCamera = mSceneMgr->getCamera("Camera");
-	mPlayer = new PlayerController(mCamera);
+	Player* player = mPhysicsWorld.createPlayer(mCamera);
+	mPlayer = new PlayerController(player);
 
 	//setup our viewport
     Ogre::Viewport* vp = mWindow->addViewport(mCamera);
