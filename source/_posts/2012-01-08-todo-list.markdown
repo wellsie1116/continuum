@@ -1,0 +1,78 @@
+---
+layout: post
+title: "todo list"
+date: 2012-01-08 20:56
+comments: true
+categories: 
+---
+
+Up to this point, I have simply been working on whatever I felt I needed to do
+in the order I felt I needed to do it.  While this works for projects without
+set requirements or a set due date, this project has a certain set of
+functionality requirements, and it is due at the end of the quarter, which is
+why I have taken some time this week to determine what I would like to have in
+the final game and how long I expect each of those features to take (based on my
+current rate of progress).
+
+## Feature Listing
+
+ *  Character movement/interaction (1 week)
+
+    Because I am using a physics simulation for the world, I need to integrate
+the character into that simulation in order for the character to interact with
+the world.  Furthermore, I want the camera to be 3rd person, so I need to
+introduce a 3D model of the character and animate that model.
+ 
+ *  Models (1 week)
+
+    I am not a graphic designer, and I don't want to pretend to be.  I plan on
+'borrowing' models from an existing game, but I am unsure to the process (other
+than I know it is possible).  It will be useful to have a determined set of
+models before attempting to design levels, in case the models are different
+proportions than I expect.
+
+ *  Forking time (1 week)
+
+    I can currently rewind time, but that always keeps the same number of
+objects in the simulation.  Forking time will require introducing new objects
+into the scene and contains a good number of unknowns that I have not yet
+explored.
+
+ *  Level design (1 week)
+
+    The component that will absolutely determine this game's success is the
+quality of its levels.  I need a good chunk of time to design and build the
+levels.
+
+ *  Audio system (1 week)
+
+    One of the more fun aspects of this game.  I want to have ambient sound
+effects and music (as most games do), except I want the audio react to how the
+user is manipulating time.  For example, if the user rewinds time at 2x, the
+audio will backwards at 2x.  I know OpenAL provides this functionality, but I
+have never actually used the library before.
+
+ *  Main menu (.5 week)
+    A minor feature, but it is nice to not immediately be thrown into the game
+after launching it.  It would also be nice to track the user's progress and let
+them save and load games.
+
+There are plenty of other things that I would **like** to do but don't think I
+will have time to do.  Examples include, but are not limited to: Python
+integration, S-3D rendering, and space manipulation (via portals).
+
+## Making more time
+
+Quickly adding up my time estimates, I come up with 5.5 weeks.  Well there are
+5.5 weeks left in the quarter, so this should be no problem to finish on time,
+right?  I would like to answer "yes", but I know from past experience that I
+tend to underestimate my time requirements, overestimate my free time, and do
+not foresee all of the problems that I will face.  I typically like to include a
+20% time buffer to account for those unknowns, and this current setup does not
+provide that.  Still, I based these time estimates on my current work load.  I
+have been prioritizing Senior Project over this project during the quarter, and
+I think it is a good time to switch priorities since our Senior Project is ahead
+of schedule.  With this change, I believe that I can finish this project by the
+end of 10th week, but I do not want to discard the possibility that it will take
+longer.
+
