@@ -20,25 +20,52 @@ enum PlayerDirection {
 	JUMP     = 1 << 4
 };
 
+class PlayerState : public PhysicsObjectState
+{
+public:
+	PlayerDirection moveDirection;
+
+public:
+	PlayerState()
+		: moveDirection(NONE)
+	{ }
+
+	PhysicsObjectState* copy() const
+	{
+		PlayerState* res = new PlayerState();
+		*res = *this;
+		return res;
+	}
+
+	PlayerState& operator=(const PlayerState& state)
+	{
+		moveDirection = state.moveDirection;
+		return *this;
+	}
+};
+
 class Player : public PhysicsObject
 {
-	public:
-		Player(Ogre::Camera* camera, PhysicsWorld* world);
-		virtual ~Player();
-		
-		virtual void sync();
+public:
+	Player(Ogre::Camera* camera, PhysicsWorld* world);
+	virtual ~Player();
+	
+	virtual void setupForces();
+	virtual void sync();
+	virtual const PhysicsObjectState* save() const;
+	virtual void restore(const PhysicsObjectState* state);
 
-		Ogre::Camera* getCamera() { return mCamera; }
+	Ogre::Camera* getCamera() { return mCamera; }
 
-		void startMove(PlayerDirection dir);
-		void stopMove(PlayerDirection dir);
+	void startMove(PlayerDirection dir);
+	void stopMove(PlayerDirection dir);
 
-	protected:
-		Ogre::Camera* mCamera;
-		dBodyID mPlayerBody;
-		dGeomID mPlayerBodyGeom;
-		PlayerDirection moveDirection;
-		const float* mPos;
+protected:
+	Ogre::Camera* mCamera;
+	dBodyID mPlayerBody;
+	dGeomID mPlayerBodyGeom;
+	const float* mPos;
+	PlayerState state;
 };
 
 #endif

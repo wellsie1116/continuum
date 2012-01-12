@@ -16,7 +16,10 @@ class Box : public PhysicsObject
 		Box(Ogre::SceneNode* node, PhysicsWorld* world, float mass);
 		virtual ~Box();
 		
+		virtual void setupForces() {}
 		virtual void sync();
+		virtual const PhysicsObjectState* save() const { return NULL; }
+		virtual void restore(const PhysicsObjectState* state) {}
 
 	protected:
 		Ogre::SceneNode* mNode;
@@ -41,7 +44,10 @@ class Surface : public PhysicsObject
 		Surface(Ogre::SceneNode* node, PhysicsWorld* world);
 		virtual ~Surface();
 		
+		virtual void setupForces() {}
 		virtual void sync();
+		virtual const PhysicsObjectState* save() const { return NULL; }
+		virtual void restore(const PhysicsObjectState* state) {}
 
 	protected:
 		Ogre::SceneNode* mNode;

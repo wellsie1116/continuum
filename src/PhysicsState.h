@@ -13,6 +13,7 @@ class BodyState
 {
 public:
 	BodyState(dGeomID geom);
+	~BodyState();
 
 	void restore();
 	PhysicsObject* getPhysObject();
@@ -25,6 +26,7 @@ private:
 	dMatrix3 mOrientation;
 	float mLinearVelocity[3];
 	float mAngularVelocity[3];
+	const PhysicsObjectState* state;
 	//float mForce[3];
 	//float mTorque[3];
 };

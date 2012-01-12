@@ -16,7 +16,7 @@ Ogre::Vector3 PhysicsObject::getBounds(Ogre::SceneNode* node)
 		bounds.merge(box);
 	}
 	Ogre::Vector3 range = (bounds.getMaximum() - bounds.getMinimum()) * node->getScale();
-	Ogre::Vector3 min = Ogre::Vector3(0.1f);
+	Ogre::Vector3 min = Ogre::Vector3(0.2f);
 	range.makeCeil(min);
 
 	return range;

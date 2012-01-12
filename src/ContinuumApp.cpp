@@ -308,6 +308,14 @@ void ContinuumApp::createScene()
 
 	//get some objects from it
 	mCamera = mSceneMgr->getCamera("Camera");
+	{
+		Ogre::Vector3 pos = mCamera->getRealPosition();
+		Ogre::Quaternion orientation = mCamera->getRealOrientation();
+		mCamera->getParentSceneNode()->detachObject(mCamera);
+		mSceneMgr->getRootSceneNode()->attachObject(mCamera);
+		mCamera->setPosition(pos);
+		mCamera->setOrientation(orientation);
+	}
 	Player* player = mPhysicsWorld.createPlayer(mCamera);
 	mPlayer = new PlayerController(player);
 

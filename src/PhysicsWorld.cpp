@@ -129,6 +129,13 @@ PhysicsWorld::step()
 void
 PhysicsWorld::stepWorld()
 {
+	//setup forces
+	for (GSList* pObjects = mObjects; pObjects; pObjects = pObjects->next)
+	{
+		PhysicsObject* obj = (PhysicsObject*)pObjects->data;
+		obj->setupForces();
+	}
+
 	//step the world
 	dSpaceCollide(mSpace, this, &collideCallback);
 	dWorldQuickStep(mWorld, 1.0 / TICKS_PER_SECOND);
@@ -232,12 +239,24 @@ PhysicsWorld::nearCollide(dGeomID o1, dGeomID o2)
 	// and have fun experimenting to learn more.
 	for (i = 0; i < MAX_CONTACTS; i++)
 	{
-		contact[i].surface.mode = dContactBounce | dContactSoftCFM;
-		contact[i].surface.mu = 16.0;
-		contact[i].surface.mu2 = 0;
-		contact[i].surface.bounce = 0.01;
-		contact[i].surface.bounce_vel = 0.01;
-		contact[i].surface.soft_cfm = 0.01;
+		if (!b1 || !b2)
+		{
+			contact[i].surface.mode = 0;
+			contact[i].surface.mu = 16.0;
+			contact[i].surface.mu2 = 0;
+			contact[i].surface.bounce = 0.01;
+			contact[i].surface.bounce_vel = 0.01;
+			contact[i].surface.soft_cfm = 0.01;
+		}
+		else
+		{
+			contact[i].surface.mode = dContactBounce | dContactSoftCFM;
+			contact[i].surface.mu = 16.0;
+			contact[i].surface.mu2 = 0;
+			contact[i].surface.bounce = 0.01;
+			contact[i].surface.bounce_vel = 0.01;
+			contact[i].surface.soft_cfm = 0.01;
+		}
 	}
 
 	// Here we do the actual collision test by calling dCollide. It returns the
