@@ -1,4 +1,5 @@
 noinst_HEADERS= \
+				vect.h
 				PlayerController.h \
 				DotSceneLoader.h \
 				ContinuumSceneLoader.h \
@@ -12,6 +13,7 @@ noinst_HEADERS= \
 				TickTimer.h
 
 SOURCES= \
+		 vect.c \
 		 PlayerController.cpp \
 		 DotSceneLoader.cpp \
 		 ContinuumSceneLoader.cpp \
