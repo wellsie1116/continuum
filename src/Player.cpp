@@ -82,7 +82,6 @@ Player::Player(Ogre::Camera* camera, PhysicsWorld* world)
 				cameraPos.y + PLAYER_HEIGHT, 
 				cameraPos.z);
 		dJointSetHingeAxis(mCameraSwivel, 0.0, 1.0, 0.0);
-		//dJointSetHinge2Axis2(mCameraSwivel, 1.0, 0.0, 0.0);
 	}
 	
 	{
@@ -110,17 +109,59 @@ Player::setupForces()
 	const Ogre::Quaternion& quat = mPlayerNode->getOrientation();
 	Ogre::Vector3 x = quat.xAxis();
 	Ogre::Vector3 z = quat.zAxis();
-	x *= MOVE_FORCE;
-	z *= MOVE_FORCE;
+	//x *= MOVE_FORCE;
+	//z *= MOVE_FORCE;
 
-	if (state.moveDirection & FORWARD)
-		dBodyAddRelForce(mPlayerBody, z[0], z[1], z[2]);
-	if (state.moveDirection & BACKWARD)
-		dBodyAddRelForce(mPlayerBody, -z[0], -z[1], -z[2]);
-	if (state.moveDirection & LEFT)
-		dBodyAddRelForce(mPlayerBody, x[0], x[1], x[2]);
-	if (state.moveDirection & RIGHT)
-		dBodyAddRelForce(mPlayerBody, -x[0], -x[1], -x[2]);
+	Ogre::Vector3 d;
+	if (state.moveDirection & (FORWARD | BACKWARD | LEFT | RIGHT))
+	{
+		int dir = state.moveDirection;
+		if ((dir & (FORWARD | BACKWARD)) == (FORWARD | BACKWARD))
+			dir &= ~(FORWARD | BACKWARD);
+		if ((dir & (LEFT | RIGHT)) == (LEFT | RIGHT))
+			dir &= ~(LEFT | RIGHT);
+		switch (dir)
+		{
+			case FORWARD:
+				d = z;
+				break;
+			case LEFT:
+				d = x;
+				break;
+			case BACKWARD:
+				d = -z;
+				break;
+			case RIGHT:
+				d = -x;
+				break;
+			case FORWARD | LEFT:
+				d = z + x;
+				break;
+			case FORWARD | RIGHT:
+				d = z - x;
+				break;
+			case BACKWARD | LEFT:
+				d = -z + x;
+				break;
+			case BACKWARD | RIGHT:
+				d = -z - x;
+				break;
+		}
+		d.normalise();
+		d *= MOVE_FORCE;
+
+		dBodyAddForce(mPlayerBody, d[0], d[1], d[2]);
+	}
+
+
+	//if (state.moveDirection & FORWARD)
+	//	dBodyAddRelForce(mPlayerBody, z[0], z[1], z[2]);
+	//if (state.moveDirection & BACKWARD)
+	//	dBodyAddRelForce(mPlayerBody, -z[0], -z[1], -z[2]);
+	//if (state.moveDirection & LEFT)
+	//	dBodyAddRelForce(mPlayerBody, x[0], x[1], x[2]);
+	//if (state.moveDirection & RIGHT)
+	//	dBodyAddRelForce(mPlayerBody, -x[0], -x[1], -x[2]);
 
 	if (state.moveDirection & JUMP)
 	{
@@ -142,30 +183,19 @@ Player::setupForces()
 		const float* vel = dBodyGetLinearVel(mPlayerBody);
 		if (state.moveDirection & (FORWARD | BACKWARD | LEFT | RIGHT))
 		{
-			//TODO finish
-			//Ogre::Vector3 x = quat.xAxis();
-			//Ogre::Vector3 z = quat.zAxis();
-			//Ogre::Vector3 move;
-			//if (state.moveDirection & FORWARD)
-			//	move += z;
-			//if (state.moveDirection & BACKWARD)
-			//	move -= z;
-			//if (state.moveDirection & LEFT)
-			//	move += x;
-			//if (state.moveDirection & RIGHT)
-			//	move -= x;
-			//move.normalise();
+			Ogre::Vector3 move(d);
+			move.normalise();
 
-			//Vector3 velocity = {vel[0], vel[1], vel[2]};
-			//Vector3 forward = {move[0], move[1], move[2]};
-			//Vector3 res;
-			//vect_project(velocity, forward, &res);
-			//vect_subtract(velocity, res, &res);
+			Vector3 velocity = {vel[0], vel[1], vel[2]};
+			Vector3 forward = {move[0], move[1], move[2]};
+			Vector3 res;
+			vect_project(velocity, forward, &res);
+			vect_subtract(velocity, res, &res);
 
-			//dBodyAddForce(mPlayerBody, 
-			//		-res.x * PLAYER_MASS * 5, 
-			//		0.0, 
-			//		-res.z * PLAYER_MASS * 5);
+			dBodyAddForce(mPlayerBody, 
+					-res.x * PLAYER_MASS * 5, 
+					0.0, 
+					-res.z * PLAYER_MASS * 5);
 		}
 		else
 		{
