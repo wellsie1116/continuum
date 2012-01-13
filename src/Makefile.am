@@ -13,7 +13,7 @@ noinst_HEADERS= \
 				TickTimer.h
 
 SOURCES= \
-		 vect.c \
+		 vect.cpp \
 		 PlayerController.cpp \
 		 DotSceneLoader.cpp \
 		 ContinuumSceneLoader.cpp \

@@ -5,6 +5,8 @@
 
 #include "PhysicsWorld.h"
 
+#include "vect.h"
+
 #define CAMERA_RADIUS 0.9
 #define CAMERA_MASS 0.1
 
@@ -135,21 +137,50 @@ Player::setupForces()
 
 	dBodyAddTorque(mCameraBody, 0.0, -xDiff * SWIVEL_TORQUE, 0.0);
 
-	//TODO dampen player velocity
-	//dReal* playerVelocity = dBodyGetLinearVel(mPlayerBody);
-	//if (!(state.moveDirection & (FORWARD | BACKWARD)))
-	//{
-	//}
-	//if (!(state.moveDirection & (LEFT | RIGHT)))
-	//{
-	//}
+	//dampen player velocity
+	{
+		const float* vel = dBodyGetLinearVel(mPlayerBody);
+		if (state.moveDirection & (FORWARD | BACKWARD | LEFT | RIGHT))
+		{
+			//Ogre::Vector3 x = quat.xAxis();
+			//Ogre::Vector3 z = quat.zAxis();
+			//Ogre::Vector3 move;
+			//if (state.moveDirection & FORWARD)
+			//	move += z;
+			//if (state.moveDirection & BACKWARD)
+			//	move -= z;
+			//if (state.moveDirection & LEFT)
+			//	move += x;
+			//if (state.moveDirection & RIGHT)
+			//	move -= x;
+			//move.normalise();
+
+			//Vector3 velocity = {vel[0], vel[1], vel[2]};
+			//Vector3 forward = {move[0], move[1], move[2]};
+			//Vector3 res;
+			//vect_project(velocity, forward, &res);
+			//vect_subtract(velocity, res, &res);
+
+			//dBodyAddForce(mPlayerBody, 
+			//		-res.x * PLAYER_MASS * 5, 
+			//		0.0, 
+			//		-res.z * PLAYER_MASS * 5);
+		}
+		else
+		{
+			dBodyAddForce(mPlayerBody, 
+					-vel[0] * PLAYER_MASS * 5, 
+					0.0, 
+					-vel[2] * PLAYER_MASS * 5);
+		}
+	}
 	
 	if (!xDiff)
 	{
 		const float* vel = dBodyGetLinearVel(mCameraBody);
 		dBodyAddForce(mCameraBody,
 				-vel[0] * CAMERA_MASS * 10, 
-				-vel[1] * CAMERA_MASS * 10, 
+				0.0, 
 				-vel[2] * CAMERA_MASS * 10);
 	}
 
