@@ -88,7 +88,6 @@ protected:
 
 	Ogre::SceneNode* mPlayerNode;
 	Ogre::SceneNode* mCameraTrackNode;
-	//Ogre::SceneNode* mCameraNode;
 
 	int xDiff;
 };

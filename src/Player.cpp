@@ -21,7 +21,6 @@ Player::Player(Ogre::Camera* camera, PhysicsWorld* world)
 	, xDiff(0)
 	, mPlayerNode(NULL)
 	, mCameraTrackNode(NULL)
-	//, mCameraNode(NULL)
 {
 	Ogre::Vector3 cameraPos = camera->getPosition();
 	const float* cameraQuat = camera->getOrientation().ptr();
@@ -202,10 +201,7 @@ void Player::setNode(Ogre::SceneNode* node)
 	{
 		mCameraTrackNode = mPlayerNode->createChildSceneNode(
 				Ogre::Vector3::UNIT_Y * PLAYER_HEIGHT/2.0);
-		//mCameraNode = mPlayerNode->getCreator()->createSceneNode();
 		mCamera->setAutoTracking(true, mCameraTrackNode);
-		//mCamera->getParentSceneNode()->detachObject(mCamera);
-		//mCameraNode->attachObject(mCamera);
 	}
 }
 
