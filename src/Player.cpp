@@ -99,7 +99,7 @@ Player::~Player()
 {
 }
 
-#define MOVE_FORCE PLAYER_MASS * 10.0
+#define MOVE_FORCE PLAYER_MASS * 20.0
 #define SWIVEL_TORQUE 20.0
 
 #define JUMP_STEP_MAX 10
@@ -142,6 +142,7 @@ Player::setupForces()
 		const float* vel = dBodyGetLinearVel(mPlayerBody);
 		if (state.moveDirection & (FORWARD | BACKWARD | LEFT | RIGHT))
 		{
+			//TODO finish
 			//Ogre::Vector3 x = quat.xAxis();
 			//Ogre::Vector3 z = quat.zAxis();
 			//Ogre::Vector3 move;
@@ -189,7 +190,11 @@ Player::setupForces()
 
 void Player::sync()
 {
-	mCamera->setPosition(mCameraPos[0], mCameraPos[1], mCameraPos[2]);
+	mCamera->setPosition(
+			mCameraPos[0],
+			mCameraPos[1] - (0*PLAYER_HEIGHT/2.0 +
+				4 * PLAYER_HEIGHT * state.pitch / PITCH_MAX), 
+			mCameraPos[2]);
 
 	if (mPlayerNode)
 	{
@@ -206,13 +211,6 @@ void Player::sync()
 		mPlayerNode->setOrientation(swivel);
 	}
 	
-	if (mCameraTrackNode)
-	{
-		mCameraTrackNode->setPosition(
-				Ogre::Vector3::UNIT_Y * (PLAYER_HEIGHT/2.0 +
-				2 * PLAYER_HEIGHT * state.pitch / PITCH_MAX));
-	}
-
 	//Ogre::Vector3 orientation(
 	//		mPlayerPos[0] - mCameraPos[0],
 	//		0.0,
