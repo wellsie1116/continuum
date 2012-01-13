@@ -153,16 +153,6 @@ Player::setupForces()
 		dBodyAddForce(mPlayerBody, d[0], d[1], d[2]);
 	}
 
-
-	//if (state.moveDirection & FORWARD)
-	//	dBodyAddRelForce(mPlayerBody, z[0], z[1], z[2]);
-	//if (state.moveDirection & BACKWARD)
-	//	dBodyAddRelForce(mPlayerBody, -z[0], -z[1], -z[2]);
-	//if (state.moveDirection & LEFT)
-	//	dBodyAddRelForce(mPlayerBody, x[0], x[1], x[2]);
-	//if (state.moveDirection & RIGHT)
-	//	dBodyAddRelForce(mPlayerBody, -x[0], -x[1], -x[2]);
-
 	if (state.moveDirection & JUMP)
 	{
 		if (state.jumpStep < JUMP_STEP_MAX)
@@ -240,21 +230,6 @@ void Player::sync()
 		Ogre::Quaternion swivel = Ogre::Vector3::UNIT_Z.getRotationTo(orientation);
 		mPlayerNode->setOrientation(swivel);
 	}
-	
-	//Ogre::Vector3 orientation(
-	//		mPlayerPos[0] - mCameraPos[0],
-	//		0.0,
-	//		mPlayerPos[2] - mCameraPos[2]);
-	//orientation.normalise();
-
-	//Ogre::Quaternion quat(Ogre::Radian(state.pitch * M_PI * 0.9 / PITCH_MAX),
-	//	   Ogre::Vector3::UNIT_X);
-	//Ogre::Quaternion swivel = Ogre::Vector3::UNIT_X.getRotationTo(orientation);
-	//quat = swivel * quat;
-
-	//Ogre::Quaternion quat(mRot[0], mRot[1], mRot[2], mRot[3]);
-	//mCamera->setOrientation(quat);
-	
 }
 		
 const PhysicsObjectState* Player::save() const
