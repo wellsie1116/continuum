@@ -34,50 +34,21 @@ void
 PlayerController::injectKeyDown(const OIS::KeyEvent &arg)
 {
 	//mCameraMan->injectKeyDown(arg);
-
-	switch (arg.key)
-	{
-		case OIS::KC_W:
-			mPlayer->startMove(FORWARD);
-			break;
-		case OIS::KC_S:
-			mPlayer->startMove(BACKWARD);
-			break;
-		case OIS::KC_A:
-			mPlayer->startMove(LEFT);
-			break;
-		case OIS::KC_D:
-			mPlayer->startMove(RIGHT);
-			break;
-    }
+	mPlayer->injectKeyDown(arg);
 }
 
 void
 PlayerController::injectKeyUp(const OIS::KeyEvent &arg)
 {
 	//mCameraMan->injectKeyUp(arg);
-
-	switch (arg.key)
-	{
-		case OIS::KC_W:
-			mPlayer->stopMove(FORWARD);
-			break;
-		case OIS::KC_S:
-			mPlayer->stopMove(BACKWARD);
-			break;
-		case OIS::KC_A:
-			mPlayer->stopMove(LEFT);
-			break;
-		case OIS::KC_D:
-			mPlayer->stopMove(RIGHT);
-			break;
-    }
+	mPlayer->injectKeyUp(arg);
 }
 
 void
 PlayerController::injectMouseMove(const OIS::MouseEvent &arg)
 {
-	mCameraMan->injectMouseMove(arg);
+	//mCameraMan->injectMouseMove(arg);
+	mPlayer->injectMouseMove(arg);
 }
 
 void
@@ -99,10 +70,11 @@ PlayerController::setupModel()
 
 	Ogre::Vector3 playerPosition;
 	//FIXME: fixed camera position to be global
-	playerPosition = mCamera->getParentSceneNode()->getPosition() + Ogre::Vector3::UNIT_Y * 5;
+	playerPosition = mCamera->getPosition();
 	mPlayerNode = root->createChildSceneNode(playerPosition);
 	mPlayerEntity = mSceneMgr->createEntity("SinbadBody", "Sinbad.mesh");
 	mPlayerNode->attachObject(mPlayerEntity);
+	mPlayer->setNode(mPlayerNode);
 }
 
 void

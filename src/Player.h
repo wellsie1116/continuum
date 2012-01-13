@@ -7,6 +7,11 @@
 
 #include <ode/ode.h>
 
+#include <OISEvents.h>
+#include <OISInputManager.h>
+#include <OISKeyboard.h>
+#include <OISMouse.h>
+
 #include "PhysicsObject.h"
 
 class PhysicsWorld;
@@ -24,10 +29,12 @@ class PlayerState : public PhysicsObjectState
 {
 public:
 	PlayerDirection moveDirection;
+	int pitch;
 
 public:
 	PlayerState()
 		: moveDirection(NONE)
+		, pitch(0)
 	{ }
 
 	PhysicsObjectState* copy() const
@@ -40,6 +47,7 @@ public:
 	PlayerState& operator=(const PlayerState& state)
 	{
 		moveDirection = state.moveDirection;
+		pitch = state.pitch;
 		return *this;
 	}
 };
@@ -57,6 +65,13 @@ public:
 
 	Ogre::Camera* getCamera() { return mCamera; }
 
+	void setNode(Ogre::SceneNode* node);
+
+	void injectKeyDown(const OIS::KeyEvent &arg);
+	void injectKeyUp(const OIS::KeyEvent &arg);
+	void injectMouseMove(const OIS::MouseEvent &arg);
+
+private:
 	void startMove(PlayerDirection dir);
 	void stopMove(PlayerDirection dir);
 
@@ -64,8 +79,18 @@ protected:
 	Ogre::Camera* mCamera;
 	dBodyID mPlayerBody;
 	dGeomID mPlayerBodyGeom;
-	const float* mPos;
+	dBodyID mCameraBody;
+	dGeomID mCameraBodyGeom;
+	dJointID mCameraSwivel;
+	const float* mPlayerPos;
+	const float* mCameraPos;
 	PlayerState state;
+
+	Ogre::SceneNode* mPlayerNode;
+	Ogre::SceneNode* mCameraTrackNode;
+	//Ogre::SceneNode* mCameraNode;
+
+	int xDiff;
 };
 
 #endif
