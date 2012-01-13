@@ -99,6 +99,8 @@ Player::~Player()
 
 #define MOVE_FORCE PLAYER_MASS * 10.0
 #define SWIVEL_TORQUE 20.0
+
+#define JUMP_STEP_MAX 10
 	
 void
 Player::setupForces()
@@ -117,6 +119,19 @@ Player::setupForces()
 		dBodyAddRelForce(mPlayerBody, x[0], x[1], x[2]);
 	if (state.moveDirection & RIGHT)
 		dBodyAddRelForce(mPlayerBody, -x[0], -x[1], -x[2]);
+
+	if (state.moveDirection & JUMP)
+	{
+		if (state.jumpStep < JUMP_STEP_MAX)
+		{
+			dBodyAddRelForce(mPlayerBody, 0.0, 100.0 * PLAYER_MASS, 0.0);
+			state.jumpStep++;
+		}
+	}
+	else if (state.jumpStep)
+	{
+		state.jumpStep = 0;
+	}
 
 	dBodyAddTorque(mCameraBody, 0.0, -xDiff * SWIVEL_TORQUE, 0.0);
 
@@ -222,6 +237,9 @@ Player::injectKeyDown(const OIS::KeyEvent &arg)
 		case OIS::KC_D:
 			startMove(RIGHT);
 			break;
+		case OIS::KC_SPACE:
+			startMove(JUMP);
+			break;
     }
 }
 
@@ -241,6 +259,9 @@ Player::injectKeyUp(const OIS::KeyEvent &arg)
 			break;
 		case OIS::KC_D:
 			stopMove(RIGHT);
+			break;
+		case OIS::KC_SPACE:
+			stopMove(JUMP);
 			break;
     }
 }

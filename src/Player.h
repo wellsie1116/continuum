@@ -29,12 +29,14 @@ class PlayerState : public PhysicsObjectState
 {
 public:
 	PlayerDirection moveDirection;
+	int jumpStep;
 	int pitch;
 
 public:
 	PlayerState()
 		: moveDirection(NONE)
 		, pitch(0)
+		, jumpStep(0)
 	{ }
 
 	PhysicsObjectState* copy() const
@@ -48,6 +50,7 @@ public:
 	{
 		moveDirection = state.moveDirection;
 		pitch = state.pitch;
+		jumpStep = state.jumpStep;
 		return *this;
 	}
 };
