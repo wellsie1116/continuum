@@ -13,6 +13,18 @@
 
 #include "Player.h"
 
+enum AnimID
+{
+	ANIM_IDLE,
+	ANIM_WALK,
+	ANIM_DIE,
+	ANIM_SHOOT,
+	ANIM_SLUMP,
+
+	ANIM_COUNT
+};
+
+
 class PlayerController
 {
 public:
@@ -29,6 +41,9 @@ public:
 private:
 	void setupModel();
 	void setupCamera();
+	void setupAnimations();
+
+	void addTime(Ogre::Real delta);
 
 private:
 	Ogre::SceneManager* mSceneMgr;
@@ -36,6 +51,7 @@ private:
 
 	Ogre::SceneNode* mPlayerNode;
 	Ogre::Entity* mPlayerEntity;
+	Ogre::AnimationState* mAnims[ANIM_COUNT];
 
 	Player* mPlayer;
     OgreBites::SdkCameraMan* mCameraMan;

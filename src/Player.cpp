@@ -13,10 +13,10 @@
 #define PITCH_MAX 3600
 
 #define PLAYER_MASS 30.0
-#define PLAYER_HEIGHT 5.0
-#define PLAYER_CAMERA_HEIGHT 4.0
+#define PLAYER_HEIGHT 8.0
+#define PLAYER_CAMERA_HEIGHT 2.0
 #define PLAYER_CAMERA_RADIUS 20.0
-#define PLAYER_RADIUS 3.0
+#define PLAYER_RADIUS 2.0
 
 Player::Player(Ogre::Camera* camera, PhysicsWorld* world)
 	: mCamera(camera)

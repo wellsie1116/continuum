@@ -1,6 +1,6 @@
 
 #include "PlayerController.h"
-
+	
 PlayerController::PlayerController(Player* player)
 	: mPlayer(player)
 {
@@ -12,6 +12,7 @@ PlayerController::PlayerController(Player* player)
 
 	setupModel();
 	setupCamera();
+	setupAnimations();
 }
 
 PlayerController::~PlayerController()
@@ -26,8 +27,9 @@ PlayerController::~PlayerController()
 bool
 PlayerController::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
-	return true;
 	//return mCameraMan->frameRenderingQueued(evt);
+	addTime(evt.timeSinceLastFrame);
+	return true;
 }
 
 void
@@ -72,8 +74,13 @@ PlayerController::setupModel()
 	//FIXME: fixed camera position to be global
 	playerPosition = mCamera->getPosition();
 	mPlayerNode = root->createChildSceneNode(playerPosition);
-	mPlayerEntity = mSceneMgr->createEntity("SinbadBody", "Sinbad.mesh");
-	mPlayerNode->attachObject(mPlayerEntity);
+	mPlayerEntity = mSceneMgr->createEntity("Robot", "robot.mesh");
+	{
+		Ogre::SceneNode* modelNode = mPlayerNode->createChildSceneNode();
+		modelNode->attachObject(mPlayerEntity);
+		modelNode->yaw(Ogre::Radian(-M_PI/2.0));
+		modelNode->scale(0.1, 0.1, 0.1);
+	}
 	mPlayer->setNode(mPlayerNode);
 }
 
@@ -81,4 +88,30 @@ void
 PlayerController::setupCamera()
 {
 }
+	
+void
+PlayerController::setupAnimations()
+{
+	Ogre::String animName[] = {"Idle", "Walk", "Die", "Shoot", "Slump"};
+
+	for (int i = 0; i < ANIM_COUNT; i++)
+	{
+		mAnims[i] = mPlayerEntity->getAnimationState(animName[i]);
+		mAnims[i]->setLoop(true);
+	}
+
+	mAnims[ANIM_WALK]->setEnabled(true);
+	mAnims[ANIM_WALK]->setWeight(0.1);
+}
+	
+void
+PlayerController::addTime(Ogre::Real delta)
+{
+	for (int i = 0; i < ANIM_COUNT; i++)
+	{
+		mAnims[i]->addTime(delta);
+	}
+
+}
+
 
