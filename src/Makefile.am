@@ -5,6 +5,7 @@ noinst_HEADERS= \
 				ContinuumSceneLoader.h \
 				ContinuumApp.h \
 				continuum.h \
+				InputRecorder.h \
 				PhysicsObject.h \
 				Box.h \
 				Player.h \
@@ -20,6 +21,7 @@ SOURCES= \
 		 DotSceneLoader.cpp \
 		 ContinuumSceneLoader.cpp \
 		 TickTimer.cpp \
+		 InputRecorder.cpp \
 		 PhysicsObject.cpp \
 		 Box.cpp \
 		 Player.cpp \

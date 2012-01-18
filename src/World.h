@@ -4,8 +4,14 @@
 
 #include "WorldObject.h"
 #include "TickTimer.h"
+#include "InputRecorder.h"
 
 #include <glib.h>
+
+#include <OISEvents.h>
+#include <OISInputManager.h>
+#include <OISKeyboard.h>
+#include <OISMouse.h>
 
 #define TICKS_PER_SECOND 120.0
 
@@ -68,6 +74,12 @@ public:
 	void decelerateTime();
 	
 	void step();
+	
+	void injectKeyDown(const OIS::KeyEvent &arg);
+	void injectKeyUp(const OIS::KeyEvent &arg);
+	void injectMouseMove(const OIS::MouseEvent &arg);
+	void injectMouseDown(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
+	void injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 
 private:
 	void updateTimeRate();
@@ -82,6 +94,7 @@ private:
 	GQueue* mObjects; //WorldObject
 
 	SnapshotManager mSnapshots;
+	InputRecorder mRecorder;
 };
 
 
