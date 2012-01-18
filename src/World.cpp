@@ -20,7 +20,6 @@ World::World()
 
 World::~World()
 {
-	//g_queue_foreach(mObjects, (GFunc)free_state, NULL);
 	g_queue_free(mObjects);
 }
 	
