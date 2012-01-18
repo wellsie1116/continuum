@@ -8,11 +8,6 @@
 static float MIN_WORLD_COORDS[] = {-5000.0f, -5000.0f, -5000.0f};
 static float MAX_WORLD_COORDS[] = { 5000.0f,  5000.0f,  5000.0f};
 
-static int DEFAULT_STEP_INDEX = 7;
-static int FREEZE_STEP_INDEX = 5;
-static float STEP_SPEEDS[] = {-16.0, -8.0, -4.0, -2.0, -1.0,
-	0.0, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0};
-
 static void collideCallback(void *data, dGeomID o1, dGeomID o2);
 
 PhysicsWorld::PhysicsWorld()
@@ -21,8 +16,6 @@ PhysicsWorld::PhysicsWorld()
 	, mContactGroup(NULL)
 	, mObjects(NULL)
 	, mSurfaces(NULL)
-	, mTimer(TICKS_PER_SECOND)
-	, mSnapshots(this)
 {
 }
 
@@ -59,12 +52,6 @@ PhysicsWorld::~PhysicsWorld()
 	}
 }
 
-int
-PhysicsWorld::getTimestep()
-{
-	return mTimestep;
-}
-
 void
 PhysicsWorld::init()
 {
@@ -82,52 +69,7 @@ PhysicsWorld::init()
 }
 
 void
-PhysicsWorld::start()
-{
-	mTimestep = 0;
-	mSnapshots.reset();
-	mTimer.start();
-}
-
-void
 PhysicsWorld::step()
-{
-	int ticks = mTimer.getTicks();
-
-	if (ticks >= 0)
-	{
-		for (int i = 0; i < ticks; i++)
-		{
-			mTimestep++;
-			stepWorld();
-			mSnapshots.worldTick(mTimestep);
-		}
-	}
-	else
-	{
-		ticks = -ticks;
-		if (ticks > mTimestep)
-			mTimestep = 0;
-		else
-			mTimestep -= ticks;
-
-		mSnapshots.restoreSnapshot(mTimestep);
-	}
-
-	//synchronize the world
-	GSList* pObjects = mObjects;
-	while (pObjects)
-	{
-		PhysicsObject* obj = (PhysicsObject*)pObjects->data;
-	
-		obj->sync();
-	
-		pObjects = pObjects->next;
-	}
-}
-
-void
-PhysicsWorld::stepWorld()
 {
 	//setup forces
 	for (GSList* pObjects = mObjects; pObjects; pObjects = pObjects->next)
@@ -143,42 +85,17 @@ PhysicsWorld::stepWorld()
 }
 
 void
-PhysicsWorld::freezeTime()
+PhysicsWorld::sync()
 {
-	mStepRate = FREEZE_STEP_INDEX;
-	updateTimeRate();
+	GSList* pObjects = mObjects;
+	while (pObjects)
+	{
+		PhysicsObject* obj = (PhysicsObject*)pObjects->data;
+		obj->sync();
+		pObjects = pObjects->next;
+	}
 }
 
-void
-PhysicsWorld::resumeTime()
-{
-	mStepRate = DEFAULT_STEP_INDEX;
-	updateTimeRate();
-}
-
-void
-PhysicsWorld::accelerateTime()
-{
-	mStepRate++;
-	updateTimeRate();
-}
-
-void
-PhysicsWorld::decelerateTime()
-{
-	mStepRate--;
-	updateTimeRate();
-}
-
-void
-PhysicsWorld::updateTimeRate()
-{
-	if (mStepRate < 0)
-		mStepRate = 0;
-	else if (mStepRate >= (sizeof(STEP_SPEEDS) / sizeof(STEP_SPEEDS[0])))
-		mStepRate = (sizeof(STEP_SPEEDS) / sizeof(STEP_SPEEDS[0])) - 1;
-	mTimer.setTickRate(STEP_SPEEDS[mStepRate]);
-}
 
 Box*
 PhysicsWorld::createCompanionCube(Ogre::SceneNode* node)

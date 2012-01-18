@@ -18,6 +18,7 @@
 
 #include <SdkTrays.h>
 
+#include "World.h"
 #include "PhysicsWorld.h"
 #include "PlayerController.h"
 
@@ -79,6 +80,7 @@ private:
     OIS::Mouse* mMouse;
     OIS::Keyboard* mKeyboard;
 
+	World mWorld;
 	PhysicsWorld mPhysicsWorld;
     
 	PlayerController* mPlayer;

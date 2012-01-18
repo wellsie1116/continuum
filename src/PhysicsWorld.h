@@ -2,16 +2,15 @@
 #ifndef PHYSICSWORLD_H_Z8CVKYR9
 #define PHYSICSWORLD_H_Z8CVKYR9
 
+#include "WorldObject.h"
 #include "Box.h"
 #include "Player.h"
-#include "TickTimer.h"
-#include "PhysicsState.h"
 
 #include <ode/ode.h>
 
 #include <glib.h>
 
-class PhysicsWorld
+class PhysicsWorld : public WorldObject
 {
 public:
 	PhysicsWorld();
@@ -21,17 +20,13 @@ public:
 	Box* createBox(Ogre::SceneNode* node, float mass);
 	Surface* createSurface(Ogre::SceneNode* node);
 	Player* createPlayer(Ogre::Camera* camera);
+	
+	virtual void step();
+	virtual void sync();
+	virtual const WorldObjectState* save() const { return NULL; }
+	virtual void restore(const WorldObjectState* state) { }
 
-	int getTimestep();
 	void init();
-	void start();
-	void step();
-	void stepWorld();
-
-	void freezeTime();
-	void resumeTime();
-	void accelerateTime();
-	void decelerateTime();
 
 	dWorldID getWorld() { return mWorld; }
 	dSpaceID getSpace() { return mSpace; }
@@ -39,20 +34,12 @@ public:
 	void nearCollide(dGeomID o1, dGeomID o2);
 
 private:
-	void updateTimeRate();
-
-private:
 	dWorldID mWorld;
 	dSpaceID mSpace;
 	dJointGroupID mContactGroup;
-	unsigned long mTimestep;
-	int mStepRate;
 
-	TickTimer mTimer;
 	GSList* mObjects;
 	GSList* mSurfaces;
-
-	SnapshotManager mSnapshots;
 };
 
 #endif

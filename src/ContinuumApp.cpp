@@ -74,12 +74,13 @@ int ContinuumApp::setup()
 	loadResources();
 
 	mPhysicsWorld.init();
+	mWorld.addObject(&mPhysicsWorld);
 
 	createScene();
 	
 	createListeners();
 
-	mPhysicsWorld.start();
+	mWorld.start();
 
 	return 0;
 }
@@ -182,7 +183,7 @@ bool ContinuumApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 
 bool ContinuumApp::frameStarted(const Ogre::FrameEvent& evt)
 {
-	mPhysicsWorld.step();
+	mWorld.step();
 	return true;
 }
 
@@ -196,7 +197,7 @@ bool ContinuumApp::keyPressed(const OIS::KeyEvent &arg)
 			mQuit = true;
 			break;
 		case OIS::KC_LMENU:
-			mPhysicsWorld.freezeTime();
+			mWorld.freezeTime();
 			mTimeControl = true;
 			break;
 		default:
@@ -213,7 +214,7 @@ bool ContinuumApp::keyReleased(const OIS::KeyEvent &arg)
 	switch (arg.key)
 	{
 		case OIS::KC_LMENU:
-			mPhysicsWorld.resumeTime();
+			mWorld.resumeTime();
 			mTimeControl = false;
 			break;
 		default:
@@ -234,11 +235,11 @@ bool ContinuumApp::mouseMoved(const OIS::MouseEvent &arg)
 	{
 		if (arg.state.Z.rel > 0)
 		{
-			mPhysicsWorld.accelerateTime();
+			mWorld.accelerateTime();
 		}
 		else if (arg.state.Z.rel < 0)
 		{
-			mPhysicsWorld.decelerateTime();
+			mWorld.decelerateTime();
 		}
 	}
 
@@ -251,7 +252,7 @@ bool ContinuumApp::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 	
 	if (id == 2)
 	{
-		mPhysicsWorld.freezeTime();
+		mWorld.freezeTime();
 		return true;
 	}
 	

@@ -1,5 +1,5 @@
 noinst_HEADERS= \
-				vect.h
+				vect.h \
 				PlayerController.h \
 				DotSceneLoader.h \
 				ContinuumSceneLoader.h \
@@ -10,7 +10,9 @@ noinst_HEADERS= \
 				Player.h \
 				PhysicsWorld.h \
 				PhysicsState.h \
-				TickTimer.h
+				TickTimer.h \
+				World.cpp
+
 
 SOURCES= \
 		 vect.cpp \
@@ -21,10 +23,12 @@ SOURCES= \
 		 PhysicsObject.cpp \
 		 Box.cpp \
 		 Player.cpp \
+		 World.cpp \
 		 PhysicsWorld.cpp \
 		 PhysicsState.cpp \
 		 ContinuumApp.cpp \
 		 continuum.cpp
+
  
 bin_PROGRAMS=continuum
 continuum_CPPFLAGS= -I$(top_srcdir) -I/usr/local/include/tinyxml

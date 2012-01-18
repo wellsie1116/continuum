@@ -167,7 +167,7 @@ SnapshotManager::restoreSnapshot(int timestep)
 
 	for (int i = state->getTimestep() + 1; i <= timestep; i++)
 	{
-		mWorld->stepWorld();
+		mWorld->step();
 		state = new WorldSnapshot(mWorld, i);
 		add(state);
 	}
