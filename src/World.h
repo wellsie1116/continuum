@@ -9,8 +9,50 @@
 
 #define TICKS_PER_SECOND 120.0
 
+class WorldSnapshot {};
+
 class World
 {
+private:
+	class Snapshot
+	{
+	public:
+		Snapshot(World* world, int timestep);
+		~Snapshot();
+
+		void restore();
+		int getTimestep() { return mTimestep; }
+
+		static void free(Snapshot* snapshot, gpointer user_data);
+
+	private:
+		int mTimestep;
+		int mCount;
+		WorldObject** mObjects;
+		WorldObjectState** mStates;
+	};
+
+	class SnapshotManager
+	{
+	public:
+		SnapshotManager(World* world);
+		~SnapshotManager();
+
+		void reset();
+
+		void worldTick(int timestep);
+		void restoreSnapshot(int timestep);
+
+	private:
+		void add(Snapshot* snapshot);
+		void purgeAfter(int timestep);
+		Snapshot* getClosest(int timestep);
+
+	private:
+		GQueue* mSnapshots;
+		World* mWorld;
+	};
+
 public:
 	World();
 	~World();
@@ -30,12 +72,27 @@ public:
 private:
 	void updateTimeRate();
 
+	void stepOnce();
+
 private:
 	TickTimer mTimer;
 	int mStepRate;
 	unsigned long mTimestep;
 
 	GQueue* mObjects; //WorldObject
+
+	SnapshotManager mSnapshots;
 };
+
+
+//class SnapshotSet
+//{
+//public:
+//	void add(WorldSnapshot* state); //tree
+//	bool contains(int timestep);   //tree
+//	void purgeAfter(int timestep); //array/list
+//	WorldSnapshot* getClosest(int timestep);  //array
+//	void prune(int timestep);      //list
+//};
 
 #endif

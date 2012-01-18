@@ -3,13 +3,8 @@
 
 #include "PhysicsWorld.h"
 
-#define SNAPSHOT_TICKS 100
-
-static void free_snapshot(WorldSnapshot* state, gpointer user_data);
-
-WorldSnapshot::WorldSnapshot(PhysicsWorld* world, int timestep)
+WorldSnapshot::WorldSnapshot(PhysicsWorld* world)
 	: mWorld(world)
-	, mTimestep(timestep)
 {
 	mSeed = dRandGetSeed();
 
@@ -43,7 +38,6 @@ WorldSnapshot::restore()
 	{
 		PhysicsObject* obj = mStates[i]->getPhysObject();
 		mStates[i]->restore();
-		obj->sync();
 	}
 
 	dRandSetSeed(mSeed);
@@ -123,100 +117,5 @@ PhysicsObject*
 BodyState::getPhysObject()
 {
 	return (PhysicsObject*)dGeomGetData(mGeom);
-}
-
-SnapshotManager::SnapshotManager(PhysicsWorld* world)
-	: mWorld(world)
-{
-	mStates = g_queue_new();
-}
-
-SnapshotManager::~SnapshotManager()
-{
-	g_queue_foreach(mStates, (GFunc)free_snapshot, NULL);
-	g_queue_free(mStates);
-}
-
-void
-SnapshotManager::reset()
-{
-	//clear old states
-	g_queue_foreach(mStates, (GFunc)free_snapshot, NULL);
-	g_queue_clear(mStates);
-
-	//add the initial state
-	add(new WorldSnapshot(mWorld, 0));
-}
-
-void
-SnapshotManager::worldTick(int timestep)
-{
-	if (timestep % SNAPSHOT_TICKS == SNAPSHOT_TICKS - 1)
-	{
-		WorldSnapshot* state = new WorldSnapshot(mWorld, timestep);
-		add(state);
-	}
-}
-
-void
-SnapshotManager::restoreSnapshot(int timestep)
-{
-	WorldSnapshot* state = getClosest(timestep);
-	purgeAfter(state->getTimestep());
-	state->restore();
-
-	for (int i = state->getTimestep() + 1; i <= timestep; i++)
-	{
-		mWorld->step();
-		state = new WorldSnapshot(mWorld, i);
-		add(state);
-	}
-}
-
-void
-SnapshotManager::add(WorldSnapshot* state)
-{
-	if (mStates->length)
-	{
-		g_assert( ((WorldSnapshot*)mStates->tail->data)->getTimestep() <
-				  state->getTimestep());
-	}
-
-	g_queue_push_tail(mStates, state);
-}
-
-WorldSnapshot*
-SnapshotManager::getClosest(int timestep)
-{
-	for (GList* pStates = mStates->tail; pStates; pStates = pStates->prev)
-	{
-		WorldSnapshot* state = (WorldSnapshot*)pStates->data;
-		if (state->getTimestep() < timestep)
-			return state;
-	}
-	return (WorldSnapshot*)mStates->head->data;
-}
-
-void
-SnapshotManager::purgeAfter(int timestep)
-{
-	if (timestep < 0)
-		timestep = 0;
-
-	WorldSnapshot* state;
-	while (state = (WorldSnapshot*)g_queue_peek_tail(mStates))
-	{
-		if (state->getTimestep() <= timestep)
-			break;
-
-		delete state;
-		g_queue_pop_tail(mStates);
-	}
-}
-
-static void
-free_snapshot(WorldSnapshot* state, gpointer user_data)
-{
-	delete state;
 }
 

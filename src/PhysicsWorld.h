@@ -23,8 +23,8 @@ public:
 	
 	virtual void step();
 	virtual void sync();
-	virtual const WorldObjectState* save() const { return NULL; }
-	virtual void restore(const WorldObjectState* state) { }
+	virtual WorldObjectState* save();
+	virtual void restore(WorldObjectState* state);
 
 	void init();
 

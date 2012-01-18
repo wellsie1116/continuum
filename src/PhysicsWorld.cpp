@@ -1,6 +1,8 @@
 
 #include "PhysicsWorld.h"
 
+#include "PhysicsState.h"
+
 #define TICKS_PER_SECOND 120.0
 
 #define MAX_CONTACTS 50
@@ -95,7 +97,18 @@ PhysicsWorld::sync()
 		pObjects = pObjects->next;
 	}
 }
+	
+WorldObjectState* 
+PhysicsWorld::save()
+{ 
+	return new WorldSnapshot(this);
+}
 
+void 
+PhysicsWorld::restore(WorldObjectState* state)
+{
+	((WorldSnapshot*)state)->restore();
+}
 
 Box*
 PhysicsWorld::createCompanionCube(Ogre::SceneNode* node)
