@@ -65,6 +65,7 @@ public:
 
 public:
 	void addObject(WorldObject* object);
+	void addInputController(InputController* object);
 
 	void start();
 
@@ -86,12 +87,15 @@ private:
 
 	void stepOnce();
 
+	void setTimestep(unsigned long timestep);
+
 private:
 	TickTimer mTimer;
 	int mStepRate;
 	unsigned long mTimestep;
 
 	GQueue* mObjects; //WorldObject
+	GQueue* mInputControllers; //InputController
 
 	SnapshotManager mSnapshots;
 	InputRecorder mRecorder;

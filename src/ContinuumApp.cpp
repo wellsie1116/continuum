@@ -77,6 +77,7 @@ int ContinuumApp::setup()
 	mWorld.addObject(&mPhysicsWorld);
 
 	createScene();
+	mWorld.addInputController(mPlayer);
 	
 	createListeners();
 
@@ -201,7 +202,7 @@ bool ContinuumApp::keyPressed(const OIS::KeyEvent &arg)
 			mTimeControl = true;
 			break;
 		default:
-			mPlayer->injectKeyDown(arg);
+			mWorld.injectKeyDown(arg);
 			return false;
     }
     
@@ -218,7 +219,7 @@ bool ContinuumApp::keyReleased(const OIS::KeyEvent &arg)
 			mTimeControl = false;
 			break;
 		default:
-			mPlayer->injectKeyUp(arg);
+			mWorld.injectKeyUp(arg);
 			return false;
     }
 
@@ -229,7 +230,7 @@ bool ContinuumApp::mouseMoved(const OIS::MouseEvent &arg)
 {
     if (mTrayMgr->injectMouseMove(arg)) return true;
     
-	mPlayer->injectMouseMove(arg);
+	mWorld.injectMouseMove(arg);
 
 	if (mTimeControl)
 	{
@@ -256,7 +257,7 @@ bool ContinuumApp::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 		return true;
 	}
 	
-	mPlayer->injectMouseDown(arg, id);
+	mWorld.injectMouseDown(arg, id);
 
 	return true;
 }
@@ -265,7 +266,7 @@ bool ContinuumApp::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID 
 {
     if (mTrayMgr->injectMouseUp(arg, id)) return true;
 
-	mPlayer->injectMouseUp(arg, id);
+	mWorld.injectMouseUp(arg, id);
 
 	return true;
 }

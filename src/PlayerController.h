@@ -11,6 +11,7 @@
 
 #include <SdkCameraMan.h>
 
+#include "WorldObject.h"
 #include "Player.h"
 
 enum AnimID
@@ -25,7 +26,7 @@ enum AnimID
 };
 
 
-class PlayerController
+class PlayerController : public InputController
 {
 public:
     PlayerController(Player* player);

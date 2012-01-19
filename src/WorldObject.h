@@ -25,11 +25,11 @@ public:
 class InputController
 {
 public:
-	virtual void injectKeyDown(const OIS::KeyEvent &arg);
-	virtual void injectKeyUp(const OIS::KeyEvent &arg);
-	virtual void injectMouseMove(const OIS::MouseEvent &arg);
-	virtual void injectMouseDown(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
-	virtual void injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
+	virtual void injectKeyDown(const OIS::KeyEvent &arg) = 0;
+	virtual void injectKeyUp(const OIS::KeyEvent &arg) = 0;
+	virtual void injectMouseMove(const OIS::MouseEvent &arg) = 0;
+	virtual void injectMouseDown(const OIS::MouseEvent &arg, OIS::MouseButtonID id) = 0;
+	virtual void injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID id) = 0;
 };
 
 #endif
