@@ -102,10 +102,10 @@ public:
 	void injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 
 	void setTimestep(unsigned int timestep);
+	void playback(InputController* obj);
 	
 private:
 	unsigned int mTimestep;
-	bool isRecording;
 
 	EventQueue* mQueue;
 };

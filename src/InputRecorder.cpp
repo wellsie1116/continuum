@@ -283,4 +283,10 @@ InputRecorder::setTimestep(unsigned int timestep)
 {
 	mQueue->setTimestep(timestep);
 }
+	
+void
+InputRecorder::playback(InputController* obj)
+{
+	mQueue->playback(obj);
+}
 

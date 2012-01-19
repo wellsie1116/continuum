@@ -276,10 +276,23 @@ World::SnapshotManager::restoreSnapshot(int timestep)
 	World::Snapshot* snapshot = getClosest(timestep);
 	purgeAfter(snapshot->getTimestep());
 	snapshot->restore();
+	//mWorld->mRecorder.setTimestep(snapshot->getTimestep());
+	//for (GList* pInputs = mWorld->mInputControllers->head; pInputs; pInputs = pInputs->next)
+	//{
+	//	InputController* pObj = (InputController*)pInputs->data;
+	//	mWorld->mRecorder.playback(pObj);
+	//}
 
 	for (int i = snapshot->getTimestep() + 1; i <= timestep; i++)
 	{
+		//mWorld->mRecorder.setTimestep(i);
+		//for (GList* pInputs = mWorld->mInputControllers->head; pInputs; pInputs = pInputs->next)
+		//{
+		//	InputController* pObj = (InputController*)pInputs->data;
+		//	mWorld->mRecorder.playback(pObj);
+		//}
 		mWorld->stepOnce();
+
 		snapshot = new World::Snapshot(mWorld, i);
 		add(snapshot);
 	}
