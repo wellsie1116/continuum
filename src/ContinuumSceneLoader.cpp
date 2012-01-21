@@ -3,6 +3,7 @@
 
 #include <OgreUserObjectBindings.h>
 #include <OgreSceneNode.h>
+#include <OgreEntity.h>
 
 ContinuumSceneLoader::ContinuumSceneLoader(PhysicsWorld* physicsWorld)
 	: DotSceneLoader()
@@ -13,6 +14,7 @@ void
 ContinuumSceneLoader::onEntityCreated(Ogre::Entity* pEntity, Ogre::SceneNode* pParentNode)
 {
 	Ogre::UserObjectBindings& bindings = pParentNode->getUserObjectBindings();
+	pEntity->setCastShadows(true);
 
 	Ogre::Any physType = bindings.getUserAny("Physics");
 	if (!physType.isEmpty())

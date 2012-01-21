@@ -74,10 +74,10 @@ PlayerController::setupModel()
 
 	Ogre::Vector3 playerPosition;
 	playerPosition = mCamera->getPosition();
-	mPlayerNode = root->createChildSceneNode(playerPosition);
+	mPlayerNode = root->createChildSceneNode("PlayerNode", playerPosition);
 	mPlayerEntity = mSceneMgr->createEntity("Robot", "robot.mesh");
 	{
-		Ogre::SceneNode* modelNode = mPlayerNode->createChildSceneNode();
+		Ogre::SceneNode* modelNode = mPlayerNode->createChildSceneNode("PlayerModelNode");
 		modelNode->attachObject(mPlayerEntity);
 		modelNode->yaw(Ogre::Radian(-M_PI/2.0));
 		//printf("Bounding Radius: %f\n", mPlayerEntity->getBoundingRadius());

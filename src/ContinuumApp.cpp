@@ -73,10 +73,11 @@ int ContinuumApp::setup()
 
 	loadResources();
 
-	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
-	mSceneMgr->setShadowColour(Ogre::ColourValue(0.5, 0.5, 0.5));
-	mSceneMgr->setShadowTextureSize(1024);
-	mSceneMgr->setShadowTextureCount(1);
+	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
+	//mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE);
+	//mSceneMgr->setShadowColour(Ogre::ColourValue(0.5, 0.5, 0.5));
+	//mSceneMgr->setShadowTextureSize(1024);
+	//mSceneMgr->setShadowTextureCount(1);
 
 	mPhysicsWorld.init();
 	mWorld.addObject(&mPhysicsWorld);
@@ -310,8 +311,9 @@ void ContinuumApp::cleanup()
 void ContinuumApp::createScene()
 {
 	//load the scene
+	Ogre::SceneNode* scene = mSceneMgr->getRootSceneNode()->createChildSceneNode("Scene");
 	ContinuumSceneLoader loader(&mPhysicsWorld);
-	loader.parseDotScene("testScene.scene", "General", mSceneMgr);
+	loader.parseDotScene("testScene.scene", "General", mSceneMgr, scene);
 
 	//get some objects from it
 	mCamera = mSceneMgr->getCamera("Camera");
