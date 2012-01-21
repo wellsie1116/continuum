@@ -66,7 +66,7 @@ PhysicsWorld::init()
 
 	mWorld = dWorldCreate();
 	mSpace = dHashSpaceCreate(0);
-	dWorldSetGravity(mWorld, 0, -9.8, 0);
+	dWorldSetGravity(mWorld, 0, -5.0, 0);
 	mContactGroup = dJointGroupCreate(0);
 }
 

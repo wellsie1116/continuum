@@ -73,6 +73,11 @@ int ContinuumApp::setup()
 
 	loadResources();
 
+	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+	mSceneMgr->setShadowColour(Ogre::ColourValue(0.5, 0.5, 0.5));
+	mSceneMgr->setShadowTextureSize(1024);
+	mSceneMgr->setShadowTextureCount(1);
+
 	mPhysicsWorld.init();
 	mWorld.addObject(&mPhysicsWorld);
 

@@ -7,16 +7,24 @@
 
 #include "vect.h"
 
-#define CAMERA_RADIUS 0.9
+#define CAMERA_RADIUS 0.2
 #define CAMERA_MASS 0.1
 
 #define PITCH_MAX 3600
 
-#define PLAYER_MASS 30.0
-#define PLAYER_HEIGHT 8.0
-#define PLAYER_CAMERA_HEIGHT 2.0
-#define PLAYER_CAMERA_RADIUS 20.0
-#define PLAYER_RADIUS 2.0
+#define PLAYER_MASS 5.0
+#define PLAYER_RADIUS 1.0
+#define PLAYER_HEIGHT (1.8*2)
+#define PLAYER_HEIGHT_OFFSET .1
+#define PLAYER_CAPSULE_HEIGHT (PLAYER_HEIGHT-2*PLAYER_RADIUS)
+#define PLAYER_CAMERA_HEIGHT 0.2
+#define PLAYER_CAMERA_RADIUS 2.5
+
+#define MOVE_FORCE 20.0
+#define SWIVEL_TORQUE 0.2
+
+#define JUMP_STEP_MAX 10
+#define JUMP_FORCE 50.0
 
 Player::Player(Ogre::Camera* camera, PhysicsWorld* world)
 	: mCamera(camera)
@@ -27,9 +35,11 @@ Player::Player(Ogre::Camera* camera, PhysicsWorld* world)
 	Ogre::Vector3 cameraPos = camera->getPosition();
 	const float* cameraQuat = camera->getOrientation().ptr();
 
+	g_assert((PLAYER_RADIUS + CAMERA_RADIUS) < PLAYER_CAMERA_RADIUS);
+
 	{
 		dMass mass;
-		dMassSetCapsuleTotal(&mass, PLAYER_MASS, 2, PLAYER_RADIUS, PLAYER_HEIGHT);
+		dMassSetCapsuleTotal(&mass, PLAYER_MASS, 2, PLAYER_RADIUS, PLAYER_CAPSULE_HEIGHT);
 		mPlayerBody = dBodyCreate(world->getWorld());
 		dBodySetPosition(mPlayerBody, 
 				cameraPos.x, 
@@ -59,12 +69,12 @@ Player::Player(Ogre::Camera* camera, PhysicsWorld* world)
 	}
 
 	{
-		mPlayerBodyGeom = dCreateCapsule(world->getSpace(), PLAYER_RADIUS, PLAYER_HEIGHT);
+		mPlayerBodyGeom = dCreateCapsule(world->getSpace(), PLAYER_RADIUS, PLAYER_CAPSULE_HEIGHT);
 		dGeomSetBody(mPlayerBodyGeom, mPlayerBody);
 		dGeomSetData(mPlayerBodyGeom, this);
 		dQuaternion geomQuat;
 		dQFromAxisAndAngle(geomQuat, 1.0, 0.0, 0.0, M_PI/2.0);
-		dGeomSetOffsetPosition(mPlayerBodyGeom, 0.0, -PLAYER_CAMERA_HEIGHT/2.0, 0.0);
+		dGeomSetOffsetPosition(mPlayerBodyGeom, 0.0, PLAYER_CAMERA_HEIGHT, 0.0);
 		dGeomSetOffsetQuaternion(mPlayerBodyGeom, geomQuat);
 	}
 	
@@ -97,11 +107,6 @@ Player::Player(Ogre::Camera* camera, PhysicsWorld* world)
 Player::~Player()
 {
 }
-
-#define MOVE_FORCE PLAYER_MASS * 20.0
-#define SWIVEL_TORQUE 20.0
-
-#define JUMP_STEP_MAX 10
 	
 void
 Player::setupForces()
@@ -109,13 +114,12 @@ Player::setupForces()
 	const Ogre::Quaternion& quat = mPlayerNode->getOrientation();
 	Ogre::Vector3 x = quat.xAxis();
 	Ogre::Vector3 z = quat.zAxis();
-	//x *= MOVE_FORCE;
-	//z *= MOVE_FORCE;
 
-	Ogre::Vector3 d;
+	Ogre::Vector3 dPlayer;
+	Ogre::Vector3 dCamera;
 	if (state.moveDirection & (FORWARD | BACKWARD | LEFT | RIGHT))
 	{
-		int dir = state.moveDirection;
+		int dir = state.moveDirection & (FORWARD | BACKWARD | LEFT | RIGHT);
 		if ((dir & (FORWARD | BACKWARD)) == (FORWARD | BACKWARD))
 			dir &= ~(FORWARD | BACKWARD);
 		if ((dir & (LEFT | RIGHT)) == (LEFT | RIGHT))
@@ -123,41 +127,59 @@ Player::setupForces()
 		switch (dir)
 		{
 			case FORWARD:
-				d = z;
+				dPlayer = z;
+				dCamera = Ogre::Vector3(0.0);
 				break;
 			case LEFT:
-				d = x;
+				dPlayer = x;
+				dCamera = x;
 				break;
 			case BACKWARD:
-				d = -z;
+				dPlayer = -z;
+				dCamera = Ogre::Vector3(0.0);
 				break;
 			case RIGHT:
-				d = -x;
+				dPlayer = -x;
+				dCamera = -x;
 				break;
 			case FORWARD | LEFT:
-				d = z + x;
+				dPlayer = z + x;
+				dCamera = x;
 				break;
 			case FORWARD | RIGHT:
-				d = z - x;
+				dPlayer = z - x;
+				dCamera = -x;
 				break;
 			case BACKWARD | LEFT:
-				d = -z + x;
+				dPlayer = -z + x;
+				dCamera = x;
 				break;
 			case BACKWARD | RIGHT:
-				d = -z - x;
+				dPlayer = -z - x;
+				dCamera = -x;
 				break;
+			default:
+				g_assert_not_reached();
 		}
-		d.normalise();
-		d *= MOVE_FORCE;
 
-		dBodyAddForce(mPlayerBody, d[0], d[1], d[2]);
+		dPlayer.normalise();
+		dPlayer *= MOVE_FORCE * PLAYER_MASS;
+		dBodyAddForce(mPlayerBody, dPlayer[0], dPlayer[1], dPlayer[2]);
+
+		if (!dCamera.isZeroLength())
+		{
+			dCamera.normalise();
+			dCamera *= MOVE_FORCE * CAMERA_MASS;
+			dBodyAddRelForce(mCameraBody, dCamera[0], dCamera[1], dCamera[2]);
+		}
 	}
 
 	if (state.moveDirection & JUMP)
 	{
 		if (state.jumpStep < JUMP_STEP_MAX)
 		{
-			dBodyAddRelForce(mPlayerBody, 0.0, 100.0 * PLAYER_MASS, 0.0);
+			dBodyAddRelForce(mPlayerBody, 0.0, JUMP_FORCE*PLAYER_MASS, 0.0);
+			dBodyAddRelForce(mCameraBody, 0.0, JUMP_FORCE*CAMERA_MASS, 0.0);
 			state.jumpStep++;
 		}
 	}
@@ -173,7 +195,7 @@ Player::setupForces()
 		const float* vel = dBodyGetLinearVel(mPlayerBody);
 		if (state.moveDirection & (FORWARD | BACKWARD | LEFT | RIGHT))
 		{
-			Ogre::Vector3 move(d);
+			Ogre::Vector3 move(dPlayer);
 			move.normalise();
 
 			Vector3 velocity = {vel[0], vel[1], vel[2]};
@@ -220,7 +242,7 @@ void Player::sync()
 	{
 		mPlayerNode->setPosition(
 				mPlayerPos[0],
-				mPlayerPos[1] - PLAYER_HEIGHT/2.0,
+				mPlayerPos[1] - PLAYER_HEIGHT/2.0 + PLAYER_HEIGHT_OFFSET,
 				mPlayerPos[2]);
 
 		Ogre::Vector3 orientation(

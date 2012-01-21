@@ -1,6 +1,8 @@
 
 #include "PlayerController.h"
 	
+#define PLAYER_SCALE .025
+
 PlayerController::PlayerController(Player* player)
 	: mPlayer(player)
 {
@@ -71,7 +73,6 @@ PlayerController::setupModel()
 	Ogre::SceneNode* root = mSceneMgr->getRootSceneNode();
 
 	Ogre::Vector3 playerPosition;
-	//FIXME: fixed camera position to be global
 	playerPosition = mCamera->getPosition();
 	mPlayerNode = root->createChildSceneNode(playerPosition);
 	mPlayerEntity = mSceneMgr->createEntity("Robot", "robot.mesh");
@@ -79,7 +80,9 @@ PlayerController::setupModel()
 		Ogre::SceneNode* modelNode = mPlayerNode->createChildSceneNode();
 		modelNode->attachObject(mPlayerEntity);
 		modelNode->yaw(Ogre::Radian(-M_PI/2.0));
-		modelNode->scale(0.1, 0.1, 0.1);
+		//printf("Bounding Radius: %f\n", mPlayerEntity->getBoundingRadius());
+		modelNode->scale(PLAYER_SCALE, PLAYER_SCALE, PLAYER_SCALE);
+		//printf("Bounding Radius: %f\n", mPlayerEntity->getBoundingRadius());
 	}
 	mPlayer->setNode(mPlayerNode);
 }
