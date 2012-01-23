@@ -117,14 +117,14 @@ Player::setupForces()
 
 	Ogre::Vector3 dPlayer;
 	Ogre::Vector3 dCamera;
-	if (state.moveDirection & (FORWARD | BACKWARD | LEFT | RIGHT))
+	int moveDir = state.moveDirection & (FORWARD | BACKWARD | LEFT | RIGHT);
+	if ((moveDir & (FORWARD | BACKWARD)) == (FORWARD | BACKWARD))
+		moveDir &= ~(FORWARD | BACKWARD);
+	if ((moveDir & (LEFT | RIGHT)) == (LEFT | RIGHT))
+		moveDir &= ~(LEFT | RIGHT);
+	if (moveDir & (FORWARD | BACKWARD | LEFT | RIGHT))
 	{
-		int dir = state.moveDirection & (FORWARD | BACKWARD | LEFT | RIGHT);
-		if ((dir & (FORWARD | BACKWARD)) == (FORWARD | BACKWARD))
-			dir &= ~(FORWARD | BACKWARD);
-		if ((dir & (LEFT | RIGHT)) == (LEFT | RIGHT))
-			dir &= ~(LEFT | RIGHT);
-		switch (dir)
+		switch (moveDir)
 		{
 			case FORWARD:
 				dPlayer = z;
@@ -193,7 +193,7 @@ Player::setupForces()
 	//dampen player velocity
 	{
 		const float* vel = dBodyGetLinearVel(mPlayerBody);
-		if (state.moveDirection & (FORWARD | BACKWARD | LEFT | RIGHT))
+		if (moveDir & (FORWARD | BACKWARD | LEFT | RIGHT))
 		{
 			Ogre::Vector3 move(dPlayer);
 			move.normalise();
