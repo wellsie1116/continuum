@@ -3,7 +3,7 @@
 
 #include <OgreMovableObject.h>
 
-Ogre::Vector3 PhysicsObject::getBounds(Ogre::SceneNode* node)
+Ogre::Vector3 PhysicsObject::getBounds(Ogre::SceneNode* node, Ogre::Vector3& offset)
 {
 	Ogre::AxisAlignedBox bounds;
 	bounds.setNull();
@@ -18,6 +18,17 @@ Ogre::Vector3 PhysicsObject::getBounds(Ogre::SceneNode* node)
 	Ogre::Vector3 range = (bounds.getMaximum() - bounds.getMinimum()) * node->getScale();
 	Ogre::Vector3 min = Ogre::Vector3(0.1f);
 	range.makeCeil(min);
+
+	//{
+	//	Ogre::Vector3 min = bounds.getMinimum();
+	//	Ogre::Vector3 max = bounds.getMaximum();
+	//	printf("Bounds: (%.1f, %.1f, %.1f) (%.1f, %.1f, %.1f)\n",
+	//			min[0], min[1], min[2],
+	//			max[0], max[1], max[2]
+	//			);
+	//}
+
+	offset = bounds.getCenter();
 
 	return range;
 }

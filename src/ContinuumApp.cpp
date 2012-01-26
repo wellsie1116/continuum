@@ -207,6 +207,9 @@ bool ContinuumApp::keyPressed(const OIS::KeyEvent &arg)
 			mWorld.freezeTime();
 			mTimeControl = true;
 			break;
+		case OIS::KC_P:
+			mWindow->writeContentsToFile("screenshot.png");
+			break;
 		default:
 			mWorld.injectKeyDown(arg);
 			return false;
@@ -313,7 +316,7 @@ void ContinuumApp::createScene()
 	//load the scene
 	Ogre::SceneNode* scene = mSceneMgr->getRootSceneNode()->createChildSceneNode("Scene");
 	ContinuumSceneLoader loader(&mPhysicsWorld);
-	loader.parseDotScene("testScene.scene", "General", mSceneMgr, scene);
+	loader.parseDotScene("level1.scene", "General", mSceneMgr, scene);
 
 	//get some objects from it
 	mCamera = mSceneMgr->getCamera("Camera");

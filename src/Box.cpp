@@ -12,7 +12,8 @@ Box::Box(Ogre::SceneNode* node, PhysicsWorld* world, float mass)
 	, mPos(NULL)
 	, mMass(mass)
 {
-	Ogre::Vector3 range = getBounds(mNode);
+	Ogre::Vector3 offset;
+	Ogre::Vector3 range = getBounds(mNode, offset);
 
 	dMass m;
 	dMassSetBox(&m, 1, range.x, range.y, range.z);
@@ -21,7 +22,7 @@ Box::Box(Ogre::SceneNode* node, PhysicsWorld* world, float mass)
 	Ogre::Vector3 pos = mNode->getPosition();
 	const float* quat = mNode->getOrientation().ptr();
 	mBody = dBodyCreate(world->getWorld());
-	dBodySetPosition(mBody, pos.x, pos.y, pos.z);
+	dBodySetPosition(mBody, pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
 	dBodySetQuaternion(mBody, quat);
 	dBodySetMass(mBody, &m);
 
@@ -48,16 +49,25 @@ Surface::Surface(Ogre::SceneNode* node, PhysicsWorld* world)
 	: mNode(node)
 	, mGeom(0)
 {
-	Ogre::Vector3 range = getBounds(mNode);
+	Ogre::Vector3 offset;
+	Ogre::Vector3 range = getBounds(mNode, offset);
 
 	Ogre::Vector3 pos = mNode->getPosition();
 	const float* quat = mNode->getOrientation().ptr();
 	mGeom = dCreateBox(world->getSpace(), range.x, range.y, range.z);
-	dGeomSetPosition(mGeom, pos.x, pos.y, pos.z);
+	dGeomSetPosition(mGeom, pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
 	dGeomSetQuaternion(mGeom, quat);
 	dGeomSetData(mGeom, this);
 
 	mPos = dGeomGetPosition(mGeom);
+	
+	//disable shadow casting
+	Ogre::SceneNode::ObjectIterator it = node->getAttachedObjectIterator();
+	while (it.hasMoreElements())
+	{
+		Ogre::MovableObject* obj = it.getNext();
+		obj->setCastShadows(false);
+	}
 }
 
 Surface::~Surface()

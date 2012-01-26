@@ -15,7 +15,7 @@ class PhysicsObject
 	public:
 		virtual ~PhysicsObject() { }
 
-		static Ogre::Vector3 getBounds(Ogre::SceneNode* node);
+		static Ogre::Vector3 getBounds(Ogre::SceneNode* node, Ogre::Vector3& offset);
 
 		virtual void setupForces() = 0;
 		virtual void sync() = 0;
