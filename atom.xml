@@ -4,7 +4,7 @@
   <title><![CDATA[Continuum]]></title>
   <link href="http://wellsie1116.github.com/continuum/atom.xml" rel="self"/>
   <link href="http://wellsie1116.github.com/continuum/"/>
-  <updated>2012-01-19T10:54:22-05:00</updated>
+  <updated>2012-01-26T14:04:02-05:00</updated>
   <id>http://wellsie1116.github.com/continuum/</id>
   <author>
     <name><![CDATA[Kevin Wells]]></name>
@@ -12,6 +12,52 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Shadows and Models]]></title>
+    <link href="http://wellsie1116.github.com/continuum/blog/2012/01/26/shadows-and-models/"/>
+    <updated>2012-01-26T13:44:00-05:00</updated>
+    <id>http://wellsie1116.github.com/continuum/blog/2012/01/26/shadows-and-models</id>
+    <content type="html"><![CDATA[<p>In response to comments from last week, I spent some time adding shadows to the
+scene.  Fortunately, OGRE provides this functionality mostly automatically, and
+I only needed to specify which objects should receive and/or cast shadows.
+After debugging a particularly obscure issues with having my own models (as
+opposed to OGRE&#8217;s built in models) be able to cast shadows, I was able to get
+the visual effect close enough to what I want without as much of a performance
+hit as I expected.  Stencil buffer shadows look very realistic, but they are
+computationally expensive, and while the game was running at around 400FPS, it
+has degraded to about 90FPS.  This may become an issue with larger scenes, but
+OGRE also supports texture based shadows, and I may need to explore that at a
+later time.</p>
+
+<p>I also imported more models to utilize during game play.  Included in the
+screenshot below is a button that is activated when a cube or the player is
+placed upon it. I will use buttons to perform various actions in the levels,
+such as opening and closing doors.</p>
+
+<p><img src="http://wellsie1116.github.com/continuum/images/shadows.png"></p>
+
+<h2>Commit log</h2>
+
+<pre><code>Commits:
+Add models to test scene. Design levels.  +4.5h
+Fix character movement issue +.25h
+Tweak character parameters +.25h
+Add shadows to all objects in the scene +1.75h
+Update models, add textures. +4h
+Work on replaying input events +.25h
+Record input events +.5h
+
+Total: 11.5
+</code></pre>
+
+<h2>Looking Ahead</h2>
+
+<p>This next week, I need to finalize some level designs and work out the
+transitions between levels.  I also need to link together objects in the scene,
+so that pressing a button actually does something.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Adding a Character]]></title>
