@@ -1,4 +1,8 @@
+!Makefile
+
 *.material
+*.skeleton
+*.skeleton.xml
 *.mesh
 *.mesh.xml
 _ogre_debug.txt
