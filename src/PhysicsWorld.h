@@ -2,6 +2,8 @@
 #ifndef PHYSICSWORLD_H_Z8CVKYR9
 #define PHYSICSWORLD_H_Z8CVKYR9
 
+#define TICKS_PER_SECOND 120.0
+
 #include "WorldObject.h"
 #include "Box.h"
 #include "Player.h"
@@ -20,6 +22,8 @@ public:
 	Box* createBox(Ogre::SceneNode* node, float mass);
 	Surface* createSurface(Ogre::SceneNode* node);
 	Player* createPlayer(Ogre::Camera* camera);
+	void addLinkSource(int id, PhysicsObject* obj);
+	void addLinkSink(int id, PhysicsObject* obj);
 	
 	virtual void step();
 	virtual void sync();
@@ -40,6 +44,7 @@ private:
 
 	GSList* mObjects;
 	GSList* mSurfaces;
+	GHashTable* mLinks; //PhysicsLink
 };
 
 #endif

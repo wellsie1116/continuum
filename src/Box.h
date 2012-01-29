@@ -44,7 +44,9 @@ class Surface : public PhysicsObject
 		Surface(Ogre::SceneNode* node, PhysicsWorld* world);
 		virtual ~Surface();
 		
-		virtual void setupForces() {}
+		virtual void linkToggled();
+		virtual bool contains(dGeomID geom);
+		virtual void setupForces();
 		virtual void sync();
 		virtual const PhysicsObjectState* save() const { return NULL; }
 		virtual void restore(const PhysicsObjectState* state) {}

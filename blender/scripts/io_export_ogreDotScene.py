@@ -3830,7 +3830,7 @@ class Skeleton(object):
                     _scl = bone.pose_scale
 
                     keyframe = doc.createElement('keyframe')
-                    keyframe.setAttribute('time', str((frame-start)/_fps))
+                    keyframe.setAttribute('time', str((frame-start+1)/_fps))
                     _keyframes[ bonename ].appendChild( keyframe )
                     trans = doc.createElement('translate')
                     keyframe.appendChild( trans )
@@ -3903,7 +3903,7 @@ class Skeleton(object):
                             _scl = bone.pose_scale
 
                             keyframe = doc.createElement('keyframe')
-                            keyframe.setAttribute('time', str((frame-strip.frame_start)/_fps))
+                            keyframe.setAttribute('time', str((frame-strip.frame_start+1)/_fps))
                             _keyframes[ bonename ].appendChild( keyframe )
                             trans = doc.createElement('translate')
                             keyframe.appendChild( trans )

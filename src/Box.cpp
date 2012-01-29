@@ -2,6 +2,10 @@
 #include "Box.h"
 
 #include <OgreMovableObject.h>
+#include <OgreEntity.h>
+#include <OgreAnimationState.h>
+#include <OgreSkeletonInstance.h>
+#include <OgreBone.h>
 
 #include "PhysicsWorld.h"
 
@@ -72,6 +76,102 @@ Surface::Surface(Ogre::SceneNode* node, PhysicsWorld* world)
 
 Surface::~Surface()
 {
+}
+
+void
+Surface::linkToggled()
+{
+	Ogre::SceneNode::ObjectIterator it = mNode->getAttachedObjectIterator();
+	while (it.hasMoreElements())
+	{
+		Ogre::MovableObject* obj = it.getNext();
+		Ogre::Entity* entity = dynamic_cast<Ogre::Entity*>(obj);
+		if (!entity)
+			continue;
+
+		Ogre::AnimationStateSet* anims = entity->getAllAnimationStates();
+		if (!anims->hasAnimationState("Activate"))
+			continue;
+
+		Ogre::AnimationState* anim = anims->getAnimationState("Activate");
+		anim->setLoop(false);
+		anim->setEnabled(true);
+		//if (mLinkEnabled)
+		//{
+		//	anim->setTimePosition(0.0);
+		//}
+		//else
+		//{
+		//	anim->setTimePosition(anim->getLength());
+		//}
+	}
+}
+
+bool 
+Surface::contains(dGeomID geom)
+{
+	return mGeom == geom;
+}
+
+void Surface::setupForces()
+{
+	bool update = false;
+	Ogre::SceneNode::ObjectIterator it = mNode->getAttachedObjectIterator();
+	while (it.hasMoreElements())
+	{
+		Ogre::MovableObject* obj = it.getNext();
+		Ogre::Entity* entity = dynamic_cast<Ogre::Entity*>(obj);
+		if (!entity)
+			continue;
+
+		Ogre::AnimationStateSet* animSet = entity->getAllAnimationStates();
+		if (!animSet)
+			continue;
+
+		Ogre::AnimationStateIterator anims = animSet->getAnimationStateIterator();
+		while (anims.hasMoreElements())
+		{
+			Ogre::AnimationState* anim = anims.getNext();
+			if (!anim->getEnabled())
+				continue;
+
+			//FIXME save and restore anim times
+			if (mLinkEnabled)
+			{
+				anim->addTime(1.0/TICKS_PER_SECOND);
+			}
+			else
+			{
+				anim->addTime(-1.0/TICKS_PER_SECOND);
+			}
+			update = true;
+		}
+	}
+
+	if (!update)
+		return;
+
+	it = mNode->getAttachedObjectIterator();
+	while (it.hasMoreElements())
+	{
+		Ogre::MovableObject* obj = it.getNext();
+		Ogre::Entity* entity = dynamic_cast<Ogre::Entity*>(obj);
+		if (!entity || !entity->hasSkeleton())
+			continue;
+
+		Ogre::SkeletonInstance* skeleton = entity->getSkeleton();
+		Ogre::Bone* bone = skeleton->getRootBone();
+		Ogre::Vector3 anim = bone->getPosition();
+
+		Ogre::Vector3 offset;
+		Ogre::Vector3 range = getBounds(mNode, offset);
+		Ogre::Vector3 pos = mNode->getPosition();
+		dGeomSetPosition(mGeom,
+				pos.x + offset.x + anim.x, 
+				pos.y + offset.y + anim.y, 
+				pos.z + offset.z + anim.z
+				);
+	}
 }
 
 void Surface::sync()

@@ -3,7 +3,8 @@
 
 #include <OgreMovableObject.h>
 
-Ogre::Vector3 PhysicsObject::getBounds(Ogre::SceneNode* node, Ogre::Vector3& offset)
+Ogre::Vector3
+PhysicsObject::getBounds(Ogre::SceneNode* node, Ogre::Vector3& offset)
 {
 	Ogre::AxisAlignedBox bounds;
 	bounds.setNull();
@@ -31,5 +32,18 @@ Ogre::Vector3 PhysicsObject::getBounds(Ogre::SceneNode* node, Ogre::Vector3& off
 	offset = bounds.getCenter();
 
 	return range;
+}
+
+void
+PhysicsObject::setLinkEnabled(bool enabled)
+{
+	mLinkEnabled = enabled;
+	linkToggled();
+}
+
+bool 
+PhysicsObject::contains(dGeomID geom)
+{
+	return false;
 }
 
