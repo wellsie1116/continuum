@@ -1,6 +1,8 @@
 
 #include "ContinuumSceneLoader.h"
 
+#include <OgreSceneManager.h>
+#include <OgreParticleSystem.h>
 #include <OgreUserObjectBindings.h>
 #include <OgreSceneNode.h>
 #include <OgreEntity.h>
@@ -77,6 +79,30 @@ ContinuumSceneLoader::onEntityCreated(Ogre::Entity* pEntity, Ogre::SceneNode* pP
 			int id = anyToInt(linkSink);
 			mPhysicsWorld->addLinkSink(id, obj);
 		}
+	}
+
+	//ps = sceneMgr->createParticleSystem("Aureola", "Examples/Aureola");
+	//ps = sceneMgr->createParticleSystem("Nimbus", "Examples/GreenyNimbus");
+	Ogre::SceneManager* sceneMgr = pParentNode->getCreator();
+	Ogre::Any particles1 = bindings.getUserAny("Particles1");
+	if (!particles1.isEmpty())
+	{
+		Ogre::ParticleSystem::setDefaultNonVisibleUpdateTimeout(5);
+		Ogre::String name = Ogre::any_cast<Ogre::String>(particles1);
+		Ogre::String psName = pParentNode->getName() + "-" + name;
+		Ogre::ParticleSystem* ps;
+		ps = sceneMgr->createParticleSystem(psName, name);
+		pParentNode->attachObject(ps);
+	}
+	Ogre::Any particles2 = bindings.getUserAny("Particles2");
+	if (!particles2.isEmpty())
+	{
+		Ogre::ParticleSystem::setDefaultNonVisibleUpdateTimeout(5);
+		Ogre::String name = Ogre::any_cast<Ogre::String>(particles2);
+		Ogre::String psName = pParentNode->getName() + "-" + name;
+		Ogre::ParticleSystem* ps;
+		ps = sceneMgr->createParticleSystem(psName, name);
+		pParentNode->attachObject(ps);
 	}
 
 }

@@ -316,10 +316,17 @@ void ContinuumApp::createScene()
 	//load the scene
 	Ogre::SceneNode* scene = mSceneMgr->getRootSceneNode()->createChildSceneNode("Scene");
 	ContinuumSceneLoader loader(&mPhysicsWorld);
-	loader.parseDotScene("level1.scene", "General", mSceneMgr, scene);
+	loader.parseDotScene("menu.scene", "General", mSceneMgr, scene);
 
 	//get some objects from it
-	mCamera = mSceneMgr->getCamera("Camera");
+	if (mSceneMgr->hasCamera("Camera"))
+	{
+		mCamera = mSceneMgr->getCamera("Camera");
+	}
+	else
+	{
+		mCamera = mSceneMgr->getCameraIterator().getNext();
+	}
 	{
 		Ogre::Vector3 pos = mCamera->getRealPosition();
 		Ogre::Quaternion orientation = mCamera->getRealOrientation();

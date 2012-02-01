@@ -463,7 +463,7 @@ void DotSceneLoader::processNode(TiXmlElement *XMLNode, SceneNode *pParent)
 
 		pNode->getUserObjectBindings().setUserAny(name, anyValue);
 
-		pElement = pElement->NextSiblingElement("node");
+		pElement = pElement->NextSiblingElement("user_data");
 	}
 
 	// Process entity (*)
