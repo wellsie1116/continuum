@@ -330,7 +330,7 @@ void ContinuumApp::createScene()
 	}
 	Player* player = mPhysicsWorld.createPlayer(mCamera);
 	mPlayer = new PlayerController(player);
-
+		
 	//setup our viewport
     Ogre::Viewport* vp = mWindow->addViewport(mCamera);
     vp->setBackgroundColour(Ogre::ColourValue(0.1, 0.1, 0.1));

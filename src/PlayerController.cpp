@@ -1,7 +1,7 @@
 
 #include "PlayerController.h"
 	
-#define PLAYER_SCALE .025
+#define PLAYER_SCALE .020
 
 PlayerController::PlayerController(Player* player)
 	: mPlayer(player)
@@ -80,9 +80,9 @@ PlayerController::setupModel()
 		Ogre::SceneNode* modelNode = mPlayerNode->createChildSceneNode("PlayerModelNode");
 		modelNode->attachObject(mPlayerEntity);
 		modelNode->yaw(Ogre::Radian(-M_PI/2.0));
-		//printf("Bounding Radius: %f\n", mPlayerEntity->getBoundingRadius());
+		printf("Bounding Radius: %f\n", mPlayerEntity->getBoundingRadius());
 		modelNode->scale(PLAYER_SCALE, PLAYER_SCALE, PLAYER_SCALE);
-		//printf("Bounding Radius: %f\n", mPlayerEntity->getBoundingRadius());
+		printf("Bounding Radius: %f\n", mPlayerEntity->getBoundingRadius());
 	}
 	mPlayer->setNode(mPlayerNode);
 }

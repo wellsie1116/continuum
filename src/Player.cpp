@@ -13,14 +13,20 @@
 #define PITCH_MAX 3600
 
 #define PLAYER_MASS 5.0
+//radius of player's cylinder
 #define PLAYER_RADIUS 0.5
-#define PLAYER_HEIGHT (1.8*2)
-#define PLAYER_HEIGHT_OFFSET .1
+//total height of player
+#define PLAYER_HEIGHT 1.62
+//vertical offset of rendered mesh
+#define PLAYER_HEIGHT_OFFSET -.05
+//height used when constructing physics capsules
 #define PLAYER_CAPSULE_HEIGHT (PLAYER_HEIGHT-2*PLAYER_RADIUS)
-#define PLAYER_CAMERA_HEIGHT 0.2
-#define PLAYER_CAMERA_RADIUS 2.5
 
-#define MOVE_FORCE 20.0
+#define PLAYER_CAMERA_HEIGHT 0.2
+#define PLAYER_CAMERA_RADIUS 1.8
+#define PLAYER_CAMERA_TRACK_RADIUS sqrt(PLAYER_CAMERA_RADIUS*PLAYER_CAMERA_RADIUS+PLAYER_CAMERA_HEIGHT*PLAYER_CAMERA_HEIGHT)
+
+#define MOVE_FORCE 16.0
 #define SWIVEL_TORQUE 0.2
 
 #define JUMP_STEP_MAX 10
@@ -59,7 +65,7 @@ Player::Player(Ogre::Camera* camera, PhysicsWorld* world)
 		Ogre::Vector3 pos(z[0], 0.0, z[2]);
 		pos.normalise();
 		pos *= PLAYER_CAMERA_RADIUS;
-		pos[1] += PLAYER_HEIGHT + PLAYER_CAMERA_HEIGHT;
+		pos[1] = PLAYER_HEIGHT + PLAYER_CAMERA_HEIGHT;
 		pos += cameraPos;
 
 		mCameraBody = dBodyCreate(world->getWorld());
@@ -74,7 +80,7 @@ Player::Player(Ogre::Camera* camera, PhysicsWorld* world)
 		dGeomSetData(mPlayerBodyGeom, this);
 		dQuaternion geomQuat;
 		dQFromAxisAndAngle(geomQuat, 1.0, 0.0, 0.0, M_PI/2.0);
-		dGeomSetOffsetPosition(mPlayerBodyGeom, 0.0, PLAYER_CAMERA_HEIGHT, 0.0);
+		//dGeomSetOffsetPosition(mPlayerBodyGeom, 0.0, 0.0, 0.0);
 		dGeomSetOffsetQuaternion(mPlayerBodyGeom, geomQuat);
 	}
 	
@@ -89,7 +95,7 @@ Player::Player(Ogre::Camera* camera, PhysicsWorld* world)
 		dJointAttach(mCameraSwivel, mPlayerBody, mCameraBody);
 		dJointSetHingeAnchor(mCameraSwivel, 
 				cameraPos.x, 
-				cameraPos.y + PLAYER_HEIGHT, 
+				cameraPos.y + PLAYER_HEIGHT + PLAYER_HEIGHT_OFFSET, 
 				cameraPos.z);
 		dJointSetHingeAxis(mCameraSwivel, 0.0, 1.0, 0.0);
 	}
@@ -232,11 +238,18 @@ Player::setupForces()
 
 void Player::sync()
 {
+	double angle = state.pitch*M_PI*0.5*0.95/PITCH_MAX;
+	double xdiff = PLAYER_CAMERA_TRACK_RADIUS * cos(angle);
+
+	Ogre::Vector3 horiz = Ogre::Vector3(mCameraPos) - Ogre::Vector3(mPlayerPos);
+	horiz.y = 0;
+	horiz.normalise();
+	horiz *= xdiff;
+
 	mCamera->setPosition(
-			mCameraPos[0],
-			mCameraPos[1] - (0*PLAYER_HEIGHT/2.0 +
-				4 * PLAYER_HEIGHT * state.pitch / PITCH_MAX), 
-			mCameraPos[2]);
+			mCameraPos[0] + horiz.x,
+			mCameraPos[1] - PLAYER_CAMERA_TRACK_RADIUS * sin(angle),
+			mCameraPos[2] + horiz.z);
 
 	if (mPlayerNode)
 	{
@@ -271,7 +284,7 @@ void Player::setNode(Ogre::SceneNode* node)
 	if (mPlayerNode)
 	{
 		mCameraTrackNode = mPlayerNode->createChildSceneNode(
-				Ogre::Vector3::UNIT_Y * PLAYER_HEIGHT/2.0);
+				Ogre::Vector3::UNIT_Y * PLAYER_HEIGHT);
 		mCamera->setAutoTracking(true, mCameraTrackNode);
 	}
 }
