@@ -73,6 +73,8 @@ public:
 	void injectKeyDown(const OIS::KeyEvent &arg);
 	void injectKeyUp(const OIS::KeyEvent &arg);
 	void injectMouseMove(const OIS::MouseEvent &arg);
+	
+	double getForwardVelocity();
 
 private:
 	void startMove(PlayerDirection dir);

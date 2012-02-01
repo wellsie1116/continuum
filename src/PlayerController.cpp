@@ -80,9 +80,9 @@ PlayerController::setupModel()
 		Ogre::SceneNode* modelNode = mPlayerNode->createChildSceneNode("PlayerModelNode");
 		modelNode->attachObject(mPlayerEntity);
 		modelNode->yaw(Ogre::Radian(-M_PI/2.0));
-		printf("Bounding Radius: %f\n", mPlayerEntity->getBoundingRadius());
+		//printf("Bounding Radius: %f\n", mPlayerEntity->getBoundingRadius());
 		modelNode->scale(PLAYER_SCALE, PLAYER_SCALE, PLAYER_SCALE);
-		printf("Bounding Radius: %f\n", mPlayerEntity->getBoundingRadius());
+		//printf("Bounding Radius: %f\n", mPlayerEntity->getBoundingRadius());
 	}
 	mPlayer->setNode(mPlayerNode);
 }
@@ -103,6 +103,8 @@ PlayerController::setupAnimations()
 		mAnims[i]->setLoop(true);
 	}
 
+	mAnims[ANIM_IDLE]->setEnabled(true);
+	mAnims[ANIM_IDLE]->setWeight(0.1);
 	mAnims[ANIM_WALK]->setEnabled(true);
 	mAnims[ANIM_WALK]->setWeight(0.1);
 }
@@ -110,9 +112,28 @@ PlayerController::setupAnimations()
 void
 PlayerController::addTime(Ogre::Real delta)
 {
+
 	for (int i = 0; i < ANIM_COUNT; i++)
 	{
-		mAnims[i]->addTime(delta);
+		switch (i)
+		{
+			case ANIM_WALK:
+			{
+				Ogre::Real d = delta;
+				double vel = mPlayer->getForwardVelocity();
+				mAnims[ANIM_WALK]->setWeight(vel);
+
+				if (vel < 0.0)
+					d *= -1;
+
+				if (abs(vel) > 5)
+					d *= 1+(abs(vel) - 5.0) * 0.1;
+
+				mAnims[i]->addTime(d);
+			} break;
+			default:
+				mAnims[i]->addTime(delta);
+		}
 	}
 
 }

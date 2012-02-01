@@ -348,6 +348,18 @@ void Player::injectMouseMove(const OIS::MouseEvent &arg)
 	else if (state.pitch  < -PITCH_MAX)
 		state.pitch = -PITCH_MAX;
 }
+	
+double
+Player::getForwardVelocity()
+{
+	const dReal* vel;
+
+	vel = dBodyGetLinearVel(mPlayerBody);
+	Vector3 v = *((Vector3*)vel);
+
+	//FIXME project in the forward direction
+	return vect_magnitude(v);
+}
 
 void
 Player::startMove(PlayerDirection dir)
