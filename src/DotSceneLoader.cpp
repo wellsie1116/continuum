@@ -7,7 +7,7 @@
 using namespace std;
 using namespace Ogre;
 
-void DotSceneLoader::parseDotScene(const String &SceneName, const String &groupName, SceneManager *yourSceneMgr, SceneNode *pAttachNode, const String &sPrependNode)
+bool DotSceneLoader::parseDotScene(const String &SceneName, const String &groupName, SceneManager *yourSceneMgr, SceneNode *pAttachNode, const String &sPrependNode)
 {
 	// set up shared object values
 	m_sGroupName = groupName;
@@ -43,7 +43,7 @@ void DotSceneLoader::parseDotScene(const String &SceneName, const String &groupN
 			//We'll just log, and continue on gracefully
 			LogManager::getSingleton().logMessage("[DotSceneLoader] The TiXmlDocument reported an error");
 			delete XMLDoc;
-			return;
+			return false;
 		}
 	}
 	catch(...)
@@ -51,7 +51,7 @@ void DotSceneLoader::parseDotScene(const String &SceneName, const String &groupN
 		//We'll just log, and continue on gracefully
 		LogManager::getSingleton().logMessage("[DotSceneLoader] Error creating TiXmlDocument");
 		delete XMLDoc;
-		return;
+		return false;
 	}
 
 	// Validate the File
@@ -59,7 +59,7 @@ void DotSceneLoader::parseDotScene(const String &SceneName, const String &groupN
 	if( String( XMLRoot->Value()) != "scene"  ) {
 		LogManager::getSingleton().logMessage( "[DotSceneLoader] Error: Invalid .scene File. Missing <scene>" );
 		delete XMLDoc;      
-		return;
+		return false;
 	}
 
 	// figure out where to attach any nodes we create
@@ -72,6 +72,7 @@ void DotSceneLoader::parseDotScene(const String &SceneName, const String &groupN
 
 	// Close the XML File
 	delete XMLDoc;
+	return true;
 }
 
 void DotSceneLoader::processScene(TiXmlElement *XMLRoot)

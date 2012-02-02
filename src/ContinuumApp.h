@@ -34,6 +34,7 @@ public:
 	~ContinuumApp ();
 
 	int run();
+	void requestLoadLevel(Ogre::String name);
 
 private:
 	int setup();
@@ -42,7 +43,8 @@ private:
 	bool configure();
 	void createListeners();
 	void cleanup();
-	void createScene();
+	void loadScene(Ogre::String name);
+	void createScene(Ogre::String name);
 
     // Ogre::FrameListener
     bool frameRenderingQueued(const Ogre::FrameEvent& evt);
@@ -65,6 +67,7 @@ private:
     static Ogre::String mResourcesCfg;
     static Ogre::String mPluginsCfg;
 
+	Ogre::String mLoadLevel;
 	bool mQuit;
 
 	bool mTimeControl;
@@ -80,8 +83,8 @@ private:
     OIS::Mouse* mMouse;
     OIS::Keyboard* mKeyboard;
 
-	World mWorld;
-	PhysicsWorld mPhysicsWorld;
+	World* mWorld;
+	PhysicsWorld* mPhysicsWorld;
     
 	PlayerController* mPlayer;
 };

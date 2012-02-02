@@ -2,13 +2,16 @@
 #include "continuum.h"
 #include "ContinuumApp.h"
 
+ContinuumApp* app;
+
 int main(int argc, char *argv[])
 {
-	ContinuumApp app;
-
+	app = new ContinuumApp();
 	try
 	{
-		return app.run();
+		int res = app->run();
+		delete app;
+		return res;
 	}
 	catch (Ogre::Exception& e)
 	{

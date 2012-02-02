@@ -1,12 +1,12 @@
 
+#include "ContinuumApp.h"
 #include "PhysicsWorld.h"
 
 #include "PhysicsState.h"
 
 #define MAX_CONTACTS 50
 
-static float MIN_WORLD_COORDS[] = {-5000.0f, -5000.0f, -5000.0f};
-static float MAX_WORLD_COORDS[] = { 5000.0f,  5000.0f,  5000.0f};
+extern ContinuumApp* app;
 
 static void collideCallback(void *data, dGeomID o1, dGeomID o2);
 
@@ -32,6 +32,17 @@ struct PhysicsLink
 	bool mark;
 };
 
+struct PhysicsTeleport
+{
+	PhysicsTeleport(Ogre::String level, PhysicsObject* obj)
+		: level(level)
+		, obj(obj)
+	{ }
+
+	Ogre::String level;
+	PhysicsObject* obj;
+};
+
 static void link_free(PhysicsLink* link);
 static void link_disable(int id, PhysicsLink* link, gpointer user_data);
 static void link_enable(int id, PhysicsLink* link, gpointer user_data);
@@ -42,6 +53,7 @@ PhysicsWorld::PhysicsWorld()
 	, mContactGroup(NULL)
 	, mObjects(NULL)
 	, mSurfaces(NULL)
+	, mTeleports(NULL)
 {
 	mLinks = g_hash_table_new_full(
 			g_direct_hash,
@@ -84,6 +96,11 @@ PhysicsWorld::~PhysicsWorld()
 	}
 
 	g_hash_table_destroy(mLinks);
+
+	for (GSList* pTeleports = mTeleports; pTeleports; pTeleports = pTeleports->next)
+		delete (PhysicsTeleport*)pTeleports->data;
+	g_slist_free(mTeleports);
+	mTeleports = NULL;
 }
 
 void
@@ -221,6 +238,12 @@ PhysicsWorld::addLinkSink(int id, PhysicsObject* obj)
 	
 	link->sinks = g_slist_prepend(link->sinks, obj);
 }
+	
+void
+PhysicsWorld::addTeleporter(Ogre::String name, PhysicsObject* obj)
+{
+	mTeleports = g_slist_prepend(mTeleports, new PhysicsTeleport(name, obj));
+}
 
 void
 PhysicsWorld::nearCollide(dGeomID o1, dGeomID o2)
@@ -297,6 +320,16 @@ PhysicsWorld::nearCollide(dGeomID o1, dGeomID o2)
 						link->mark = true;
 						break;
 					}
+				}
+			}
+
+			for (GSList* pTeleports = mTeleports; pTeleports; pTeleports = pTeleports->next)
+			{
+				PhysicsTeleport* teleport = (PhysicsTeleport*)pTeleports->data;
+				if (teleport->obj->contains(o))
+				{
+					app->requestLoadLevel(teleport->level);
+					break;
 				}
 			}
 		}

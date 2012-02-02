@@ -18,6 +18,7 @@ Ogre::String ContinuumApp::mPluginsCfg = "plugins.cfg";
 
 ContinuumApp::ContinuumApp()
 	: mQuit(false)
+	, mLoadLevel("")
 	, mTimeControl(false)
 	, mSceneMgr(NULL)
 	, mWindow(NULL)
@@ -27,6 +28,8 @@ ContinuumApp::ContinuumApp()
 	, mInputManager(NULL)
 	, mMouse(NULL)
 	, mKeyboard(NULL)
+	, mWorld(NULL)
+	, mPhysicsWorld(NULL)
 	, mPlayer(NULL)
 {
 }
@@ -40,6 +43,18 @@ ContinuumApp::~ContinuumApp()
     windowClosed(mWindow);
 
 	if (mRoot) delete mRoot;
+	
+	if (mWorld)
+	{
+		delete mWorld;
+		mWorld = NULL;
+	}
+	
+	if (mPhysicsWorld)
+	{
+		delete mPhysicsWorld;
+		mPhysicsWorld = NULL;
+	}
 }
 
 int ContinuumApp::run()
@@ -51,6 +66,12 @@ int ContinuumApp::run()
     mRoot->startRendering();
 
     cleanup();
+}
+	
+void
+ContinuumApp::requestLoadLevel(Ogre::String name)
+{
+	mLoadLevel = name;
 }
 
 int ContinuumApp::setup()
@@ -79,15 +100,9 @@ int ContinuumApp::setup()
 	//mSceneMgr->setShadowTextureSize(1024);
 	//mSceneMgr->setShadowTextureCount(1);
 
-	mPhysicsWorld.init();
-	mWorld.addObject(&mPhysicsWorld);
-
-	createScene();
-	mWorld.addInputController(mPlayer);
+	loadScene("menu");
 	
 	createListeners();
-
-	mWorld.start();
 
 	return 0;
 }
@@ -175,6 +190,12 @@ bool ContinuumApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
     if (mQuit)
         return false;
 
+	if (mLoadLevel != "")
+	{
+		loadScene(mLoadLevel);
+		mLoadLevel = "";
+	}
+
     mKeyboard->capture();
     mMouse->capture();
     
@@ -190,7 +211,10 @@ bool ContinuumApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 
 bool ContinuumApp::frameStarted(const Ogre::FrameEvent& evt)
 {
-	mWorld.step();
+	if (mLoadLevel != "")
+		return true;
+
+	mWorld->step();
 	return true;
 }
 
@@ -204,14 +228,14 @@ bool ContinuumApp::keyPressed(const OIS::KeyEvent &arg)
 			mQuit = true;
 			break;
 		case OIS::KC_LMENU:
-			mWorld.freezeTime();
+			mWorld->freezeTime();
 			mTimeControl = true;
 			break;
 		case OIS::KC_P:
 			mWindow->writeContentsToFile("screenshot.png");
 			break;
 		default:
-			mWorld.injectKeyDown(arg);
+			mWorld->injectKeyDown(arg);
 			return false;
     }
     
@@ -224,11 +248,11 @@ bool ContinuumApp::keyReleased(const OIS::KeyEvent &arg)
 	switch (arg.key)
 	{
 		case OIS::KC_LMENU:
-			mWorld.resumeTime();
+			mWorld->resumeTime();
 			mTimeControl = false;
 			break;
 		default:
-			mWorld.injectKeyUp(arg);
+			mWorld->injectKeyUp(arg);
 			return false;
     }
 
@@ -239,17 +263,17 @@ bool ContinuumApp::mouseMoved(const OIS::MouseEvent &arg)
 {
     if (mTrayMgr->injectMouseMove(arg)) return true;
     
-	mWorld.injectMouseMove(arg);
+	mWorld->injectMouseMove(arg);
 
 	if (mTimeControl)
 	{
 		if (arg.state.Z.rel > 0)
 		{
-			mWorld.accelerateTime();
+			mWorld->accelerateTime();
 		}
 		else if (arg.state.Z.rel < 0)
 		{
-			mWorld.decelerateTime();
+			mWorld->decelerateTime();
 		}
 	}
 
@@ -262,11 +286,11 @@ bool ContinuumApp::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 	
 	if (id == 2)
 	{
-		mWorld.freezeTime();
+		mWorld->freezeTime();
 		return true;
 	}
 	
-	mWorld.injectMouseDown(arg, id);
+	mWorld->injectMouseDown(arg, id);
 
 	return true;
 }
@@ -275,7 +299,7 @@ bool ContinuumApp::mouseReleased(const OIS::MouseEvent &arg, OIS::MouseButtonID 
 {
     if (mTrayMgr->injectMouseUp(arg, id)) return true;
 
-	mWorld.injectMouseUp(arg, id);
+	mWorld->injectMouseUp(arg, id);
 
 	return true;
 }
@@ -311,12 +335,68 @@ void ContinuumApp::cleanup()
 {
 }
 
-void ContinuumApp::createScene()
+void printSceneGraph(Ogre::Node* root, int indent = 0)
+{
+	for (int i = 0; i < indent; i++)
+	{
+		printf("  ");
+	}
+	printf("N: %s\n", root->getName().c_str());
+
+	Ogre::Node::ChildNodeIterator it = root->getChildIterator();
+	while (it.hasMoreElements())
+	{
+		Ogre::Node* node = it.getNext();
+		printSceneGraph(node, indent + 1);
+	}
+}
+
+void ContinuumApp::loadScene(Ogre::String name)
+{
+	name = name + ".scene";
+	printf("Loading level: %s\n", name.c_str());
+	if (mWorld)
+	{
+		delete mWorld;
+		mWorld = NULL;
+	}
+	if (mPhysicsWorld)
+	{
+		delete mPhysicsWorld;
+		mPhysicsWorld = NULL;
+	}
+
+	mWindow->removeAllViewports();
+	mSceneMgr->destroyAllCameras();
+	mSceneMgr->clearScene();
+	printf("Empty scene\n");
+	printSceneGraph(mSceneMgr->getRootSceneNode());
+	printf("\n");
+
+	mWorld = new World();
+	mPhysicsWorld = new PhysicsWorld();
+	mPhysicsWorld->init();
+
+	mWorld->addObject(mPhysicsWorld);
+
+	createScene(name);
+	mWorld->addInputController(mPlayer);
+
+	mWorld->start();
+	printf("Loaded level: %s\n", name.c_str());
+}
+
+void ContinuumApp::createScene(Ogre::String name)
 {
 	//load the scene
 	Ogre::SceneNode* scene = mSceneMgr->getRootSceneNode()->createChildSceneNode("Scene");
-	ContinuumSceneLoader loader(&mPhysicsWorld);
-	loader.parseDotScene("menu.scene", "General", mSceneMgr, scene);
+	ContinuumSceneLoader loader(mPhysicsWorld);
+	if (!loader.parseDotScene(name, "General", mSceneMgr, scene))
+	{
+		printf("Error loading scene file: %s\n", name.c_str());
+		exit(1);
+	}
+	printSceneGraph(mSceneMgr->getRootSceneNode());
 
 	//get some objects from it
 	if (mSceneMgr->hasCamera("Camera"))
@@ -335,7 +415,12 @@ void ContinuumApp::createScene()
 		mCamera->setPosition(pos);
 		mCamera->setOrientation(orientation);
 	}
-	Player* player = mPhysicsWorld.createPlayer(mCamera);
+	Player* player = mPhysicsWorld->createPlayer(mCamera);
+	if (mPlayer)
+	{
+		delete mPlayer;
+		mPlayer = NULL;
+	}
 	mPlayer = new PlayerController(player);
 		
 	//setup our viewport

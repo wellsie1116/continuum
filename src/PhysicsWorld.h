@@ -24,6 +24,7 @@ public:
 	Player* createPlayer(Ogre::Camera* camera);
 	void addLinkSource(int id, PhysicsObject* obj);
 	void addLinkSink(int id, PhysicsObject* obj);
+	void addTeleporter(Ogre::String name, PhysicsObject* obj);
 	
 	virtual void step();
 	virtual void sync();
@@ -44,7 +45,8 @@ private:
 
 	GSList* mObjects;
 	GSList* mSurfaces;
-	GHashTable* mLinks; //PhysicsLink
+	GHashTable* mLinks; //int -> PhysicsLink
+	GSList* mTeleports; //PhysicsTeleport
 };
 
 #endif

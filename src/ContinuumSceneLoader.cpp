@@ -79,6 +79,13 @@ ContinuumSceneLoader::onEntityCreated(Ogre::Entity* pEntity, Ogre::SceneNode* pP
 			int id = anyToInt(linkSink);
 			mPhysicsWorld->addLinkSink(id, obj);
 		}
+		
+		Ogre::Any teleport = bindings.getUserAny("Teleport");
+		if (!teleport.isEmpty())
+		{
+			Ogre::String dest = Ogre::any_cast<Ogre::String>(teleport);
+			mPhysicsWorld->addTeleporter(dest, obj);
+		}
 	}
 
 	//ps = sceneMgr->createParticleSystem("Aureola", "Examples/Aureola");

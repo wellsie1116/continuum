@@ -15,8 +15,6 @@
 
 #define TICKS_PER_SECOND 120.0
 
-class WorldSnapshot {};
-
 class World
 {
 private:
