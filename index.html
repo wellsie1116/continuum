@@ -9,8 +9,8 @@
   <meta name="author" content="Kevin Wells">
 
   
-  <meta name="description" content="In response to comments from last week, I spent some time adding shadows to the
-scene. Fortunately, OGRE provides this functionality mostly &hellip;">
+  <meta name="description" content="Commit log This week was a mix of work, ranging from making buttons doing something to
+adding teleporters from one level to another. The game is at &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -63,6 +63,101 @@ scene. Fortunately, OGRE provides this functionality mostly &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/continuum/blog/2012/02/01/real-gameplay/">Real Gameplay</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-01T20:14:00-05:00" pubdate data-updated="true">Feb 1<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Commit log</h2>
+
+<p>This week was a mix of work, ranging from making buttons doing something to
+adding teleporters from one level to another.  The game is at this point
+playable (although without forking time, level 2 is not beatable).  That is the
+goal for next week.</p>
+
+<p><img src="/continuum/images/teleporters.png"></p>
+
+<pre><code>Commits:
+Add level 2 +.5h
+Add teleportation nodes to other levels +2.25h
+Add particles support. +1.25h
+Add animation for walking +.5h
+Adjust character height and camera tracking +1.25h
+Tweak robot mesh +.25h
+Add link (source/sink) support.  +4h
+Add models/animations. +3.75h
+
+Total: 13.75
+</code></pre>
+
+<h2>Reviewing Feature Listing</h2>
+
+<p>A few weeks ago, I outlined various features that I wanted to be included in
+final game.  This week, I took a bit to review where I am relative to that list:</p>
+
+<ul>
+<li><p>Character movement/interaction</p>
+
+<p>With the addition of links (sources and sinks), the character can now
+actually interact with the environment.  I would also like to allow the
+character to pickup objects, but that functionality is not absolutely necessary
+to make the game playable.  Given time, I would like to add that last feature to
+character movement.</p></li>
+<li><p>Models</p>
+
+<p>I have all of the models that I need for the game.</p></li>
+<li><p>Forking time</p>
+
+<p>Not yet functional.  I record the user&#8217;s input, and it should not be too
+hard to make the transition to showing a second character, but I will need at
+least a week to fully implement this feature.</p></li>
+<li><p>Level design</p>
+
+<p>I am making levels as I implement features that utilize them, but I will not
+be able to make nearly enough levels to make this a full featured game.
+Instead, I am making the levels easy to create with Blender so that people can
+make their own levels.</p></li>
+<li><p>Audio system</p>
+
+<p>I do not think I will have time to implement this, even though it would have
+been fun to hear the audio play backwards while rewinding time.</p></li>
+<li><p>Main menu</p>
+
+<p>Implemented this week via teleporters.  Objects in the level editor can be
+defined to teleport the player to another level when the player touches that
+object.</p></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -696,6 +791,10 @@ for my physics engine, and a blend of C and Python for the implementation langua
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/continuum/blog/2012/02/01/real-gameplay/">Real Gameplay</a>
+      </li>
+    
+      <li class="post">
         <a href="/continuum/blog/2012/01/26/shadows-and-models/">Shadows and Models</a>
       </li>
     
@@ -709,10 +808,6 @@ for my physics engine, and a blend of C and Python for the implementation langua
     
       <li class="post">
         <a href="/continuum/blog/2012/01/05/running-backwards/">Running Backwards</a>
-      </li>
-    
-      <li class="post">
-        <a href="/continuum/blog/2011/12/16/a-real-framework/">A Real Framework</a>
       </li>
     
   </ul>

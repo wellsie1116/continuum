@@ -5,15 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Blog Archive - Continuum</title>
+  <title>Real Gameplay - Continuum</title>
   <meta name="author" content="Kevin Wells">
 
   
-  <meta name="description" content="Blog Archive 2012 Real Gameplay
-Feb 01 2012 Shadows and Models
-Jan 26 2012 Adding a Character
-Jan 19 2012 todo list
-Jan 08 2012 Running Backwards &hellip;">
+  <meta name="description" content="Commit log This week was a mix of work, ranging from making buttons doing something to
+adding teleporters from one level to another. The game is at &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -22,7 +19,7 @@ Jan 08 2012 Running Backwards &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://wellsie1116.github.com/continuum/blog/archives">
+  <link rel="canonical" href="http://wellsie1116.github.com/continuum/blog/2012/02/01/real-gameplay">
   <link href="/continuum/favicon.png" rel="icon">
   <link href="/continuum/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/continuum/javascripts/modernizr-2.0.js"></script>
@@ -65,94 +62,139 @@ Jan 08 2012 Running Backwards &hellip;">
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Blog Archive</h1>
+    
+      <h1 class="entry-title">Real Gameplay</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-01T20:14:00-05:00" pubdate data-updated="true">Feb 1<span>st</span>, 2012</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives">
 
 
+<div class="entry-content"><h2>Commit log</h2>
 
-  
-  <h2>2012</h2>
+<p>This week was a mix of work, ranging from making buttons doing something to
+adding teleporters from one level to another.  The game is at this point
+playable (although without forking time, level 2 is not beatable).  That is the
+goal for next week.</p>
 
-<article>
-  
-<h1><a href="/continuum/blog/2012/02/01/real-gameplay/">Real Gameplay</a></h1>
-<time datetime="2012-02-01T20:14:00-05:00" pubdate><span class='month'>Feb</span> <span class='day'>01</span> <span class='year'>2012</span></time>
+<p><img src="/continuum/images/teleporters.png"></p>
 
+<pre><code>Commits:
+Add level 2 +.5h
+Add teleportation nodes to other levels +2.25h
+Add particles support. +1.25h
+Add animation for walking +.5h
+Adjust character height and camera tracking +1.25h
+Tweak robot mesh +.25h
+Add link (source/sink) support.  +4h
+Add models/animations. +3.75h
 
-</article>
+Total: 13.75
+</code></pre>
 
+<h2>Reviewing Feature Listing</h2>
 
+<p>A few weeks ago, I outlined various features that I wanted to be included in
+final game.  This week, I took a bit to review where I am relative to that list:</p>
 
-<article>
-  
-<h1><a href="/continuum/blog/2012/01/26/shadows-and-models/">Shadows and Models</a></h1>
-<time datetime="2012-01-26T13:44:00-05:00" pubdate><span class='month'>Jan</span> <span class='day'>26</span> <span class='year'>2012</span></time>
+<ul>
+<li><p>Character movement/interaction</p>
 
+<p>With the addition of links (sources and sinks), the character can now
+actually interact with the environment.  I would also like to allow the
+character to pickup objects, but that functionality is not absolutely necessary
+to make the game playable.  Given time, I would like to add that last feature to
+character movement.</p></li>
+<li><p>Models</p>
 
-</article>
+<p>I have all of the models that I need for the game.</p></li>
+<li><p>Forking time</p>
 
+<p>Not yet functional.  I record the user&#8217;s input, and it should not be too
+hard to make the transition to showing a second character, but I will need at
+least a week to fully implement this feature.</p></li>
+<li><p>Level design</p>
 
+<p>I am making levels as I implement features that utilize them, but I will not
+be able to make nearly enough levels to make this a full featured game.
+Instead, I am making the levels easy to create with Blender so that people can
+make their own levels.</p></li>
+<li><p>Audio system</p>
 
-<article>
-  
-<h1><a href="/continuum/blog/2012/01/19/adding-a-character/">Adding a Character</a></h1>
-<time datetime="2012-01-19T09:46:00-05:00" pubdate><span class='month'>Jan</span> <span class='day'>19</span> <span class='year'>2012</span></time>
+<p>I do not think I will have time to implement this, even though it would have
+been fun to hear the audio play backwards while rewinding time.</p></li>
+<li><p>Main menu</p>
 
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/continuum/blog/2012/01/08/todo-list/">todo list</a></h1>
-<time datetime="2012-01-08T20:56:00-05:00" pubdate><span class='month'>Jan</span> <span class='day'>08</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/continuum/blog/2012/01/05/running-backwards/">Running Backwards</a></h1>
-<time datetime="2012-01-05T10:00:00-05:00" pubdate><span class='month'>Jan</span> <span class='day'>05</span> <span class='year'>2012</span></time>
-
-
-</article>
-
-
-
-  
-  <h2>2011</h2>
-
-<article>
-  
-<h1><a href="/continuum/blog/2011/12/16/a-real-framework/">A Real Framework</a></h1>
-<time datetime="2011-12-16T09:54:00-05:00" pubdate><span class='month'>Dec</span> <span class='day'>16</span> <span class='year'>2011</span></time>
-
-
-</article>
-
-
-
-<article>
-  
-<h1><a href="/continuum/blog/2011/11/30/getting-things-started/">Getting Things Started</a></h1>
-<time datetime="2011-11-30T22:45:00-05:00" pubdate><span class='month'>Nov</span> <span class='day'>30</span> <span class='year'>2011</span></time>
-
-
-</article>
+<p>Implemented this week via teleporters.  Objects in the level editor can be
+defined to teleport the player to another level when the player touches that
+object.</p></li>
+</ul>
 
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Kevin Wells</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-01T20:14:00-05:00" pubdate data-updated="true">Feb 1<span>st</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://wellsie1116.github.com/continuum/blog/2012/02/01/real-gameplay/" data-via="" data-counturl="http://wellsie1116.github.com/continuum/blog/2012/02/01/real-gameplay/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/continuum/blog/2012/01/26/shadows-and-models/" title="Previous Post: Shadows and Models">&laquo; Shadows and Models</a>
+      
+      
+    </p>
+  </footer>
 </article>
 
 </div>
