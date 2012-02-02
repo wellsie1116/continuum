@@ -5259,8 +5259,11 @@ class INFO_HT_myheader(bpy.types.Header):
 
 def export_menu_func_ogre(self, context):
     path,name = os.path.split( context.blend_data.filepath )
+    scene = bpy.context.screen.scene
+    sceneName = scene.name
     op = self.layout.operator(INFO_OT_createOgreExport.bl_idname, text="Ogre3D (.scene and .mesh)")
-    op.filepath = os.path.join( path, name.split('.')[0]+'.scene' )
+    #op.filepath = os.path.join( path, name.split('.')[0]+'.scene' )
+    op.filepath = os.path.join( path, sceneName+'.scene' )
 
 def export_menu_func_realxtend(self, context):
     path,name = os.path.split( context.blend_data.filepath )
