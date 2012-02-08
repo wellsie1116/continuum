@@ -131,6 +131,7 @@ PhysicsWorld::step()
 	for (GSList* pObjects = mObjects; pObjects; pObjects = pObjects->next)
 	{
 		PhysicsObject* obj = (PhysicsObject*)pObjects->data;
+		obj->sync();
 		obj->setupForces();
 	}
 

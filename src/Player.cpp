@@ -34,7 +34,6 @@
 
 Player::Player(Ogre::Camera* camera, PhysicsWorld* world)
 	: mCamera(camera)
-	, xDiff(0)
 	, mPlayerNode(NULL)
 	, mCameraTrackNode(NULL)
 {
@@ -87,7 +86,6 @@ Player::Player(Ogre::Camera* camera, PhysicsWorld* world)
 	{
 		mCameraBodyGeom = dCreateSphere(world->getSpace(), CAMERA_RADIUS);
 		dGeomSetBody(mCameraBodyGeom, mCameraBody);
-		dGeomSetData(mCameraBodyGeom, this);
 	}
 
 	{
@@ -194,7 +192,7 @@ Player::setupForces()
 		state.jumpStep = 0;
 	}
 
-	dBodyAddTorque(mCameraBody, 0.0, -xDiff * SWIVEL_TORQUE, 0.0);
+	dBodyAddTorque(mCameraBody, 0.0, -state.xDiff * SWIVEL_TORQUE, 0.0);
 
 	//dampen player velocity
 	{
@@ -224,7 +222,7 @@ Player::setupForces()
 		}
 	}
 	
-	if (!xDiff)
+	if (!state.xDiff)
 	{
 		const float* vel = dBodyGetLinearVel(mCameraBody);
 		dBodyAddForce(mCameraBody,
@@ -233,7 +231,7 @@ Player::setupForces()
 				-vel[2] * CAMERA_MASS * 10);
 	}
 
-	xDiff = 0;
+	state.xDiff = 0;
 }
 
 void Player::sync()
@@ -292,6 +290,7 @@ void Player::setNode(Ogre::SceneNode* node)
 void
 Player::injectKeyDown(const OIS::KeyEvent &arg)
 {
+	printf("Player key down!\n");
 	switch (arg.key)
 	{
 		case OIS::KC_W:
@@ -340,7 +339,7 @@ void Player::injectMouseMove(const OIS::MouseEvent &arg)
 	int x = arg.state.X.rel;
 	int y = arg.state.Y.rel;
 
-	xDiff += x;
+	state.xDiff += x;
 
 	state.pitch -= y;
 	if (state.pitch > PITCH_MAX)

@@ -32,11 +32,14 @@ public:
 	int jumpStep;
 	int pitch;
 
+	int xDiff;
+
 public:
 	PlayerState()
 		: moveDirection(NONE)
 		, pitch(0)
 		, jumpStep(0)
+		, xDiff(0)
 	{ }
 
 	PhysicsObjectState* copy() const
@@ -51,6 +54,7 @@ public:
 		moveDirection = state.moveDirection;
 		pitch = state.pitch;
 		jumpStep = state.jumpStep;
+		xDiff = state.xDiff;
 		return *this;
 	}
 };
@@ -93,8 +97,6 @@ protected:
 
 	Ogre::SceneNode* mPlayerNode;
 	Ogre::SceneNode* mCameraTrackNode;
-
-	int xDiff;
 };
 
 #endif

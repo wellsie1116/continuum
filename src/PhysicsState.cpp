@@ -49,6 +49,16 @@ BodyState::BodyState(dGeomID geom)
 {
 	dGeomCopyPosition(mGeom, mPosition);
 	dGeomCopyRotation(mGeom, mOrientation);
+	
+	PhysicsObject* obj = (PhysicsObject*)dGeomGetData(mGeom);
+	if (obj)
+	{
+		state = obj->save();
+		if (state)
+		{
+			state = state->copy();
+		}
+	}
 
 	mBody = dGeomGetBody(mGeom);
 	if (mBody)
@@ -63,15 +73,6 @@ BodyState::BodyState(dGeomID geom)
 		for (int i = 0; i < 3; i++)
 			mAngularVelocity[i] = vect[i];
 
-		PhysicsObject* obj = (PhysicsObject*)dBodyGetData(mBody);
-		if (obj)
-		{
-			state = obj->save();
-			if (state)
-			{
-				state = state->copy();
-			}
-		}
 		
 		//vect = dBodyGetForce(mBody);
 		//for (int i = 0; i < 3; i++)
@@ -97,17 +98,18 @@ BodyState::restore()
 {
 	dGeomSetPosition(mGeom, mPosition[0], mPosition[1], mPosition[2]);
 	dGeomSetRotation(mGeom, mOrientation);
+	
+	PhysicsObject* obj = (PhysicsObject*)dGeomGetData(mGeom);
+	if (obj)
+	{
+		obj->restore(state);
+	}
 
 	if (mBody)
 	{
 		dBodySetLinearVel(mBody, mLinearVelocity[0], mLinearVelocity[1], mLinearVelocity[2]);
 		dBodySetAngularVel(mBody, mAngularVelocity[0], mAngularVelocity[1], mAngularVelocity[2]);
 		
-		PhysicsObject* obj = (PhysicsObject*)dBodyGetData(mBody);
-		if (obj)
-		{
-			obj->restore(state);
-		}
 		//dBodySetForce(mBody, mForce[0], mForce[1], mForce[2]);
 		//dBodySetTorque(mBody, mTorque[0], mTorque[1], mTorque[2]);
 	}

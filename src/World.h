@@ -91,6 +91,7 @@ private:
 	TickTimer mTimer;
 	int mStepRate;
 	unsigned long mTimestep;
+	bool isPlaying;
 
 	GQueue* mObjects; //WorldObject
 	GQueue* mInputControllers; //InputController

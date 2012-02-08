@@ -176,11 +176,11 @@ void Surface::setupForces()
 
 void Surface::sync()
 {
-	dQuaternion quat;
-	dGeomGetQuaternion(mGeom, quat);
+	//dQuaternion quat;
+	//dGeomGetQuaternion(mGeom, quat);
 
-	mNode->setPosition(mPos[0], mPos[1], mPos[2]);
-	mNode->setOrientation(quat[0], quat[1], quat[2], quat[3]);
+	//mNode->setPosition(mPos[0], mPos[1], mPos[2]);
+	//mNode->setOrientation(quat[0], quat[1], quat[2], quat[3]);
 }
 
 void

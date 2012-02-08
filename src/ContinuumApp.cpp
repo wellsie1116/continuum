@@ -422,7 +422,7 @@ void ContinuumApp::createScene(Ogre::String name)
 		mPlayer = NULL;
 	}
 	mPlayer = new PlayerController(player);
-		
+
 	//setup our viewport
     Ogre::Viewport* vp = mWindow->addViewport(mCamera);
     vp->setBackgroundColour(Ogre::ColourValue(0.1, 0.1, 0.1));

@@ -1,7 +1,7 @@
 
 #include "World.h"
 
-#define SNAPSHOT_TICKS 20
+#define SNAPSHOT_TICKS 100
 	
 static int DEFAULT_STEP_INDEX = 7;
 static int FREEZE_STEP_INDEX = 5;
@@ -15,6 +15,7 @@ World::World()
 	, mObjects(NULL)
 	, mInputControllers(NULL)
 	, mSnapshots(this)
+	, isPlaying(false)
 {
 	mObjects = g_queue_new();
 	mInputControllers = g_queue_new();
@@ -45,20 +46,26 @@ World::start()
 	setTimestep(0);
 	mSnapshots.reset();
 	mTimer.start();
+	isPlaying = true;
 }
 
 void
 World::freezeTime()
 {
+	isPlaying = false;
 	mStepRate = FREEZE_STEP_INDEX;
 	updateTimeRate();
+	mRecorder.dump();
 }
 
 void
 World::resumeTime()
 {
+	isPlaying = true;
 	mStepRate = DEFAULT_STEP_INDEX;
+	mRecorder.purgeAfter(mTimestep);
 	updateTimeRate();
+	mRecorder.dump();
 }
 
 void
@@ -111,6 +118,9 @@ World::step()
 void
 World::injectKeyDown(const OIS::KeyEvent &arg)
 {
+	if (!isPlaying)
+		return;
+
 	mRecorder.injectKeyDown(arg);
 	for (GList* pInputs = mInputControllers->head; pInputs; pInputs = pInputs->next)
 	{
@@ -122,6 +132,9 @@ World::injectKeyDown(const OIS::KeyEvent &arg)
 void
 World::injectKeyUp(const OIS::KeyEvent &arg)
 {
+	if (!isPlaying)
+		return;
+
 	mRecorder.injectKeyUp(arg);
 	for (GList* pInputs = mInputControllers->head; pInputs; pInputs = pInputs->next)
 	{
@@ -133,6 +146,9 @@ World::injectKeyUp(const OIS::KeyEvent &arg)
 void
 World::injectMouseMove(const OIS::MouseEvent &arg)
 {
+	if (!isPlaying)
+		return;
+
 	mRecorder.injectMouseMove(arg);
 	for (GList* pInputs = mInputControllers->head; pInputs; pInputs = pInputs->next)
 	{
@@ -144,6 +160,9 @@ World::injectMouseMove(const OIS::MouseEvent &arg)
 void
 World::injectMouseDown(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
+	if (!isPlaying)
+		return;
+
 	mRecorder.injectMouseDown(arg, id);
 	for (GList* pInputs = mInputControllers->head; pInputs; pInputs = pInputs->next)
 	{
@@ -155,6 +174,9 @@ World::injectMouseDown(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 void
 World::injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 {
+	if (!isPlaying)
+		return;
+
 	mRecorder.injectMouseUp(arg, id);
 	for (GList* pInputs = mInputControllers->head; pInputs; pInputs = pInputs->next)
 	{
@@ -276,21 +298,26 @@ World::SnapshotManager::restoreSnapshot(int timestep)
 	World::Snapshot* snapshot = getClosest(timestep);
 	purgeAfter(snapshot->getTimestep());
 	snapshot->restore();
-	//mWorld->mRecorder.setTimestep(snapshot->getTimestep());
-	//for (GList* pInputs = mWorld->mInputControllers->head; pInputs; pInputs = pInputs->next)
-	//{
-	//	InputController* pObj = (InputController*)pInputs->data;
-	//	mWorld->mRecorder.playback(pObj);
-	//}
+
+	//restore input events for that snapshot
+	mWorld->mRecorder.setTimestep(snapshot->getTimestep());
+	for (GList* pInputs = mWorld->mInputControllers->head; pInputs; pInputs = pInputs->next)
+	{
+		InputController* pObj = (InputController*)pInputs->data;
+		mWorld->mRecorder.playback(pObj);
+	}
 
 	for (int i = snapshot->getTimestep() + 1; i <= timestep; i++)
 	{
-		//mWorld->mRecorder.setTimestep(i);
-		//for (GList* pInputs = mWorld->mInputControllers->head; pInputs; pInputs = pInputs->next)
-		//{
-		//	InputController* pObj = (InputController*)pInputs->data;
-		//	mWorld->mRecorder.playback(pObj);
-		//}
+		//play input events
+		mWorld->mRecorder.setTimestep(i);
+		for (GList* pInputs = mWorld->mInputControllers->head; pInputs; pInputs = pInputs->next)
+		{
+			InputController* pObj = (InputController*)pInputs->data;
+			mWorld->mRecorder.playback(pObj);
+		}
+
+		//step the world
 		mWorld->stepOnce();
 
 		snapshot = new World::Snapshot(mWorld, i);

@@ -1,6 +1,67 @@
 
 #include "InputRecorder.h"
 
+#include <stdio.h>
+
+void InputEvent::dump()
+{
+	switch (type)
+	{
+		case EVENT_KEY_DOWN:
+			printf("Key down: '%c'\n", event.key.text);
+			break;
+		case EVENT_KEY_UP:
+			printf("Key up: '%c'\n", event.key.text);
+			break;
+		case EVENT_MOUSE_MOVE:
+			printf("Mouse move: %d, %d\n",
+					event.mouse.state.X.rel,
+					event.mouse.state.Y.rel);
+			break;
+		case EVENT_MOUSE_DOWN:
+			printf("Mouse down: %d\n", event.mouse.id);
+			break;
+		case EVENT_MOUSE_UP:
+			printf("Mouse up: %d\n", event.mouse.id);
+			break;
+		default:
+			printf("Unknown\n");
+	}
+}
+
+void InputEvents::dump()
+{
+	printf("Timestep: %d\n", mTimestep);
+	if (!mEvents || !g_queue_get_length(mEvents))
+	{
+		printf("Empty\n");
+		return;
+	}
+
+	for (GList* pEvents = mEvents->head; pEvents; pEvents = pEvents->next)
+	{
+		InputEvent* event = (InputEvent*)pEvents->data;
+		printf("  ");
+		event->dump();
+	}
+}
+
+void EventQueue::dump()
+{
+	if (!mEvents || !g_queue_get_length(mEvents))
+	{
+		printf("Empty\n");
+		return;
+	}
+
+	for (GList* pQueue = mEvents->head; pQueue; pQueue = pQueue->next)
+	{
+		InputEvents* queue = (InputEvents*)pQueue->data;
+		queue->dump();
+	}
+	printf("\n");
+}
+
 InputEvent
 InputEvent::injectKeyDown(const OIS::KeyEvent &arg)
 {
@@ -158,6 +219,12 @@ InputEvents::injectInput(InputEvent event)
 	InputEvent* obj = new InputEvent(event);
 	g_queue_push_tail(mEvents, obj);
 }
+	
+bool
+InputEvents::isEmpty()
+{
+	return g_queue_get_length(mEvents) == 0;
+}
 
 void
 InputEvents::playback(InputController* obj)
@@ -195,38 +262,70 @@ EventQueue::injectInput(InputEvent event)
 	InputEvents* events = (InputEvents*)g_queue_peek_tail(mEvents);
 	events->injectInput(event);
 }
+	
+EventQueue*
+EventQueue::extract(unsigned int from, unsigned int to)
+{
+	//TODO implement
+	return NULL;
+}
+
+void
+EventQueue::purgeAfter(unsigned int timestep)
+{
+	InputEvents* events;
+	while ((events = (InputEvents*)g_queue_peek_tail(mEvents)) && 
+			(events->getTimestep() >= timestep))
+	{
+		g_queue_pop_tail(mEvents);
+		delete events;
+	}
+	current = NULL;
+}
 
 void
 EventQueue::setTimestep(unsigned int timestep)
 {
+	//cleanup empty event lists
+	if (current && current == mEvents->tail->data && current->isEmpty())
+	{
+		g_queue_pop_tail(mEvents);
+		delete current;
+		current = NULL;
+	}
+
+	//empty queue or newer timestep
+	if (g_queue_get_length(mEvents) == 0 ||
+			((InputEvents*)mEvents->tail->data)->getTimestep() < timestep)
+		 
+	{
+		//append a new set of input events 
+		current = new InputEvents(timestep);
+		g_queue_push_tail(mEvents, current);
+		return;
+	}
+
+	current = NULL;
+
+	//get the next list
 	for (GList* pEvents = mEvents->tail; pEvents; pEvents = pEvents->prev)
 	{
 		InputEvents* events = (InputEvents*)pEvents->data;
 		if (events->getTimestep() == timestep)
 		{
 			//found it
+			//printf("Found eventqueue at timestep: %d\n", timestep);
 			current = events;
 			return;
 		}
-		else if (events->getTimestep() > timestep)
+		else if (events->getTimestep() < timestep)
 		{
-			if (pEvents->next)
-			{
-				//somewhere in the middle, don't make it
-				current = NULL;
-			}
-			else
-			{
-				//append a new set of input events 
-				current = new InputEvents(timestep);
-				g_queue_push_tail(mEvents, events);
-			}
+			//somewhere in the middle, don't make it
+			//printf("Nulling eventqueue at timestep: %d\n", timestep);
 			return;
 		}
 	}
 
-	//does not exist
-	current = NULL;
 }
 
 void
@@ -279,14 +378,42 @@ InputRecorder::injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID id)
 }
 
 void
+InputRecorder::purgeAfter(unsigned int timestep)
+{
+	mQueue->purgeAfter(timestep);
+}
+
+void
 InputRecorder::setTimestep(unsigned int timestep)
 {
 	mQueue->setTimestep(timestep);
+}
+	
+InputPlayer*
+InputRecorder::createPlayer(unsigned int from, unsigned int to)
+{
+	return new InputPlayer(mQueue->extract(from, to));
 }
 	
 void
 InputRecorder::playback(InputController* obj)
 {
 	mQueue->playback(obj);
+}
+
+InputPlayer::InputPlayer(EventQueue* queue)
+{
+	//TODO implement
+}
+
+InputPlayer::~InputPlayer()
+{
+	//TODO implement
+}
+
+void
+InputPlayer::playback(unsigned int timestep, InputController* obj)
+{
+	//TODO implement
 }
 

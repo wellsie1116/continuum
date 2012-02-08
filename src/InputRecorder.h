@@ -55,6 +55,7 @@ struct InputEvent
 	static InputEvent injectMouseDown(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 	static InputEvent injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 	void send(InputController* obj);
+	void dump();
 };
 
 class InputEvents
@@ -64,9 +65,11 @@ public:
 	~InputEvents();
 
 	void injectInput(InputEvent event);
+	bool isEmpty();
 
 	void playback(InputController* obj);
 	unsigned int getTimestep() { return mTimestep; }
+	void dump();
 
 private:
 	unsigned int mTimestep;
@@ -80,15 +83,33 @@ public:
 	~EventQueue();
 
 	void injectInput(InputEvent event);
+	
+	EventQueue* extract(unsigned int from, unsigned int to);
+	void purgeAfter(unsigned int timestep);
 	void setTimestep(unsigned int timestep);
 	void playback(InputController* obj);
+	void dump();
 	
 private:	
 	GQueue* mEvents; //InputEvents
 	InputEvents* current;
 };
 
-class InputRecorder
+class InputPlayer
+{
+public:
+	InputPlayer(EventQueue* queue);
+	~InputPlayer();
+
+public:
+	void playback(unsigned int timestep, InputController* obj);
+	void dump() { mQueue->dump(); }
+	
+private:
+	EventQueue* mQueue;
+};
+
+class InputRecorder 
 {
 public:
 	InputRecorder();
@@ -101,27 +122,16 @@ public:
 	void injectMouseDown(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 	void injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 
+	void purgeAfter(unsigned int timestep);
 	void setTimestep(unsigned int timestep);
+	InputPlayer* createPlayer(unsigned int from, unsigned int to);
 	void playback(InputController* obj);
+	void dump() { mQueue->dump(); }
 	
 private:
 	unsigned int mTimestep;
 
 	EventQueue* mQueue;
 };
-
-class InputPlayer
-{
-public:
-	InputPlayer();
-	~InputPlayer();
-
-public:
-	void updateTimestep(unsigned int timestep);
-	
-private:
-	GQueue* mEvents;
-};
-
 
 #endif
