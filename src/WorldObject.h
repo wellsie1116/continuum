@@ -32,4 +32,10 @@ public:
 	virtual void injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID id) = 0;
 };
 
+class InputControllerDup
+{
+public:
+	virtual InputController* duplicate(InputController* obj) = 0;
+};
+
 #endif

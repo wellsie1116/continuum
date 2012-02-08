@@ -70,6 +70,7 @@ public:
 	void playback(InputController* obj);
 	unsigned int getTimestep() { return mTimestep; }
 	void dump();
+	InputEvents* clone();
 
 private:
 	unsigned int mTimestep;
@@ -102,7 +103,8 @@ public:
 	~InputPlayer();
 
 public:
-	void playback(unsigned int timestep, InputController* obj);
+	void setTimestep(unsigned int timestep);
+	void playback(InputController* obj);
 	void dump() { mQueue->dump(); }
 	
 private:

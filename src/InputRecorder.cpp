@@ -237,6 +237,19 @@ InputEvents::playback(InputController* obj)
 		event->send(obj);
 	}
 }
+	
+InputEvents*
+InputEvents::clone()
+{
+	InputEvents* res = new InputEvents(mTimestep);
+	for (GList* pEvents = mEvents->head; pEvents; pEvents = pEvents->next)
+	{
+		InputEvent* event = (InputEvent*)pEvents->data;
+		res->injectInput(*event);
+	}
+
+	return res;
+}
 
 static void free_events(InputEvents* events, gpointer user_data)
 {
@@ -268,8 +281,18 @@ EventQueue::injectInput(InputEvent event)
 EventQueue*
 EventQueue::extract(unsigned int from, unsigned int to)
 {
-	//TODO implement
-	return NULL;
+	EventQueue* res = new EventQueue();
+
+	for (GList* pEvents = mEvents->head; pEvents; pEvents = pEvents->next)
+	{
+		InputEvents* events = (InputEvents*)pEvents->data;
+		if (events->getTimestep() >= from && events->getTimestep() <= to)
+		{
+			g_queue_push_tail(res->mEvents, events->clone());
+		}
+	}
+
+	return res;
 }
 
 void
@@ -404,18 +427,24 @@ InputRecorder::playback(InputController* obj)
 }
 
 InputPlayer::InputPlayer(EventQueue* queue)
+	: mQueue(queue)
 {
-	//TODO implement
 }
 
 InputPlayer::~InputPlayer()
 {
-	//TODO implement
+	delete mQueue;
+}
+	
+void
+InputPlayer::setTimestep(unsigned int timestep)
+{
+	mQueue->setTimestep(timestep);
 }
 
 void
-InputPlayer::playback(unsigned int timestep, InputController* obj)
+InputPlayer::playback(InputController* obj)
 {
-	//TODO implement
+	mQueue->playback(obj);
 }
 

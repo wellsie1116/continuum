@@ -58,7 +58,7 @@ private:
 	};
 
 public:
-	World();
+	World(InputControllerDup* duplicator);
 	~World();
 
 public:
@@ -99,6 +99,10 @@ private:
 
 	GQueue* mObjects; //WorldObject
 	GQueue* mInputControllers; //InputController
+
+	InputControllerDup* mDuplicator;
+	InputController* mPlaybackController;
+	InputPlayer* mInputPlayer;
 
 	SnapshotManager mSnapshots;
 	InputRecorder mRecorder;

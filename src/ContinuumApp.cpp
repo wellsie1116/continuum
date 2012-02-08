@@ -73,6 +73,16 @@ ContinuumApp::requestLoadLevel(Ogre::String name)
 {
 	mLoadLevel = name;
 }
+	
+InputController*
+ContinuumApp::duplicate(InputController* obj)
+{
+	PlayerController* playerController = (PlayerController*)obj;
+
+	//TODO dup
+
+	return playerController;
+}
 
 int ContinuumApp::setup()
 {
@@ -383,7 +393,7 @@ void ContinuumApp::loadScene(Ogre::String name)
 	printSceneGraph(mSceneMgr->getRootSceneNode());
 	printf("\n");
 
-	mWorld = new World();
+	mWorld = new World(this);
 	mPhysicsWorld = new PhysicsWorld();
 	mPhysicsWorld->init();
 

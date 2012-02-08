@@ -28,6 +28,7 @@ class ContinuumApp
 	, public OIS::KeyListener
 	, public OIS::MouseListener
 	, public OgreBites::SdkTrayListener
+	, public InputControllerDup
 {
 public:
 	ContinuumApp ();
@@ -35,6 +36,8 @@ public:
 
 	int run();
 	void requestLoadLevel(Ogre::String name);
+	
+	virtual InputController* duplicate(InputController* obj);
 
 private:
 	int setup();

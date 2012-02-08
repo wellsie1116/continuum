@@ -8,13 +8,16 @@ static int FREEZE_STEP_INDEX = 5;
 static float STEP_SPEEDS[] = {-16.0, -8.0, -4.0, -2.0, -1.0,
 	0.0, 0.5, 1.0, 2.0, 4.0, 8.0, 16.0};
 
-World::World()
+World::World(InputControllerDup* duplicator)
 	: mTimer(TICKS_PER_SECOND)
 	, mStepRate(DEFAULT_STEP_INDEX)
 	, mTimestep(0)
 	, mMarker(-1)
 	, mObjects(NULL)
 	, mInputControllers(NULL)
+	, mDuplicator(duplicator)
+	, mPlaybackController(NULL)
+	, mInputPlayer(NULL)
 	, mSnapshots(this)
 	, isPlaying(false)
 {
@@ -95,8 +98,11 @@ World::jumpMarker()
 	if (mMarker < 0)
 		return;
 
-	//TODO implement
-	//InputPlayer* inputPlayer = mRecorder.createPlayer(mMarker, mTimestep);
+	mInputPlayer = mRecorder.createPlayer(mMarker, mTimestep);
+	mRecorder.purgeAfter(mMarker);
+	setTimestep(mMarker);
+	mPlaybackController = mDuplicator->duplicate((InputController*)mInputControllers->head->data);
+	mSnapshots.restoreSnapshot(mTimestep);
 }
 
 void
@@ -115,6 +121,11 @@ World::step()
 			{
 				InputController* pObj = (InputController*)pInputs->data;
 				mRecorder.playback(pObj);
+			}
+
+			if (mInputPlayer)
+			{
+				mInputPlayer->playback(mPlaybackController);
 			}
 
 			stepOnce();
@@ -237,6 +248,8 @@ World::setTimestep(unsigned long timestep)
 {
 	mTimestep = timestep;
 	mRecorder.setTimestep(timestep);
+	if (mInputPlayer)
+		mInputPlayer->setTimestep(timestep);
 }
 
 World::Snapshot::Snapshot(World* world, int timestep)
