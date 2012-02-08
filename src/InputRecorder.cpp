@@ -232,6 +232,8 @@ InputEvents::playback(InputController* obj)
 	for (GList* pEvents = mEvents->head; pEvents; pEvents = pEvents->next)
 	{
 		InputEvent* event = (InputEvent*)pEvents->data;
+		printf("Playing back event: ");
+		event->dump();
 		event->send(obj);
 	}
 }

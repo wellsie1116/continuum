@@ -71,6 +71,9 @@ public:
 	void resumeTime();
 	void accelerateTime();
 	void decelerateTime();
+		
+	void setMarker();
+	void jumpMarker();
 	
 	void step();
 	
@@ -91,6 +94,7 @@ private:
 	TickTimer mTimer;
 	int mStepRate;
 	unsigned long mTimestep;
+	int mMarker;
 	bool isPlaying;
 
 	GQueue* mObjects; //WorldObject

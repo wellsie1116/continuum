@@ -12,6 +12,7 @@ World::World()
 	: mTimer(TICKS_PER_SECOND)
 	, mStepRate(DEFAULT_STEP_INDEX)
 	, mTimestep(0)
+	, mMarker(-1)
 	, mObjects(NULL)
 	, mInputControllers(NULL)
 	, mSnapshots(this)
@@ -83,6 +84,22 @@ World::decelerateTime()
 }
 
 void
+World::setMarker()
+{
+	mMarker = mTimestep;
+}
+
+void
+World::jumpMarker()
+{
+	if (mMarker < 0)
+		return;
+
+	//TODO implement
+	//InputPlayer* inputPlayer = mRecorder.createPlayer(mMarker, mTimestep);
+}
+
+void
 World::step()
 {
 	int ticks = mTimer.getTicks();
@@ -92,6 +109,14 @@ World::step()
 		for (int i = 0; i < ticks; i++)
 		{
 			setTimestep(mTimestep+1);
+
+			//replay any existing input events
+			for (GList* pInputs = mInputControllers->head; pInputs; pInputs = pInputs->next)
+			{
+				InputController* pObj = (InputController*)pInputs->data;
+				mRecorder.playback(pObj);
+			}
+
 			stepOnce();
 			mSnapshots.worldTick(mTimestep);
 		}

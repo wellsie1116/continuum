@@ -284,14 +284,24 @@ bool ContinuumApp::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 {
     if (mTrayMgr->injectMouseDown(arg, id)) return true;
 	
-	if (id == 2)
+	switch (id)
 	{
-		mWorld->freezeTime();
-		return true;
-	}
-	
-	mWorld->injectMouseDown(arg, id);
+		case 0:
+			//Set marker
+			mWorld->setMarker();
+			break;
+		case 1:
+			//Jump back
+			mWorld->jumpMarker();
+			break;
+		case 2:
+			//freeze time
+			mWorld->freezeTime();
+			break;
+		default:
+			mWorld->injectMouseDown(arg, id);
 
+	}
 	return true;
 }
 
