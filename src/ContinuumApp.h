@@ -38,6 +38,7 @@ public:
 	void requestLoadLevel(Ogre::String name);
 	
 	virtual InputController* duplicate(InputController* obj);
+	virtual void unduplicate(InputController* obj);
 
 private:
 	int setup();

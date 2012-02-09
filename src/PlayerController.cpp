@@ -66,6 +66,13 @@ PlayerController::injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID i
 {
 	//mCameraMan->injectMouseUp(arg, id);
 }
+	
+void
+PlayerController::remove()
+{
+	mSceneMgr->destroySceneNode(mPlayerNode);
+	mSceneMgr->destroyCamera(mCamera);
+}
 
 void
 PlayerController::setupModel()

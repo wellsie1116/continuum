@@ -25,6 +25,7 @@ public:
 class InputController
 {
 public:
+	virtual ~InputController() {}
 	virtual void injectKeyDown(const OIS::KeyEvent &arg) = 0;
 	virtual void injectKeyUp(const OIS::KeyEvent &arg) = 0;
 	virtual void injectMouseMove(const OIS::MouseEvent &arg) = 0;
@@ -36,6 +37,7 @@ class InputControllerDup
 {
 public:
 	virtual InputController* duplicate(InputController* obj) = 0;
+	virtual void unduplicate(InputController* obj) = 0;
 };
 
 #endif

@@ -30,7 +30,7 @@ class PlayerController : public InputController
 {
 public:
     PlayerController(Player* player);
-	~PlayerController();
+	virtual ~PlayerController();
 
 	bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 	void injectKeyDown(const OIS::KeyEvent &arg);
@@ -40,6 +40,7 @@ public:
 	void injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 
 	Player* getPlayer() { return mPlayer; }
+	void remove();
 
 private:
 	void setupModel();

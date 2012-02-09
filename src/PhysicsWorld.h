@@ -22,6 +22,7 @@ public:
 	Box* createBox(Ogre::SceneNode* node, float mass);
 	Surface* createSurface(Ogre::SceneNode* node);
 	Player* createPlayer(Ogre::Camera* camera);
+	void removePlayer(Player* player);
 	void addLinkSource(int id, PhysicsObject* obj);
 	void addLinkSink(int id, PhysicsObject* obj);
 	void addTeleporter(Ogre::String name, PhysicsObject* obj);

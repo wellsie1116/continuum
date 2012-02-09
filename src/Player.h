@@ -65,6 +65,7 @@ public:
 	Player(Ogre::Camera* camera, PhysicsWorld* world);
 	virtual ~Player();
 	
+	void remove();
 	virtual void setupForces();
 	virtual void sync();
 	virtual const PhysicsObjectState* save() const;

@@ -113,6 +113,15 @@ Player::~Player()
 }
 	
 void
+Player::remove()
+{
+	dGeomDestroy(mCameraBodyGeom);
+	dGeomDestroy(mPlayerBodyGeom);
+	dBodyDestroy(mCameraBody);
+	dBodyDestroy(mPlayerBody);
+}
+	
+void
 Player::setupForces()
 {
 	const Ogre::Quaternion& quat = mPlayerNode->getOrientation();

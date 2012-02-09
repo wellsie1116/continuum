@@ -145,27 +145,21 @@ World::step()
 		else
 			setTimestep(mTimestep - ticks);
 
-		//FIXME temp hack to stop crashes
 		if (mTimestep < mMarker)
 		{
-			mTimestep = mMarker;
+			if (mPlaybackController)
+			{
+				mDuplicator->unduplicate(mPlaybackController);
+				delete mPlaybackController;
+				mPlaybackController = NULL;
+			}
+			if (mInputPlayer)
+			{
+				delete mInputPlayer;
+				mInputPlayer = NULL;
+			}
+			mMarker = -1;
 		}
-		//if (mTimestep < mMarker)
-		//{
-		//	//TODO remove model
-		//	//TODO remove from physics world
-		//	if (mPlaybackController)
-		//	{
-		//		delete mPlaybackController;
-		//		mPlaybackController = NULL;
-		//	}
-		//	if (mInputPlayer)
-		//	{
-		//		delete mInputPlayer;
-		//		mInputPlayer = NULL;
-		//	}
-		//	mMarker = -1;
-		//}
 
 		mSnapshots.restoreSnapshot(mTimestep);
 	}

@@ -89,6 +89,16 @@ ContinuumApp::duplicate(InputController* obj)
 
 	return newPlayerController;
 }
+	
+void
+ContinuumApp::unduplicate(InputController* obj)
+{
+	PlayerController* playerController = (PlayerController*)obj;
+	Player* player = playerController->getPlayer();
+
+	mPhysicsWorld->removePlayer(player);
+	playerController->remove();
+}
 
 int ContinuumApp::setup()
 {
@@ -395,9 +405,6 @@ void ContinuumApp::loadScene(Ogre::String name)
 	mWindow->removeAllViewports();
 	mSceneMgr->destroyAllCameras();
 	mSceneMgr->clearScene();
-	printf("Empty scene\n");
-	printSceneGraph(mSceneMgr->getRootSceneNode());
-	printf("\n");
 
 	mWorld = new World(this);
 	mPhysicsWorld = new PhysicsWorld();

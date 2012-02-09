@@ -225,6 +225,17 @@ PhysicsWorld::createPlayer(Ogre::Camera* camera)
 
 	return player;
 }
+	
+void
+PhysicsWorld::removePlayer(Player* player)
+{
+	g_assert(mPlayer2 == player);
+
+	player->remove();
+	mObjects = g_slist_remove(mObjects, player);
+	mPlayer2 = NULL;
+	delete player;
+}
 
 static PhysicsLink* getLink(GHashTable* links, int id)
 {
