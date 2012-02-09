@@ -54,6 +54,8 @@ PhysicsWorld::PhysicsWorld()
 	, mObjects(NULL)
 	, mSurfaces(NULL)
 	, mTeleports(NULL)
+	, mPlayer1(NULL)
+	, mPlayer2(NULL)
 {
 	mLinks = g_hash_table_new_full(
 			g_direct_hash,
@@ -205,8 +207,21 @@ Player*
 PhysicsWorld::createPlayer(Ogre::Camera* camera)
 {
 	Player* player = new Player(camera, this);
-	
+
 	mObjects = g_slist_prepend(mObjects, player);
+	
+	if (!mPlayer1)
+	{
+		mPlayer1 = player;
+	}
+	else if (!mPlayer2)
+	{
+		mPlayer2 = player;
+	}
+	else
+	{
+		g_assert_not_reached();
+	}
 
 	return player;
 }
@@ -250,6 +265,15 @@ void
 PhysicsWorld::nearCollide(dGeomID o1, dGeomID o2)
 {
 	int i;
+
+	//stop the two players from colliding
+	if (mPlayer1 && mPlayer2)
+	{
+		if (mPlayer1->contains(o1) && mPlayer2->contains(o2))
+			return;
+		if (mPlayer2->contains(o1) && mPlayer1->contains(o2))
+			return;
+	}
 
 	// Get the dynamics body for each geom
 	dBodyID b1 = dGeomGetBody(o1);

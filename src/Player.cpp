@@ -275,6 +275,11 @@ void Player::restore(const PhysicsObjectState* state)
 	this->state = *(PlayerState*)state;
 }
 
+bool Player::contains(dGeomID geom)
+{
+	return geom == mPlayerBodyGeom || geom == mCameraBodyGeom;
+}
+
 void Player::setNode(Ogre::SceneNode* node)
 {
 	mPlayerNode = node;
@@ -358,6 +363,17 @@ Player::getForwardVelocity()
 
 	//FIXME project in the forward direction
 	return vect_magnitude(v);
+}
+
+void
+Player::initializeCamera(Ogre::Camera* camera)
+{
+	Ogre::Vector3 position(mPlayerPos);
+	position[1] -= PLAYER_HEIGHT / 2.0;
+
+	camera->setPosition(position);
+	camera->setOrientation(mPlayerNode->getOrientation());
+	camera->yaw(Ogre::Radian(M_PI));
 }
 
 void

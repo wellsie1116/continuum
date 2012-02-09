@@ -43,6 +43,8 @@ private:
 	dSpaceID mSpace;
 	dJointGroupID mContactGroup;
 
+	Player* mPlayer1;
+	Player* mPlayer2;
 	GSList* mObjects;
 	GSList* mSurfaces;
 	GHashTable* mLinks; //int -> PhysicsLink

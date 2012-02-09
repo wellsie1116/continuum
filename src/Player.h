@@ -69,6 +69,7 @@ public:
 	virtual void sync();
 	virtual const PhysicsObjectState* save() const;
 	virtual void restore(const PhysicsObjectState* state);
+	virtual bool contains(dGeomID geom);
 
 	Ogre::Camera* getCamera() { return mCamera; }
 
@@ -79,6 +80,8 @@ public:
 	void injectMouseMove(const OIS::MouseEvent &arg);
 	
 	double getForwardVelocity();
+
+	void initializeCamera(Ogre::Camera* camera);
 
 private:
 	void startMove(PlayerDirection dir);

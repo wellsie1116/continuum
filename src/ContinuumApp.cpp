@@ -78,10 +78,16 @@ InputController*
 ContinuumApp::duplicate(InputController* obj)
 {
 	PlayerController* playerController = (PlayerController*)obj;
+	Player* player = playerController->getPlayer();
 
-	//TODO dup
+	Ogre::Camera* newCamera = mSceneMgr->createCamera("Player2");
+	player->initializeCamera(newCamera);
+	mSceneMgr->getRootSceneNode()->attachObject(newCamera);
 
-	return playerController;
+	Player* newPlayer = mPhysicsWorld->createPlayer(newCamera);
+	PlayerController* newPlayerController = new PlayerController(newPlayer);
+
+	return newPlayerController;
 }
 
 int ContinuumApp::setup()

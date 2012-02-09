@@ -95,14 +95,19 @@ World::setMarker()
 void
 World::jumpMarker()
 {
+	//set a marker first
 	if (mMarker < 0)
+		return;
+
+	//don't jump back more than once
+	if (mInputPlayer)
 		return;
 
 	mInputPlayer = mRecorder.createPlayer(mMarker, mTimestep);
 	mRecorder.purgeAfter(mMarker);
 	setTimestep(mMarker);
-	mPlaybackController = mDuplicator->duplicate((InputController*)mInputControllers->head->data);
 	mSnapshots.restoreSnapshot(mTimestep);
+	mPlaybackController = mDuplicator->duplicate((InputController*)mInputControllers->head->data);
 }
 
 void
@@ -139,6 +144,28 @@ World::step()
 			setTimestep(0);
 		else
 			setTimestep(mTimestep - ticks);
+
+		//FIXME temp hack to stop crashes
+		if (mTimestep < mMarker)
+		{
+			mTimestep = mMarker;
+		}
+		//if (mTimestep < mMarker)
+		//{
+		//	//TODO remove model
+		//	//TODO remove from physics world
+		//	if (mPlaybackController)
+		//	{
+		//		delete mPlaybackController;
+		//		mPlaybackController = NULL;
+		//	}
+		//	if (mInputPlayer)
+		//	{
+		//		delete mInputPlayer;
+		//		mInputPlayer = NULL;
+		//	}
+		//	mMarker = -1;
+		//}
 
 		mSnapshots.restoreSnapshot(mTimestep);
 	}

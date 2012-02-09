@@ -39,6 +39,8 @@ public:
 	void injectMouseDown(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 	void injectMouseUp(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 
+	Player* getPlayer() { return mPlayer; }
+
 private:
 	void setupModel();
 	void setupCamera();
