@@ -5,12 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Real Gameplay - Continuum</title>
+  <title>Forking Time - Continuum</title>
   <meta name="author" content="Kevin Wells">
 
   
-  <meta name="description" content="Commit log This week was a mix of work, ranging from making buttons doing something to
-adding teleporters from one level to another. The game is at &hellip;">
+  <meta name="description" content="Commit log As expected, I have not been able to work on this project as much as I would
+have liked to this week, but I was still able to implement &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +19,7 @@ adding teleporters from one level to another. The game is at &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://wellsie1116.github.com/continuum/blog/2012/02/01/real-gameplay">
+  <link rel="canonical" href="http://wellsie1116.github.com/continuum/blog/2012/02/08/forking-time">
   <link href="/continuum/favicon.png" rel="icon">
   <link href="/continuum/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/continuum/javascripts/modernizr-2.0.js"></script>
@@ -66,7 +66,7 @@ adding teleporters from one level to another. The game is at &hellip;">
   
   <header>
     
-      <h1 class="entry-title">Real Gameplay</h1>
+      <h1 class="entry-title">Forking Time</h1>
     
     
       <p class="meta">
@@ -82,7 +82,7 @@ adding teleporters from one level to another. The game is at &hellip;">
   
 
 
-<time datetime="2012-02-01T20:14:00-05:00" pubdate data-updated="true">Feb 1<span>st</span>, 2012</time>
+<time datetime="2012-02-08T21:09:00-05:00" pubdate data-updated="true">Feb 8<span>th</span>, 2012</time>
         
       </p>
     
@@ -91,64 +91,26 @@ adding teleporters from one level to another. The game is at &hellip;">
 
 <div class="entry-content"><h2>Commit log</h2>
 
-<p>This week was a mix of work, ranging from making buttons doing something to
-adding teleporters from one level to another.  The game is at this point
-playable (although without forking time, level 2 is not beatable).  That is the
-goal for next week.</p>
+<p>As expected, I have not been able to work on this project as much as I would
+have liked to this week, but I was still able to implement the ability to fork
+time.  With this new ability, levels that were impossible can now be solved.</p>
 
-<p><img src="/continuum/images/teleporters.png"></p>
+<p><img src="/continuum/images/forking.png"></p>
 
 <pre><code>Commits:
-Add level 2 +.5h
-Add teleportation nodes to other levels +2.25h
-Add particles support. +1.25h
-Add animation for walking +.5h
-Adjust character height and camera tracking +1.25h
-Tweak robot mesh +.25h
-Add link (source/sink) support.  +4h
-Add models/animations. +3.75h
+Animate ghost mesh +.5h
+Allow time to rewind past a fork +.5h
+Implement most of forking time +1.5h
+Allow basic jumping back to a marker +.75h
+Replay user input when playing time forwards +1h
+Allow Player controller to be rewound +3h
 
-Total: 13.75
+Total: 7.25
 </code></pre>
 
-<h2>Reviewing Feature Listing</h2>
-
-<p>A few weeks ago, I outlined various features that I wanted to be included in
-final game.  This week, I took a bit to review where I am relative to that list:</p>
-
-<ul>
-<li><p>Character movement/interaction</p>
-
-<p>With the addition of links (sources and sinks), the character can now
-actually interact with the environment.  I would also like to allow the
-character to pickup objects, but that functionality is not absolutely necessary
-to make the game playable.  Given time, I would like to add that last feature to
-character movement.</p></li>
-<li><p>Models</p>
-
-<p>I have all of the models that I need for the game.</p></li>
-<li><p>Forking time</p>
-
-<p>Not yet functional.  I record the user&#8217;s input, and it should not be too
-hard to make the transition to showing a second character, but I will need at
-least a week to fully implement this feature.</p></li>
-<li><p>Level design</p>
-
-<p>I am making levels as I implement features that utilize them, but I will not
-be able to make nearly enough levels to make this a full featured game.
-Instead, I am making the levels easy to create with Blender so that people can
-make their own levels.</p></li>
-<li><p>Audio system</p>
-
-<p>I do not think I will have time to implement this, even though it would have
-been fun to hear the audio play backwards while rewinding time.</p></li>
-<li><p>Main menu</p>
-
-<p>Implemented this week via teleporters.  Objects in the level editor can be
-defined to teleport the player to another level when the player touches that
-object.</p></li>
-</ul>
-
+<p>For the remainder of the quarter, I would like to add a few more levels and will
+write the user/designer documentation so that people can make levels for the
+game (and play them) in the future.</p>
 </div>
 
 
@@ -171,7 +133,7 @@ object.</p></li>
   
 
 
-<time datetime="2012-02-01T20:14:00-05:00" pubdate data-updated="true">Feb 1<span>st</span>, 2012</time>
+<time datetime="2012-02-08T21:09:00-05:00" pubdate data-updated="true">Feb 8<span>th</span>, 2012</time>
       
 
 
@@ -179,7 +141,7 @@ object.</p></li>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://wellsie1116.github.com/continuum/blog/2012/02/01/real-gameplay/" data-via="" data-counturl="http://wellsie1116.github.com/continuum/blog/2012/02/01/real-gameplay/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://wellsie1116.github.com/continuum/blog/2012/02/08/forking-time/" data-via="" data-counturl="http://wellsie1116.github.com/continuum/blog/2012/02/08/forking-time/" >Tweet</a>
   
   
   <div class="g-plusone" data-size="medium"></div>
@@ -190,10 +152,8 @@ object.</p></li>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/continuum/blog/2012/01/26/shadows-and-models/" title="Previous Post: Shadows and Models">&laquo; Shadows and Models</a>
+        <a class="basic-alignment left" href="/continuum/blog/2012/02/01/real-gameplay/" title="Previous Post: Real Gameplay">&laquo; Real Gameplay</a>
       
-      
-        <a class="basic-alignment right" href="/continuum/blog/2012/02/08/forking-time/" title="next Post: Forking Time">Forking Time &raquo;</a>
       
     </p>
   </footer>
