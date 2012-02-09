@@ -57,6 +57,15 @@ ContinuumSceneLoader::onEntityCreated(Ogre::Entity* pEntity, Ogre::SceneNode* pP
 				obj = mPhysicsWorld->createBox(pParentNode, Ogre::any_cast<double>(mass));
 			}
 		}
+		else
+		{
+			Ogre::SceneNode::ObjectIterator it = pParentNode->getAttachedObjectIterator();
+			while (it.hasMoreElements())
+			{
+				Ogre::MovableObject* o = it.getNext();
+				o->setCastShadows(false);
+			}
+		}
 	}
 	else
 	{
