@@ -91,6 +91,7 @@ private:
 	PhysicsWorld* mPhysicsWorld;
     
 	PlayerController* mPlayer;
+	PlayerController* mOtherPlayer;
 };
 
 #endif

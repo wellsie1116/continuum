@@ -31,6 +31,7 @@ ContinuumApp::ContinuumApp()
 	, mWorld(NULL)
 	, mPhysicsWorld(NULL)
 	, mPlayer(NULL)
+	, mOtherPlayer(NULL)
 {
 }
 
@@ -87,6 +88,8 @@ ContinuumApp::duplicate(InputController* obj)
 	Player* newPlayer = mPhysicsWorld->createPlayer(newCamera);
 	PlayerController* newPlayerController = new PlayerController(newPlayer);
 
+	mOtherPlayer = newPlayerController;
+
 	return newPlayerController;
 }
 	
@@ -98,6 +101,7 @@ ContinuumApp::unduplicate(InputController* obj)
 
 	mPhysicsWorld->removePlayer(player);
 	playerController->remove();
+	mOtherPlayer = NULL;
 }
 
 int ContinuumApp::setup()
@@ -230,6 +234,9 @@ bool ContinuumApp::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	if (!mTrayMgr->isDialogVisible())
 	{
         mPlayer->frameRenderingQueued(evt);
+        
+		if (mOtherPlayer)
+			mOtherPlayer->frameRenderingQueued(evt);
 	}
 
 	return true;
@@ -454,6 +461,7 @@ void ContinuumApp::createScene(Ogre::String name)
 		delete mPlayer;
 		mPlayer = NULL;
 	}
+	mOtherPlayer = NULL;
 	mPlayer = new PlayerController(player);
 
 	//setup our viewport
