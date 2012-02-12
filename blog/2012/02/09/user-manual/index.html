@@ -5,12 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Real Gameplay - Continuum</title>
+  <title>User Manual - Continuum</title>
   <meta name="author" content="Kevin Wells">
 
   
-  <meta name="description" content="Commit log This week was a mix of work, ranging from making buttons doing something to
-adding teleporters from one level to another. The game is at &hellip;">
+  <meta name="description" content="Game Overview Continuum is a game that explores certain properties of time that we have come
+to assume could not be violated. What if, for example, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +19,7 @@ adding teleporters from one level to another. The game is at &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://wellsie1116.github.com/continuum/blog/2012/02/01/real-gameplay">
+  <link rel="canonical" href="http://wellsie1116.github.com/continuum/blog/2012/02/09/user-manual">
   <link href="/continuum/favicon.png" rel="icon">
   <link href="/continuum/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/continuum/javascripts/modernizr-2.0.js"></script>
@@ -66,7 +66,7 @@ adding teleporters from one level to another. The game is at &hellip;">
   
   <header>
     
-      <h1 class="entry-title">Real Gameplay</h1>
+      <h1 class="entry-title">User Manual</h1>
     
     
       <p class="meta">
@@ -82,71 +82,56 @@ adding teleporters from one level to another. The game is at &hellip;">
   
 
 
-<time datetime="2012-02-01T20:14:00-05:00" pubdate data-updated="true">Feb 1<span>st</span>, 2012</time>
+<time datetime="2012-02-09T11:35:00-05:00" pubdate data-updated="true">Feb 9<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><h2>Commit log</h2>
+<div class="entry-content"><h2>Game Overview</h2>
 
-<p>This week was a mix of work, ranging from making buttons doing something to
-adding teleporters from one level to another.  The game is at this point
-playable (although without forking time, level 2 is not beatable).  That is the
-goal for next week.</p>
+<p>Continuum is a game that explores certain properties of time that we have come
+to assume could not be violated.  What if, for example, you could rewind time,
+fixing any mistakes you have made?  What if you were able to jump back in time
+and help yourself accomplish something?  Continuum explores these two
+questions.</p>
 
-<p><img src="/continuum/images/teleporters.png"></p>
+<p><img src="/continuum/images/user-player.png"></p>
 
-<pre><code>Commits:
-Add level 2 +.5h
-Add teleportation nodes to other levels +2.25h
-Add particles support. +1.25h
-Add animation for walking +.5h
-Adjust character height and camera tracking +1.25h
-Tweak robot mesh +.25h
-Add link (source/sink) support.  +4h
-Add models/animations. +3.75h
+<p>This is you.  You are presented with puzzles and you know you must solve them.</p>
 
-Total: 13.75
-</code></pre>
+<p><img src="/continuum/images/user-links.png"></p>
 
-<h2>Reviewing Feature Listing</h2>
+<p>Buttons can be activated by either pushing cubes onto them or by standing on
+them yourself.  Activating buttons do things like open doors.</p>
 
-<p>A few weeks ago, I outlined various features that I wanted to be included in
-final game.  This week, I took a bit to review where I am relative to that list:</p>
+<p><img src="/continuum/images/user-teleporters.png"></p>
+
+<p>Teleporters are the goal.  Reach a teleporter, and you have solved the level.
+This may sound easy, but don&#8217;t worry, bending time doesn&#8217;t come naturally.</p>
+
+<h2>How to Play</h2>
+
+<p>Continuum plays like most First Person Shooters (FPS&#8217;s) with a few
+modifications.  It supports your basic movement keys (move with WASD, jump with
+SPACE, and use the mouse to look around).  Continuum also introduces some
+controls allow the manipulation of time, as outlined below:</p>
 
 <ul>
-<li><p>Character movement/interaction</p>
-
-<p>With the addition of links (sources and sinks), the character can now
-actually interact with the environment.  I would also like to allow the
-character to pickup objects, but that functionality is not absolutely necessary
-to make the game playable.  Given time, I would like to add that last feature to
-character movement.</p></li>
-<li><p>Models</p>
-
-<p>I have all of the models that I need for the game.</p></li>
-<li><p>Forking time</p>
-
-<p>Not yet functional.  I record the user&#8217;s input, and it should not be too
-hard to make the transition to showing a second character, but I will need at
-least a week to fully implement this feature.</p></li>
-<li><p>Level design</p>
-
-<p>I am making levels as I implement features that utilize them, but I will not
-be able to make nearly enough levels to make this a full featured game.
-Instead, I am making the levels easy to create with Blender so that people can
-make their own levels.</p></li>
-<li><p>Audio system</p>
-
-<p>I do not think I will have time to implement this, even though it would have
-been fun to hear the audio play backwards while rewinding time.</p></li>
-<li><p>Main menu</p>
-
-<p>Implemented this week via teleporters.  Objects in the level editor can be
-defined to teleport the player to another level when the player touches that
-object.</p></li>
+<li><p>ALT: Holding ALT will enter &#8216;time control&#8217; mode and will initially freeze
+time.  From this state, you can use the scroll wheel to either move time
+backwards or forwards.  Scroll up to accelerate the rate that time moves
+forwards, and scroll down to accelerate the rate that time moves backwards.  To
+exit this mode, simply release ALT.</p></li>
+<li><p>P: Save a screenshot.  Useful for making blog articles.</p></li>
+<li><p>Left click: Set a marker.  The point in time that you specify as a marker will
+be the point in time that you can jump back to at a later time.</p></li>
+<li><p>Right click: Jump back to marker.  Jumping back to a marker will clone
+yourself.  You can watch your clone do what you just did (up until the point
+that you jumped back in time), and furthermore, you are free to do anything you
+want during this time.  It&#8217;s like teamwork, but you are working with yourself.</p></li>
+<li><p>Middle click: Freeze time.  Tap ALT to unfreeze.</p></li>
 </ul>
 
 </div>
@@ -171,7 +156,7 @@ object.</p></li>
   
 
 
-<time datetime="2012-02-01T20:14:00-05:00" pubdate data-updated="true">Feb 1<span>st</span>, 2012</time>
+<time datetime="2012-02-09T11:35:00-05:00" pubdate data-updated="true">Feb 9<span>th</span>, 2012</time>
       
 
 
@@ -179,7 +164,7 @@ object.</p></li>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://wellsie1116.github.com/continuum/blog/2012/02/01/real-gameplay/" data-via="" data-counturl="http://wellsie1116.github.com/continuum/blog/2012/02/01/real-gameplay/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://wellsie1116.github.com/continuum/blog/2012/02/09/user-manual/" data-via="" data-counturl="http://wellsie1116.github.com/continuum/blog/2012/02/09/user-manual/" >Tweet</a>
   
   
   <div class="g-plusone" data-size="medium"></div>
@@ -190,10 +175,8 @@ object.</p></li>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/continuum/blog/2012/01/26/shadows-and-models/" title="Previous Post: Shadows and Models">&laquo; Shadows and Models</a>
+        <a class="basic-alignment left" href="/continuum/blog/2012/02/09/technical-notes/" title="Previous Post: Technical Notes">&laquo; Technical Notes</a>
       
-      
-        <a class="basic-alignment right" href="/continuum/blog/2012/02/08/forking-time/" title="next Post: Forking Time">Forking Time &raquo;</a>
       
     </p>
   </footer>

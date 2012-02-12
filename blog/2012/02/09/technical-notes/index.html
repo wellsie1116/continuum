@@ -1,0 +1,404 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Technical Notes - Continuum</title>
+  <meta name="author" content="Kevin Wells">
+
+  
+  <meta name="description" content="Technologies Continuum uses various libraries: Object-Oriented Graphics Rendering Engine (OGRE) OGRE deals with all of the 3D rendering logic that &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://wellsie1116.github.com/continuum/blog/2012/02/09/technical-notes">
+  <link href="/continuum/favicon.png" rel="icon">
+  <link href="/continuum/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/continuum/javascripts/modernizr-2.0.js"></script>
+  <script src="/continuum/javascripts/ender.js"></script>
+  <script src="/continuum/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/continuum/atom.xml" rel="alternate" title="Continuum" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/continuum/">Continuum</a></h1>
+  
+    <h2>Status updates for my CSSE491 project.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/continuum/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:wellsie1116.github.com/continuum" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul class="main-navigation">
+  <li><a href="/continuum/">Blog</a></li>
+  <li><a href="/continuum/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Technical Notes</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-09T11:35:00-05:00" pubdate data-updated="true">Feb 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>Technologies</h2>
+
+<p>Continuum uses various libraries:</p>
+
+<h4>Object-Oriented Graphics Rendering Engine (OGRE)</h4>
+
+<p>OGRE deals with all of the 3D rendering logic that would have been too tedious
+to do by hand.  Below is a simple overview of features provided by OGRE (and
+were used by Continuum):</p>
+
+<ul>
+<li>External material declaration files</li>
+<li>External mesh declaration files</li>
+<li>Image loader (png, tga, &#8230;)</li>
+<li>Direct3D and OpenGL support</li>
+<li>Skeletal animation</li>
+<li>Tree based scene graph (objects can move relative to a parent)</li>
+<li>Full featured particle system</li>
+</ul>
+
+
+<p>By hand, I would have only implemented a small subset of these features.  For
+example, I would not have added any particle effects to my teleporter objects,
+but because OGRE made it so simple, I was able to add particle effects in only
+about an hour of work.  Choosing to go with an existing graphics engine was
+critical to the success of this project.</p>
+
+<h4>Open Dynamics Engine (ODE)</h4>
+
+<p>One requirement of this game was to have a physics engine that was both fast and
+deterministic.  I experimented with other engines (such as Newton Dynamics), and
+while these engines were fast, they would not simulate deterministically.
+Because ODE is deterministic, I can save and restore snapshots of the world at
+any given time and know that doing so will not inadvertently change the outcome
+of the simulation.  Without determinism, whenever the user would be rewinding
+time and would hit a snapshot frame, the world would jitter as a result of
+errors in the simulation accumulating.  This is not desirable, and ODE does not
+suffer from any of these issues.</p>
+
+<h2>Key Concepts</h2>
+
+<h4>Character Rigging</h4>
+
+<p>The rigging for the character camera setup is best explained with a diagram:</p>
+
+<p><img src="/continuum/images/rigging.png"></p>
+
+<p>In this image, the red objects represent logical connections between
+components, but do not collide in the physics simulation, whereas the blue
+objects are all collision objects.  I have opted to use a simple geometric
+primitive for the actual character (a capsule shape) that simply slides along
+the ground when given input from the user.  I restrict the angular velocity of
+this shape to 0 so the character remains upright during the simulation. Because
+the rotation of the capsule is fixed in this way, I need a rigging for the
+camera to rotate around.  In the diagram, the red sphere is a hinge joint that
+allows the camera to freely rotate around the capsule (while the camera always
+tracks the character).  When the player moves the mouse left or right, I simply
+apply a force to either side of the camera to push it in the correct location.
+To look up or down, the camera can move up and down the vertical red line (with
+a little bit of an arc), always tracking the top of the capsule.</p>
+
+<p>This might seem like an overcomplicated setup, but it provides a number of
+benefits.  Mainly, I never have to worry about the camera entering objects and
+obscuring the view of the player because it is an actual object in the physics
+simulation.  Doing this math myself would be infeasible.</p>
+
+<h4>Links</h4>
+
+<p>One design goal I had with Continuum was that I wanted to separate the design of
+the levels from the implementation of the game itself.  This means that if a
+user needs to interact with some other part of the level or with the game as a
+whole, that interaction must be specified in the level itself, not be statically
+coded in the game.  To accomplish this goal, I introduced a concept of link
+sources and sinks.  The main idea behind links is that any object in the map can
+be designated as a link source or sink.  Every source and sink are also assigned
+to a specific link channel (so that multiple linked pairs can exist
+simultaneously).  If the user (or another moveable physics object) comes in
+contact with a link source, any corresponding link sinks will be activated.
+This allows the user to do things such as open doors or start an elevator in
+response to pressing a button.</p>
+
+<p>A similar concept I added was teleporters.  Teleporters function similarly to
+link sources, except that, when activated, they teleport the user to a new
+level.</p>
+
+<h4>Rewinding Time</h4>
+
+<p>One of the key gameplay elements of Continuum is the ability to manipulate the
+flow of time.  More specifically, the player can:</p>
+
+<ul>
+<li>Play time backwards</li>
+<li>Play time forwards (while replaying past input events)</li>
+<li>Set a marker in time</li>
+<li>Jump back that marker, forking the player into 2 instances</li>
+</ul>
+
+
+<p>These features require a framework that is aware of the entire state of the
+world at more than a single time instance (which is very untypical of video
+games to have to track).  Continuum accomplishes this by utilizing two main
+strategies: taking snapshots of the game state and recording all user input.</p>
+
+<p>Every 100 frames, the game iterates over every object in the world (cubes,
+models, player, etc&#8230;) and records various attributes (position, orientation,
+linear velocity, angular velocity, and any custom data specified by that
+object).  With this information, the game, if requested, can compute any state
+in between snapshots by restoring the state of the game to an earlier snapshot
+and replaying the game until the appropriate timestep is reached.  This
+save/restore/replay operation happens fast enough that it is not noticeable when
+the player is performing actions such as rewinding time.</p>
+
+<p>Unfortunately, simply capturing the states of objects at various timesteps is
+not enough information to completely resimulate the world.  The game also needs
+to track all user input provided by the user.  This information becomes
+especially useful when forking time.  When the user forks time, the game copies
+all input that the user made from the marker to the end of the simulation and
+duplicates the player entity.  Every frame, instead of piping any user input to
+the cloned entity, it simply replays input that was originally provided by the
+player, allowing the player to be free to control the other entity.</p>
+
+<h2>Level Design</h2>
+
+<p>Levels can be designed and built using the free modeling program:
+<a href="http://www.blender.org">Blender</a> in conjunction with a custom export script
+that is used to convert Blender scenes to scenes that can be imported by
+Continuum. All paths listed are relative to the root of the repository.</p>
+
+<h4>Prerequisites</h4>
+
+<ul>
+<li><p>A Linux environment</p></li>
+<li><p>The newest version of Blender (2.61)</p></li>
+<li><p>Experience using Blender</p></li>
+</ul>
+
+
+<h4>Setting Up the Environment</h4>
+
+<p>Run the script located at blender/scripts/mklinks.sh.  This will copy the
+Blender export script to the necessary location in your Blender installation.
+Next, run Blender and enable the OGRE dotScene exporter addon.</p>
+
+<h4>Making Levels</h4>
+
+<p>Now for the fun part, designing levels.  You can build scenes like you normally
+would with a few exceptions, outlined below:</p>
+
+<ul>
+<li><p>Rotation and scale for objects are not preserved.  Instead, apply the
+transformations to the mesh.</p></li>
+<li><p>The camera must be facing down.  This is due to a bug with the export script
+that orients the camera incorrectly.  The game will reorient the camera
+appropriately.</p></li>
+<li><p>Levels can be called whatever you want, but the game will always look for a
+level entitled &#8220;menu&#8221; when it first loads.</p></li>
+</ul>
+
+
+<h4>Object Properties</h4>
+
+<p>Various properties can be applied to objects to change how they interact with
+the game.  By default, every mesh is given a bounding box and placed in the
+physics world as an immovable object. This is not always desirable.
+Furthermore, graphical effects and level transitions can be added by adding
+custom properties.</p>
+
+<ul>
+<li><p>Physics: no.  Disable all physics integration.  The object will be drawn, but
+will collide with nothing.</p></li>
+<li><p>Physics: Cube.  Create a cube that can be moved around the scene and can
+activate links.</p></li>
+<li><p>Mass: <em>n</em>.  Set the mass of a moveable physics object to <em>n</em>.</p></li>
+<li><p>LinkSource: <em>n</em>.  Define this object to activate link <em>n</em>.</p></li>
+<li><p>LinkSink: <em>n</em>.  Define this object to be activated by link <em>n</em>.  Upon
+activation, the animation entitled &#8220;Activate&#8221; will be played for the given
+object.  During the animation, the bounding box will be updated appropriately.
+This makes it possible to make things like doors that open in response to the
+Activate animation.</p></li>
+<li><p>Teleport: <em>level</em>.  When touched by a player, teleport to <em>level</em>.</p></li>
+<li><p>Particles1: <em>name</em>.  Add a particle effect to the given object.</p></li>
+<li><p>Particles2: <em>name</em>.  Add a particle effect to the given object.</p></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Kevin Wells</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-09T11:35:00-05:00" pubdate data-updated="true">Feb 9<span>th</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://wellsie1116.github.com/continuum/blog/2012/02/09/technical-notes/" data-via="" data-counturl="http://wellsie1116.github.com/continuum/blog/2012/02/09/technical-notes/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/continuum/blog/2012/02/08/forking-time/" title="Previous Post: Forking Time">&laquo; Forking Time</a>
+      
+      
+        <a class="basic-alignment right" href="/continuum/blog/2012/02/09/user-manual/" title="next Post: User Manual">User Manual &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/continuum/blog/2012/02/09/user-manual/">User Manual</a>
+      </li>
+    
+      <li class="post">
+        <a href="/continuum/blog/2012/02/09/technical-notes/">Technical Notes</a>
+      </li>
+    
+      <li class="post">
+        <a href="/continuum/blog/2012/02/08/forking-time/">Forking Time</a>
+      </li>
+    
+      <li class="post">
+        <a href="/continuum/blog/2012/02/01/real-gameplay/">Real Gameplay</a>
+      </li>
+    
+      <li class="post">
+        <a href="/continuum/blog/2012/01/26/shadows-and-models/">Shadows and Models</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Kevin Wells -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

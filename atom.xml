@@ -4,7 +4,7 @@
   <title><![CDATA[Continuum]]></title>
   <link href="http://wellsie1116.github.com/continuum/atom.xml" rel="self"/>
   <link href="http://wellsie1116.github.com/continuum/"/>
-  <updated>2012-02-08T21:15:12-05:00</updated>
+  <updated>2012-02-10T16:53:23-05:00</updated>
   <id>http://wellsie1116.github.com/continuum/</id>
   <author>
     <name><![CDATA[Kevin Wells]]></name>
@@ -12,6 +12,251 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[User Manual]]></title>
+    <link href="http://wellsie1116.github.com/continuum/blog/2012/02/09/user-manual/"/>
+    <updated>2012-02-09T11:35:00-05:00</updated>
+    <id>http://wellsie1116.github.com/continuum/blog/2012/02/09/user-manual</id>
+    <content type="html"><![CDATA[<h2>Game Overview</h2>
+
+<p>Continuum is a game that explores certain properties of time that we have come
+to assume could not be violated.  What if, for example, you could rewind time,
+fixing any mistakes you have made?  What if you were able to jump back in time
+and help yourself accomplish something?  Continuum explores these two
+questions.</p>
+
+<p><img src="http://wellsie1116.github.com/continuum/images/user-player.png"></p>
+
+<p>This is you.  You are presented with puzzles and you know you must solve them.</p>
+
+<p><img src="http://wellsie1116.github.com/continuum/images/user-links.png"></p>
+
+<p>Buttons can be activated by either pushing cubes onto them or by standing on
+them yourself.  Activating buttons do things like open doors.</p>
+
+<p><img src="http://wellsie1116.github.com/continuum/images/user-teleporters.png"></p>
+
+<p>Teleporters are the goal.  Reach a teleporter, and you have solved the level.
+This may sound easy, but don&#8217;t worry, bending time doesn&#8217;t come naturally.</p>
+
+<h2>How to Play</h2>
+
+<p>Continuum plays like most First Person Shooters (FPS&#8217;s) with a few
+modifications.  It supports your basic movement keys (move with WASD, jump with
+SPACE, and use the mouse to look around).  Continuum also introduces some
+controls allow the manipulation of time, as outlined below:</p>
+
+<ul>
+<li><p>ALT: Holding ALT will enter &#8216;time control&#8217; mode and will initially freeze
+time.  From this state, you can use the scroll wheel to either move time
+backwards or forwards.  Scroll up to accelerate the rate that time moves
+forwards, and scroll down to accelerate the rate that time moves backwards.  To
+exit this mode, simply release ALT.</p></li>
+<li><p>P: Save a screenshot.  Useful for making blog articles.</p></li>
+<li><p>Left click: Set a marker.  The point in time that you specify as a marker will
+be the point in time that you can jump back to at a later time.</p></li>
+<li><p>Right click: Jump back to marker.  Jumping back to a marker will clone
+yourself.  You can watch your clone do what you just did (up until the point
+that you jumped back in time), and furthermore, you are free to do anything you
+want during this time.  It&#8217;s like teamwork, but you are working with yourself.</p></li>
+<li><p>Middle click: Freeze time.  Tap ALT to unfreeze.</p></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Technical Notes]]></title>
+    <link href="http://wellsie1116.github.com/continuum/blog/2012/02/09/technical-notes/"/>
+    <updated>2012-02-09T11:35:00-05:00</updated>
+    <id>http://wellsie1116.github.com/continuum/blog/2012/02/09/technical-notes</id>
+    <content type="html"><![CDATA[<h2>Technologies</h2>
+
+<p>Continuum uses various libraries:</p>
+
+<h4>Object-Oriented Graphics Rendering Engine (OGRE)</h4>
+
+<p>OGRE deals with all of the 3D rendering logic that would have been too tedious
+to do by hand.  Below is a simple overview of features provided by OGRE (and
+were used by Continuum):</p>
+
+<ul>
+<li>External material declaration files</li>
+<li>External mesh declaration files</li>
+<li>Image loader (png, tga, &#8230;)</li>
+<li>Direct3D and OpenGL support</li>
+<li>Skeletal animation</li>
+<li>Tree based scene graph (objects can move relative to a parent)</li>
+<li>Full featured particle system</li>
+</ul>
+
+
+<p>By hand, I would have only implemented a small subset of these features.  For
+example, I would not have added any particle effects to my teleporter objects,
+but because OGRE made it so simple, I was able to add particle effects in only
+about an hour of work.  Choosing to go with an existing graphics engine was
+critical to the success of this project.</p>
+
+<h4>Open Dynamics Engine (ODE)</h4>
+
+<p>One requirement of this game was to have a physics engine that was both fast and
+deterministic.  I experimented with other engines (such as Newton Dynamics), and
+while these engines were fast, they would not simulate deterministically.
+Because ODE is deterministic, I can save and restore snapshots of the world at
+any given time and know that doing so will not inadvertently change the outcome
+of the simulation.  Without determinism, whenever the user would be rewinding
+time and would hit a snapshot frame, the world would jitter as a result of
+errors in the simulation accumulating.  This is not desirable, and ODE does not
+suffer from any of these issues.</p>
+
+<h2>Key Concepts</h2>
+
+<h4>Character Rigging</h4>
+
+<p>The rigging for the character camera setup is best explained with a diagram:</p>
+
+<p><img src="http://wellsie1116.github.com/continuum/images/rigging.png"></p>
+
+<p>In this image, the red objects represent logical connections between
+components, but do not collide in the physics simulation, whereas the blue
+objects are all collision objects.  I have opted to use a simple geometric
+primitive for the actual character (a capsule shape) that simply slides along
+the ground when given input from the user.  I restrict the angular velocity of
+this shape to 0 so the character remains upright during the simulation. Because
+the rotation of the capsule is fixed in this way, I need a rigging for the
+camera to rotate around.  In the diagram, the red sphere is a hinge joint that
+allows the camera to freely rotate around the capsule (while the camera always
+tracks the character).  When the player moves the mouse left or right, I simply
+apply a force to either side of the camera to push it in the correct location.
+To look up or down, the camera can move up and down the vertical red line (with
+a little bit of an arc), always tracking the top of the capsule.</p>
+
+<p>This might seem like an overcomplicated setup, but it provides a number of
+benefits.  Mainly, I never have to worry about the camera entering objects and
+obscuring the view of the player because it is an actual object in the physics
+simulation.  Doing this math myself would be infeasible.</p>
+
+<h4>Links</h4>
+
+<p>One design goal I had with Continuum was that I wanted to separate the design of
+the levels from the implementation of the game itself.  This means that if a
+user needs to interact with some other part of the level or with the game as a
+whole, that interaction must be specified in the level itself, not be statically
+coded in the game.  To accomplish this goal, I introduced a concept of link
+sources and sinks.  The main idea behind links is that any object in the map can
+be designated as a link source or sink.  Every source and sink are also assigned
+to a specific link channel (so that multiple linked pairs can exist
+simultaneously).  If the user (or another moveable physics object) comes in
+contact with a link source, any corresponding link sinks will be activated.
+This allows the user to do things such as open doors or start an elevator in
+response to pressing a button.</p>
+
+<p>A similar concept I added was teleporters.  Teleporters function similarly to
+link sources, except that, when activated, they teleport the user to a new
+level.</p>
+
+<h4>Rewinding Time</h4>
+
+<p>One of the key gameplay elements of Continuum is the ability to manipulate the
+flow of time.  More specifically, the player can:</p>
+
+<ul>
+<li>Play time backwards</li>
+<li>Play time forwards (while replaying past input events)</li>
+<li>Set a marker in time</li>
+<li>Jump back that marker, forking the player into 2 instances</li>
+</ul>
+
+
+<p>These features require a framework that is aware of the entire state of the
+world at more than a single time instance (which is very untypical of video
+games to have to track).  Continuum accomplishes this by utilizing two main
+strategies: taking snapshots of the game state and recording all user input.</p>
+
+<p>Every 100 frames, the game iterates over every object in the world (cubes,
+models, player, etc&#8230;) and records various attributes (position, orientation,
+linear velocity, angular velocity, and any custom data specified by that
+object).  With this information, the game, if requested, can compute any state
+in between snapshots by restoring the state of the game to an earlier snapshot
+and replaying the game until the appropriate timestep is reached.  This
+save/restore/replay operation happens fast enough that it is not noticeable when
+the player is performing actions such as rewinding time.</p>
+
+<p>Unfortunately, simply capturing the states of objects at various timesteps is
+not enough information to completely resimulate the world.  The game also needs
+to track all user input provided by the user.  This information becomes
+especially useful when forking time.  When the user forks time, the game copies
+all input that the user made from the marker to the end of the simulation and
+duplicates the player entity.  Every frame, instead of piping any user input to
+the cloned entity, it simply replays input that was originally provided by the
+player, allowing the player to be free to control the other entity.</p>
+
+<h2>Level Design</h2>
+
+<p>Levels can be designed and built using the free modeling program:
+<a href="http://www.blender.org">Blender</a> in conjunction with a custom export script
+that is used to convert Blender scenes to scenes that can be imported by
+Continuum. All paths listed are relative to the root of the repository.</p>
+
+<h4>Prerequisites</h4>
+
+<ul>
+<li><p>A Linux environment</p></li>
+<li><p>The newest version of Blender (2.61)</p></li>
+<li><p>Experience using Blender</p></li>
+</ul>
+
+
+<h4>Setting Up the Environment</h4>
+
+<p>Run the script located at blender/scripts/mklinks.sh.  This will copy the
+Blender export script to the necessary location in your Blender installation.
+Next, run Blender and enable the OGRE dotScene exporter addon.</p>
+
+<h4>Making Levels</h4>
+
+<p>Now for the fun part, designing levels.  You can build scenes like you normally
+would with a few exceptions, outlined below:</p>
+
+<ul>
+<li><p>Rotation and scale for objects are not preserved.  Instead, apply the
+transformations to the mesh.</p></li>
+<li><p>The camera must be facing down.  This is due to a bug with the export script
+that orients the camera incorrectly.  The game will reorient the camera
+appropriately.</p></li>
+<li><p>Levels can be called whatever you want, but the game will always look for a
+level entitled &#8220;menu&#8221; when it first loads.</p></li>
+</ul>
+
+
+<h4>Object Properties</h4>
+
+<p>Various properties can be applied to objects to change how they interact with
+the game.  By default, every mesh is given a bounding box and placed in the
+physics world as an immovable object. This is not always desirable.
+Furthermore, graphical effects and level transitions can be added by adding
+custom properties.</p>
+
+<ul>
+<li><p>Physics: no.  Disable all physics integration.  The object will be drawn, but
+will collide with nothing.</p></li>
+<li><p>Physics: Cube.  Create a cube that can be moved around the scene and can
+activate links.</p></li>
+<li><p>Mass: <em>n</em>.  Set the mass of a moveable physics object to <em>n</em>.</p></li>
+<li><p>LinkSource: <em>n</em>.  Define this object to activate link <em>n</em>.</p></li>
+<li><p>LinkSink: <em>n</em>.  Define this object to be activated by link <em>n</em>.  Upon
+activation, the animation entitled &#8220;Activate&#8221; will be played for the given
+object.  During the animation, the bounding box will be updated appropriately.
+This makes it possible to make things like doors that open in response to the
+Activate animation.</p></li>
+<li><p>Teleport: <em>level</em>.  When touched by a player, teleport to <em>level</em>.</p></li>
+<li><p>Particles1: <em>name</em>.  Add a particle effect to the given object.</p></li>
+<li><p>Particles2: <em>name</em>.  Add a particle effect to the given object.</p></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Forking Time]]></title>
